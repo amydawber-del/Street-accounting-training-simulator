@@ -2146,7 +2146,7 @@ const MODULES = [
           { step: 'Navigate to Landlord Account', desc: 'Find the landlord record in Street and open their accounting view.', path: 'Contacts → Landlords → Select Landlord → Accounting' },
           { step: 'View Ledger History', desc: 'Review all ledger entries: receipts, charges, fees, payments.', path: 'Landlord Account → Ledger' },
           { step: 'Identify Each Entry Type', desc: 'Identify what each entry type means: DR (debit), CR (credit), balance.', path: 'Landlord Account → Ledger → Entry Details' },
-          { step: 'Check for Suspense Items', desc: 'Check if any rent received is sitting in suspense rather than allocated to this landlord.', path: 'Accounting → Suspense Account' }
+          { step: 'Check for Suspense Items', desc: 'Check if any rent received is sitting in suspense rather than allocated to this landlord.', path: 'Accounting → Bank Accounts → View Suspense Account' }
         ],
         tasks: [
           { id: 't1', title: 'Review the glossary of Street accounting terms', type: 'read', desc: 'Ensure you understand: ledger, suspense, allocation, charge, statement, reconciliation.' },
@@ -2187,10 +2187,10 @@ const MODULES = [
             feedback: 'Client money always belongs to the landlords and tenants. The agency is merely a custodian. This is the foundation of trust accounting.'
           },
           {
-            q: 'What happens in Street when rent is received but NOT allocated?',
-            options: ['It is automatically assigned to the oldest tenancy', 'It sits in suspense until manually allocated', 'It is paid directly to the landlord', 'It is returned to the tenant'],
+            q: 'What happens in Street when rent is received but NOT yet reconciled or allocated?',
+            options: ['It is automatically assigned to the oldest tenancy', 'It appears on the Reconcile page as an unreconciled transaction after you import your bank statement', 'It is paid directly to the landlord', 'It is returned to the tenant'],
             correct: 1,
-            feedback: 'Unallocated rent sits in the suspense account. Street requires manual allocation to match payments to the correct tenancy and landlord ledger.'
+            feedback: 'Incoming funds only reach Street when you import your bank statement CSV. Once imported, each transaction appears on the Reconcile page to be matched and reconciled. Only after reconciliation is the money receipted onto the relevant ledger. If you cannot identify a payment, you can manually add it to the suspense account from the reconcile page.'
           },
           {
             q: 'What is the correct order of operations when processing rent?',
@@ -2394,21 +2394,21 @@ const MODULES = [
         concepts: ['Rent Receipt', 'Payment Allocation', 'Tenancy Ledger', 'Fee Calculation', 'Landlord Credit'],
         knowledgeCheck: [
           {
-            q: 'Tenant pays rent 2 days early. Where does this payment initially sit in Street?',
-            options: ['On the landlord ledger immediately', 'In the suspense account as unallocated', 'In the agency\'s own account', 'It is automatically rejected'],
+            q: 'A tenant pays rent 2 days early. How does this payment appear in Street?',
+            options: ['It is automatically posted to the landlord ledger immediately', 'It appears as an unreconciled transaction on the Reconcile page after you import your bank statement', 'It is automatically rejected for being early', 'It goes to the agency\'s own account'],
             correct: 1,
-            feedback: 'All incoming payments sit in suspense (unallocated) until they are matched to a tenancy. Street doesn\'t auto-allocate to prevent errors.'
+            feedback: 'Payments are not automatically posted anywhere. You first import your bank statement CSV via Accounting → Bank Accounts → Import Statement. The payment then appears on the Reconcile page as a transaction to be matched and reconciled — linked (green), suggested (blue), attention (orange), or no match — before it is receipted onto the tenancy ledger.'
           },
           {
-            q: 'After allocating rent, what is automatically created in Street?',
+            q: 'What does clicking Allocate on the Allocate Funds page do?',
             options: [
-              'A new tenancy agreement',
-              'A management fee charge against the landlord',
-              'A deposit registration',
-              'A new bank account entry'
+              'Creates a new tenancy agreement',
+              'Allocates the available funds to the relevant charges and makes the net balance payable to the owner',
+              'Creates a deposit registration',
+              'Sends money directly to the landlord\'s bank account'
             ],
             correct: 1,
-            feedback: 'When rent is allocated, Street automatically calculates and posts the management fee charge based on the configured fee %, giving the agency their income and updating the net landlord balance.'
+            feedback: 'Clicking Allocate on the Owners in Credit tab allocates the received funds to the relevant charges on the owner ledger and calculates what to pay the owner. You can also use Detailed Allocation to choose which specific charges to allocate to. Once allocated, a statement is generated and the balance appears in Payments to Make.'
           }
         ],
         scenario: {
@@ -2482,14 +2482,14 @@ const MODULES = [
           { step: 'Confirm Charge on Ledger', desc: 'Save the charge. It now appears on Prof. Scarlett Cooper\'s ledger, reducing her next payment by £144.00.', path: 'Landlord Account → Ledger → Review' },
           { step: 'Add Renewal Fee — Miss Tiffany Ward', desc: 'Open Miss Tiffany Ward\'s account (142 Ladymere Drive). Add £60 renewal fee + £12 VAT = £72 total. Description: "Tenancy renewal — Mr. Jason Walker".', path: 'Contacts → Landlords → Miss Tiffany Ward' },
           { step: 'Add Coordination Fee — Dr. Eleanor Rogers', desc: 'Open Dr. Eleanor Rogers\'s account (285 Chatsworth Road). Add £240 coordination fee + £48 VAT = £288 total. Description: "Maintenance coordination — boiler works".', path: 'Contacts → Landlords → Dr. Eleanor Rogers' },
-          { step: 'Run Pre-Payment Review', desc: 'Before processing payments, run a ledger review to confirm all three charges are correct and no errors exist.', path: 'Accounting → Landlord Payments → Pre-Payment Report' }
+          { step: 'Review All Three Charges Before Payment Run', desc: 'Before running the payment batch, navigate to each owner ledger (Property → Accounting → Owner Ledger) to confirm all three charges appear correctly with the right amounts and descriptions. Any error should be corrected now before payments are processed.', path: 'Property → Accounting → Owner Ledger → Review' }
         ],
         tasks: [
           { id: 't1', title: 'Add the £120 inventory fee charge to Prof. Scarlett Cooper\'s account (268 Greenleach Lane)', type: 'demo', desc: 'Navigate to her Owner Ledger (Property → Ownership → Accounting) and add the One Off Charge.' },
           { id: 't2', title: 'Confirm VAT (£24.00) is correctly calculated on the inventory fee', type: 'demo', desc: 'Check that Street has applied 20% VAT — total should show £144.00.' },
           { id: 't3', title: 'View Prof. Scarlett Cooper\'s landlord ledger to confirm the charge appears', type: 'demo', desc: 'Verify it shows as a deduction on the account.' },
           { id: 't4', title: 'Add the renewal fee to Miss Tiffany Ward and coordination fee to Dr. Eleanor Rogers', type: 'demo', desc: 'Repeat the process for both remaining landlords.' },
-          { id: 't5', title: 'Check the pre-payment report before running payments', type: 'confirm', desc: 'Confirm all three charges are correct before landlord payment batch.' }
+          { id: 't5', title: 'Review all three owner ledgers to confirm charges appear correctly before payment run', type: 'confirm', desc: 'Open each owner ledger and confirm the charge is visible as a debit entry with the correct amount and description.' }
         ],
         reflections: [
           { id: 'r1', q: 'Prof. Scarlett Cooper disputes the £120 inventory fee charge. How would you trace when it was added, by whom, and what charge type was used? Where in Street does the audit trail live?' },
@@ -2573,7 +2573,7 @@ const MODULES = [
     icon: '💸',
     tag: 'workflow',
     tagLabel: 'Workflow',
-    desc: 'Run landlord payment batches, generate statements, handle payment holds, and manage net payment calculations in Street.',
+    desc: 'Run landlord payment batches, generate statements, select which landlords to include in a payment run, and manage net payment calculations in Street.',
     estimatedTime: '35 min',
     scenarios: [
       {
@@ -2584,7 +2584,7 @@ const MODULES = [
           url: 'https://intercom.help/streetcouk/en/articles/7050149-payments-to-make',
           summary: 'After allocating funds, go to Accounting → Payments to Make. The Owners tab lists all landlords due payment with their property, reference and amount. Select payees, confirm the payment bank account in Payment Settings, click Pay to create a payment file. Then go to the Payment Files tab and click Export to download as CSV or bank SIF file for submission to your bank. When payment is confirmed, statements are automatically emailed to landlords.'
         },
-        concepts: ['Payment Batch', 'Net Payment', 'Payment Run', 'BACS', 'Payment Hold', 'Statement Generation'],
+        concepts: ['Payment Batch', 'Net Payment', 'Payment Run', 'Payee Selection', 'Payment File', 'Statement Generation'],
         knowledgeCheck: [
           {
             q: 'Before running a landlord payment batch, what should you always check?',
@@ -2598,21 +2598,21 @@ const MODULES = [
             feedback: 'Always verify rent allocation and fee accuracy before running payments. An incorrect payment batch is very difficult to reverse and causes landlord complaints.'
           },
           {
-            q: 'A landlord asks you to hold their payment this month. What do you do in Street?',
+            q: 'A landlord asks you to skip their payment this month. What do you do in Street?',
             options: [
               'Delete their bank details',
-              'Place a payment hold on their account for this payment run',
+              'Untick their checkbox in the Owners tab under Payments to Make to exclude them from this payment run',
               'Cancel all their tenancies',
               'Change their fee rate to 0%'
             ],
             correct: 1,
-            feedback: 'Street allows you to place a payment hold on specific landlord accounts. The balance remains in the client account until you release the hold in a future payment run.'
+            feedback: 'In the Owners tab under Payments to Make, you control which landlords are included in a payment run by ticking or unticking their checkbox on the left. Simply untick the landlord to exclude them — their balance stays in the client account and they can be included in a future payment run.'
           }
         ],
         scenario: {
           title: 'Month-End Payment Run — {AGENCY} (25th)',
           context: 'It is the 25th — payment day for {AGENCY}. You need to run the monthly landlord payment batch for all 12 properties across the Worsley and Eccles portfolio.',
-          details: `Month-end summary for {AGENCY}:\n• 11 landlords have correct balances ready for payment\n• 1 landlord (Dr. Dave Bennett — 6 Woodside Avenue M28 3HR) has requested a payment hold until next month\n• Total to be paid: £18,489.60 across 11 landlords (net of 12% fees + VAT)\n• Dr. Dave Bennett's £2,482.40 remains held in client account\n\nYou need to run the batch, hold Dr. Dave Bennett, and generate statements for all 12 landlords.`
+          details: `Month-end summary for {AGENCY}:\n• 11 landlords have correct balances ready for payment\n• 1 landlord (Dr. Dave Bennett — 6 Woodside Avenue M28 3HR) has asked to defer his payment until next month\n• Total to be paid: £18,489.60 across 11 landlords (net of 12% fees + VAT)\n• Dr. Dave Bennett's £2,482.40 remains in the client account\n\nYou need to run the batch, exclude Dr. Dave Bennett by leaving his checkbox unticked, and generate statements for all 12 landlords.`
         },
         workflow: [
           { step: 'Navigate to Payments to Make', desc: 'After completing Allocate Funds, go to Accounting → Payments to Make. You will see tabs for Owners, Contractors, Agency, Tenants, and Deposits.', path: 'Accounting → Payments to Make' },
@@ -2625,14 +2625,14 @@ const MODULES = [
         tasks: [
           { id: 't1', title: 'Navigate to Accounting → Payments to Make', type: 'demo', desc: 'Explore the Owners, Contractors, Agency, Tenants, and Deposits tabs.' },
           { id: 't2', title: 'Review the Owners tab — note all 12 {AGENCY} landlords listed', type: 'demo', desc: 'Confirm each landlord shows correct property, reference and net payment amount.' },
-          { id: 't3', title: 'Deselect Dr. Dave Bennett (6 Woodside Avenue) to place a payment hold', type: 'demo', desc: 'Leave his checkbox unticked — his balance remains in the client account.' },
+          { id: 't3', title: 'Deselect Dr. Dave Bennett (6 Woodside Avenue) to exclude him from this payment run', type: 'demo', desc: 'Leave his checkbox unticked — his balance remains in the client account until included in a future payment run.' },
           { id: 't4', title: 'Set the payment account in Payment Settings and click Pay', type: 'demo', desc: 'Select the correct client account and process the payment run for 11 landlords.' },
           { id: 't5', title: 'Go to Payment Files tab and export the payment file', type: 'demo', desc: 'Download the CSV or bank SIF file that would be uploaded to your bank.' },
           { id: 't6', title: 'Confirm landlord statements were generated automatically', type: 'confirm', desc: 'Statements are generated and emailed to landlords when the payment is confirmed.' }
         ],
         reflections: [
           { id: 'r1', q: 'You process the {AGENCY} payment batch and realise after processing that Prof. Fred Watson\'s fee was set incorrectly at 10% instead of 12%. What steps would you take in Street to investigate and correct this?' },
-          { id: 'r2', q: 'Why is it important to generate statements for ALL 12 {AGENCY} landlords including Dr. Dave Bennett who is on a payment hold?' },
+          { id: 'r2', q: 'Why is it important to generate statements for ALL 12 {AGENCY} landlords including Dr. Dave Bennett who was excluded from this payment run?' },
           { id: 'r3', q: 'What is the relationship between the client account balance and the total of all landlord ledger balances? What should they equal?' }
         ]
       }
@@ -2666,7 +2666,7 @@ const MODULES = [
               'VAT needs to be adjusted'
             ],
             correct: 1,
-            feedback: 'Any difference after reconciliation indicates an error or timing difference. Common causes: unmatched payments, duplicate entries, bank charges not recorded in Street, or timing differences for in-transit items.'
+            feedback: 'A difference after all transactions are reconciled means there is a transaction on the bank statement that hasn\'t been matched to a Street entry, or a Street transaction that isn\'t on the bank statement. Every difference must be investigated and resolved — common causes include bank charges not yet posted in Street, duplicate entries, or timing differences for in-transit items. Never force-balance with a manual adjustment.'
           }
         ],
         scenario: {
@@ -2712,7 +2712,7 @@ const MODULES = [
         helpArticle: {
           title: 'Suspense Account — Street Accounting',
           url: 'https://intercom.help/streetcouk/en/articles/8787363-suspense-account',
-          summary: 'Access via Accounting → Bank Accounts → View Suspense Account. Use it to hold payments of unknown origin temporarily. Add money directly or via the Reconcile page (click \'more\' → \'add to suspense account\'). To resolve: click Transfer on a suspense entry, select the ledger type (tenancy/owner/contractor/agency), search for the correct entity, enter amount and description, confirm. Dormant funds (held 6+ years) are automatically tagged.'
+          summary: 'Access via Accounting → Bank Accounts → \'view suspense account\'. A suspense account holds funds received where the reason is unknown or there are issues with those funds. Money can be added directly or via the Reconcile page (click \'more\' → \'add to suspense account\'). To resolve: click Transfer on a suspense entry, select the ledger type (lettings application, tenancy, owner, contractor, or agency), search for the correct entity, enter amount and description, confirm. Entries can be edited or voided via the three-dot menu. Dormant funds (held 6+ years) are automatically tagged.'
         },
         concepts: ['Suspense Account', 'Unallocated Funds', 'Payment Investigation', 'Allocation Error', 'Clearing Entry'],
         knowledgeCheck: [
@@ -2734,18 +2734,18 @@ const MODULES = [
           details: `4 unallocated items in the {AGENCY} client account:\n• £1,400 — matches Prof. Aaron Bailey\'s rent for 268 Greenleach Lane exactly (Ref: TvLE84DkIQ)\n• £500 — unknown reference "BANK REF 44721" — no matching tenancy\n• £2,350 — £50 more than expected rent for Mrs. Sasha Stevens at 210 Cliftonville Drive (rent is £2,300)\n• Old unallocated: £1,200 from 6 weeks ago — still sitting unresolved in suspense`
         },
         workflow: [
-          { step: 'Open Suspense Account', desc: 'Navigate to Accounting → Suspense Account. Review all outstanding items.', path: 'Accounting → Suspense Account' },
-          { step: 'Allocate Matched Payment', desc: '£1,400 clearly matches Prof. Aaron Bailey\'s tenancy at 268 Greenleach Lane (Ref: TvLE84DkIQ). Allocate immediately.', path: 'Suspense → Select £1,400 → Allocate to Tenancy' },
-          { step: 'Investigate Unknown Payment', desc: '£500 unknown. Contact bank, check reference, check if any landlord or tenant matches. Post to holding account until identified.', path: 'Suspense → £500 → Investigation Flag' },
-          { step: 'Handle Overpayment', desc: '£1,050 vs £1,000 expected. Allocate £1,000 to rent. Post £50 as tenant credit on their ledger.', path: 'Suspense → £1,050 → Allocate Rent + Post Credit' },
-          { step: 'Review Aged Suspense Items', desc: 'The old unallocated item from last month. Escalate for manager review — aged suspense is a compliance risk.', path: 'Suspense → Aged Items → Escalate' }
+          { step: 'Open Suspense Account', desc: 'Navigate to Accounting → Bank Accounts → \'view suspense account\'. Review all outstanding items — you can see a list of entries, add money, and transfer money out from this page.', path: 'Accounting → Bank Accounts → View Suspense Account' },
+          { step: 'Transfer Matched Payment', desc: '£1,400 clearly matches Prof. Aaron Bailey\'s tenancy at 268 Greenleach Lane (Ref: TvLE84DkIQ). Click the \'Transfer\' button on the entry. Select ledger type (Tenancy), search for and select the correct tenancy, enter the amount and description, then click \'confirm transfer\'.', path: 'Suspense → £1,400 → Transfer → Tenancy → Confirm' },
+          { step: 'Investigate Unknown Payment', desc: '£500 with unknown reference "BANK REF 44721". Leave it in suspense — do not allocate until identified. Contact relevant tenants to identify the sender. Add a note to the entry (via three dots → view details) explaining you are investigating.', path: 'Suspense → £500 → Three Dots → View Details → Note' },
+          { step: 'Handle Overpayment', desc: '£2,350 arrived for Mrs. Sasha Stevens whose rent is £2,300. Transfer the full £2,350 to her tenancy ledger — the £50 excess will appear as unallocated funds on the tenancy ledger (visible in the Tenancies in Credit tab on Allocate Funds) to be handled separately.', path: 'Suspense → £2,350 → Transfer → Tenancy → Confirm' },
+          { step: 'Review Old Unallocated Item', desc: 'The old item from 6 weeks ago requires investigation. Click the three dots → view details to review when it arrived and what reference it carried. If still unidentifiable, escalate to a manager — aged suspense items are a compliance concern.', path: 'Suspense → Aged Item → Three Dots → View Details → Escalate' }
         ],
         tasks: [
-          { id: 't1', title: 'Locate the Suspense Account in Street Accounting', type: 'demo', desc: 'Navigate to Accounting → Suspense Account.' },
-          { id: 't2', title: 'Allocate a test unallocated payment to a tenancy', type: 'demo', desc: 'Practice clearing a suspense item.' },
-          { id: 't3', title: 'Post a tenant credit for an overpayment scenario', type: 'demo', desc: 'Record the £50 excess as tenant credit.' },
-          { id: 't4', title: 'Flag an unidentifiable payment for investigation', type: 'demo', desc: 'Mark the unknown entry for follow-up.' },
-          { id: 't5', title: 'Generate a suspense account report', type: 'confirm', desc: 'Confirm the report shows cleared and outstanding items.' }
+          { id: 't1', title: 'Navigate to the Suspense Account in Street Accounting', type: 'demo', desc: 'Navigate to Accounting → Bank Accounts → click \'view suspense account\'. This is where unidentified or unallocated funds are held temporarily.' },
+          { id: 't2', title: 'Transfer a test suspense entry to a tenancy ledger', type: 'demo', desc: 'Click Transfer on a suspense entry. Select ledger type (e.g. Tenancy), search for the correct tenancy, enter amount and description, click Confirm Transfer.' },
+          { id: 't3', title: 'Transfer a suspense entry to a tenancy ledger', type: 'demo', desc: 'Click Transfer on a suspense entry, select the ledger type, search for the correct tenancy, enter the amount and description, and confirm the transfer.' },
+          { id: 't4', title: 'Practice viewing and editing a suspense entry using the three-dot menu', type: 'demo', desc: 'Click three dots → View Details to see a breakdown. Explore editing the bank account or description on the entry.' },
+          { id: 't5', title: 'Confirm the suspense account shows the updated balance after transfers', type: 'confirm', desc: 'Transferred entries should no longer appear in the suspense account list.' }
         ],
         reflections: [
           { id: 'r1', q: 'How long should money be allowed to sit in the suspense account before it becomes a compliance concern? What is best practice?' },
@@ -2834,7 +2834,7 @@ const MODULES = [
         helpArticle: {
           title: 'Landlord Statements and Reports in Street',
           url: 'https://intercom.help/streetcouk/en/collections/3887357-accounting',
-          summary: 'Street generates professional landlord statements showing all transactions for the period: rent received, fees deducted, charges, contractor payments and the net payment amount. Statements can be emailed directly to landlords from Street.'
+          summary: 'Landlord statements are generated automatically when a payment file is confirmed in Payments to Make and emailed to all owners on the property. If a landlord is owed £0, the statement is sent during Allocate Funds instead. Statements are visible on each owner\'s ledger under the Statements tab. Use the three-dot menu to resend or download as PDF. Use Generate Owner Income Report for annual tax summaries.'
         },
         concepts: ['Landlord Statement', 'Statement Period', 'Net Remittance', 'Email Dispatch', 'Statement Format', 'Annual Summary'],
         knowledgeCheck: [
@@ -2856,19 +2856,19 @@ const MODULES = [
           details: 'All statements should cover the current calendar month for the full {AGENCY} portfolio. Statements must be emailed by 5pm today. Three landlords (Prof. Scarlett Cooper at 268 Greenleach Lane, Mrs. Sarah Price at 210 Cliftonville Drive, and Dr. Eleanor Rogers at 285 Chatsworth Road) have historically queried their statements — review these carefully before sending.'
         },
         workflow: [
-          { step: 'Navigate to Statement Generation', desc: 'Open Accounting → Statements → Landlord Statements.', path: 'Accounting → Statements → Landlord Statements' },
-          { step: 'Select Statement Period', desc: 'Set the period as the current calendar month. Street will pull all transactions within this date range.', path: 'Statements → Select Period' },
-          { step: 'Preview Statements for Query Landlords', desc: 'Open and review statements for Prof. Scarlett Cooper (268 Greenleach Lane), Mrs. Sarah Price (210 Cliftonville Drive), and Dr. Eleanor Rogers (285 Chatsworth Road) before batch sending.', path: 'Statements → Preview → Per Landlord' },
-          { step: 'Verify Figures Match Ledger', desc: 'Cross-reference statement totals with each landlord\'s ledger. Any discrepancy must be investigated before sending.', path: 'Landlord Account → Ledger → Compare with Statement' },
-          { step: 'Batch Send All Statements', desc: 'Once satisfied, run the batch statement email dispatch. Street sends PDFs to all registered landlord email addresses.', path: 'Statements → Send All → Confirm Dispatch' },
-          { step: 'Confirm Delivery Log', desc: 'Review the statement dispatch log to confirm all emails were sent successfully. Follow up any failures.', path: 'Statements → Dispatch Log' }
+          { step: 'Understand How Statements Are Generated', desc: 'In Street, landlord statements are generated automatically when a payment file is created and confirmed in Payments to Make. They are emailed automatically to all owners on that property. If the amount payable to an owner is £0, the statement is sent during the Allocate Funds stage instead.', path: 'Accounting → Payments to Make → Confirm Payment' },
+          { step: 'Access Statements on the Owner Ledger', desc: 'To view a specific landlord\'s statements, open the property → Accounting (top right) → Owner Ledger → Statements tab. This shows a list of all statements generated and sent for that property.', path: 'Property → Accounting → Owner Ledger → Statements' },
+          { step: 'Preview a Statement Before Payment', desc: 'During Allocate Funds, on the Owners in Credit tab there is a document icon next to the Allocate button. Click this to preview the statement as it will look before confirming the allocation.', path: 'Accounting → Allocate Funds → Owners in Credit → Preview Statement' },
+          { step: 'Resend or Download a Statement', desc: 'From the Statements tab on an owner ledger, click the three dots on the right of any statement to resend it to the landlord or download it as a PDF.', path: 'Owner Ledger → Statements → Three Dots → Resend / Download PDF' },
+          { step: 'Generate a Landlord Income Report', desc: 'On the Statements tab of the owner ledger, click the Generate Owner Income Report button. This creates a PDF showing a tax breakdown of income and expenditure over a set timeframe — useful as an annual tax summary for landlords.', path: 'Owner Ledger → Statements → Generate Owner Income Report' },
+          { step: 'Verify Statements for Query Landlords', desc: 'For landlords who have queried statements recently (Prof. Scarlett Cooper, Mrs. Sarah Price, Dr. Eleanor Rogers), open their Owner Ledger Statements tab and cross-check the entries against the Accounting tab before the next payment run.', path: 'Owner Ledger → Statements → Review' }
         ],
         tasks: [
-          { id: 't1', title: 'Navigate to Landlord Statements in the demo', type: 'demo', desc: 'Find the statement generation tool.' },
-          { id: 't2', title: 'Generate a preview statement for one landlord', type: 'demo', desc: 'Preview a statement and check all entries are correct.' },
-          { id: 't3', title: 'Verify the statement against the landlord ledger', type: 'demo', desc: 'Cross-check statement totals with the ledger.' },
-          { id: 't4', title: 'Practice the batch send process', type: 'demo', desc: 'Simulate sending statements to all landlords.' },
-          { id: 't5', title: 'Review the statement dispatch log', type: 'confirm', desc: 'Confirm all statements were sent and log reviewed.' }
+          { id: 't1', title: 'Navigate to a property owner ledger and open the Statements tab', type: 'demo', desc: 'Access via Property → Accounting (top right) → Owner Ledger → Statements tab to view all statements generated for that landlord.' },
+          { id: 't2', title: 'Preview a statement using the document icon during Allocate Funds', type: 'demo', desc: 'On the Owners in Credit tab, find the preview statement (document icon) next to the Allocate button and review what the statement will show.' },
+          { id: 't3', title: 'Download a statement as a PDF from the owner ledger', type: 'demo', desc: 'On the Statements tab, click the three dots next to a statement → Download PDF.' },
+          { id: 't4', title: 'Resend a statement to a landlord', type: 'demo', desc: 'Click three dots on a statement → Resend to landlord.' },
+          { id: 't5', title: 'Generate a Landlord Income Report for one landlord', type: 'confirm', desc: 'Click the Generate Owner Income Report button on the Statements tab — confirm a PDF is created.' }
         ],
         reflections: [
           { id: 'r1', q: 'Describe the difference between a landlord statement and a landlord account ledger. When would you use each?' },
@@ -2902,10 +2902,10 @@ const MODULES = [
               'Run bank reconciliation',
               'Send landlord statements',
               'Process landlord payment batch',
-              'Archive all transactions and mark the month as read-only'
+              'Confirm the period is clean: suspense empty, all funds allocated, bank reconciled'
             ],
             correct: 3,
-            feedback: 'Street does not have an accounting period lock. The correct final step is to verify the period is clean: suspense account empty, all funds allocated, bank reconciled. Your discipline in completing tasks in the right order is what keeps the books accurate.'
+            feedback: 'Street does not have an accounting period lock — there is no button to close or lock the month. Instead, completing each step correctly in the right order keeps the books accurate. The final check is confirming everything is complete: no unallocated funds, no outstanding suspense items, bank reconciled, statements sent.'
           }
         ],
         scenario: {
@@ -2916,7 +2916,7 @@ const MODULES = [
         workflow: [
           { step: '1. Check All Rent is Allocated', desc: 'Navigate to Accounting → Allocate Funds. Check the Tenancies in Credit tab — any tenancies listed here have unallocated funds that have not yet been matched to charges. Resolve any outstanding items.', path: 'Accounting → Allocate Funds → Tenancies in Credit' },
           { step: '2. Review Arrears', desc: 'Run the arrears report. Review tenants in arrears. Note action taken: payment plan, notice, or hold.', path: 'Accounting → Reports → Arrears' },
-          { step: '3. Clear Suspense Account', desc: 'Investigate and allocate or escalate the £450 suspense item.', path: 'Accounting → Suspense Account' },
+          { step: '3. Clear Suspense Account', desc: 'Navigate to Accounting → Bank Accounts → View Suspense Account. Investigate and transfer the £450 item to the correct ledger, or escalate if unidentifiable.', path: 'Accounting → Bank Accounts → View Suspense Account' },
           { step: '4. Post Outstanding Contractor Payment', desc: 'Find and post the missing contractor invoice before running reconciliation.', path: 'Accounting → Contractor Payments' },
           { step: '5. Run Bank Reconciliation', desc: 'Reconcile the client account against the bank statement. Resolve any differences.', path: 'Accounting → Reconciliation' },
           { step: '6. Process Landlord Payments', desc: 'Run the payment batch. Review all amounts. Process and confirm payments.', path: 'Accounting → Landlord Payments' },
@@ -2980,7 +2980,7 @@ const MODULES = [
           { step: 'Identify Charge Type', desc: 'Determine if it was an automated fee, manual charge or contractor invoice. If incorrect, create a reversal entry.', path: 'Charge Entry → View Details → Reversal' },
           { step: 'Issue 2: Investigate Unmatched Bank Item', desc: 'Open Bank Reconciliation. Find the unmatched £250. Cross-reference against receipts, payments, and bank statement narrative.', path: 'Accounting → Reconciliation → Unmatched Items' },
           { step: 'Resolve the Unmatched Item', desc: 'Determine if the £250 is a legitimate transaction not yet posted in Street, or a bank error. Post the missing transaction or raise with bank.', path: 'Accounting → Post Transaction → Match' },
-          { step: 'Issue 3: Clear Aged Suspense Item', desc: 'Open the suspense account. Find the £75 from 6 weeks ago. Investigate the original payment and allocate to the correct tenant account as a credit.', path: 'Accounting → Suspense Account → Aged Items → Allocate' }
+          { step: 'Issue 3: Clear Aged Suspense Item', desc: 'Navigate to Accounting → Bank Accounts → View Suspense Account. Find the £75 from 6 weeks ago. Click three dots → View Details to review when it arrived and what reference it carried. Click Transfer to move it to the correct tenancy ledger once identified.', path: 'Accounting → Bank Accounts → View Suspense Account → Transfer' }
         ],
         tasks: [
           { id: 't1', title: 'Use the audit trail to investigate a charge on a landlord account', type: 'demo', desc: 'Practice tracing who posted a specific entry and when.' },
@@ -3042,13 +3042,13 @@ const MODULES = [
               'Allocate funds → generate statements → reconcile → pay landlords'
             ],
             correct: 1,
-            feedback: 'Correct Street order: Reconcile (import & match bank statement) → Allocate Funds (owners in credit) → Payments to Make (pay landlords) → Generate Statements. There is no period lock in Street — clean completion of each step is what closes the month.'
+            feedback: 'Correct Street order: Reconcile (import & match bank statement) → Allocate Funds (owners in credit) → Payments to Make (pay landlords) → Statements sent automatically on payment confirmation. There is no period lock in Street — completing each step correctly in the right order is what closes the month cleanly.'
           }
         ],
         scenario: {
           title: '🏅 Capstone: Complete Month for {AGENCY}',
           context: 'You are the accounts manager at {AGENCY}, managing 5 properties. You must complete the full month from setup verification through to period close.',
-          details: `**Setup Check:**\n• Verify accounting is correctly configured\n• Confirm bank accounts, fee settings\n\n**Income:**\n• £850 rent — 268 Greenleach Lane (full payment, on time)\n• £1,100 rent — 6 Woodside Avenue (full payment, 2 days early)\n• £950 rent — 142 Ladymere Drive (partial — £900 paid, £50 outstanding)\n• £1,200 rent — 20 Vicars Street (full payment)\n• Flat 5 — no payment (arrears from last month)\n\n**Charges:**\n• £280 boiler repair — 268 Greenleach Lane (Worsley Electrical Ltd)\n• £90 renewal fee — Dr. Eleanor Rogers\n\n**Payments:**\n• Pay all landlords except 142 Ladymere Drive (hold pending full payment)\n• 285 Chatsworth Road — escalate arrears\n\n**Close:**\n• Reconcile bank account\n• Generate statements for all landlords\n• Confirm period is clean: suspense empty, all payments processed, statements sent`
+          details: `**Setup Check:**\n• Verify accounting is correctly configured\n• Confirm bank accounts, fee settings\n\n**Income:**\n• £850 rent — 268 Greenleach Lane (full payment, on time)\n• £1,100 rent — 6 Woodside Avenue (full payment, 2 days early)\n• £950 rent — 142 Ladymere Drive (partial — £900 paid, £50 outstanding)\n• £1,200 rent — 20 Vicars Street (full payment)\n• Flat 5 — no payment (arrears from last month)\n\n**Charges:**\n• £280 boiler repair — 268 Greenleach Lane (Worsley Electrical Ltd)\n• £90 renewal fee — Dr. Eleanor Rogers\n\n**Payments:**\n• Pay all landlords except 142 Ladymere Drive (untick in Owners tab — awaiting full payment)\n• 285 Chatsworth Road — escalate arrears\n\n**Close:**\n• Reconcile bank account\n• Statements generated automatically when payments are confirmed (visible on owner ledgers)\n• Confirm period is clean: suspense account empty, all funds allocated, all payments processed, statements sent`
         },
         workflow: [
           { step: 'Phase 1: Setup Verification', desc: 'Verify: bank accounts configured with correct opening balances, management fee at 10%+VAT set, Invoice Settings complete, payment schedule confirmed.', path: 'Settings → Accounting → Setup & Bank Accounts' },
@@ -3068,7 +3068,7 @@ const MODULES = [
           { id: 't3', title: 'Complete Phase 3: Post the £280 contractor invoice', type: 'demo', desc: 'Post Worsley Electrical Ltd invoice and schedule payment.' },
           { id: 't4', title: 'Complete Phase 4: Post the £90 renewal fee', type: 'demo', desc: 'Add renewal fee to Dr. Eleanor Rogers.' },
           { id: 't5', title: 'Complete Phase 5: Verify all landlord ledgers are accurate', type: 'demo', desc: 'Review each ledger before payment run.' },
-          { id: 't6', title: 'Complete Phase 6: Run the landlord payment batch (hold Miss Tiffany Ward (142 Ladymere Drive))', type: 'demo', desc: 'Process payments, hold Miss Tiffany Ward (142 Ladymere Drive).' },
+          { id: 't6', title: 'Complete Phase 6: Run the landlord payment batch (exclude Miss Tiffany Ward — 142 Ladymere Drive — from this run)', type: 'demo', desc: 'Process payments, unticking Miss Tiffany Ward (142 Ladymere Drive) in the Owners tab to exclude her from this payment run.' },
           { id: 't7', title: 'Complete Phase 7: Record arrears action at 285 Chatsworth Road', type: 'demo', desc: 'Document what action has been taken.' },
           { id: 't8', title: 'Complete Phase 8: Run and complete bank reconciliation', type: 'demo', desc: 'Reconcile with zero difference.' },
           { id: 't9', title: 'Complete Phase 9: Generate and send all 5 landlord statements', type: 'demo', desc: 'Dispatch statements with notes for held and arrears accounts.' },
@@ -4504,7 +4504,7 @@ const BANK_STATEMENTS = {
   module10: {
     filename: 'September_Bank_Statement_JBS_Module10_Suspense.csv',
     label: 'September — {AGENCY} Client Account (Module 10 — Suspense Account)',
-    scenario: 'This statement contains a mystery payment of £975 with the reference "RENT SEP" — not enough to match any tenancy automatically. It will land in the suspense account. Practice navigating to Accounting → Suspense Account, investigating the payment, contacting the tenant, and allocating it to the correct tenancy once identified. Also note the bank charge that is easy to miss.',
+    scenario: 'This statement contains a mystery payment of £975 with the reference "RENT SEP" — not enough to match any tenancy automatically. On the Reconcile page, click \'more\' → \'add to suspense account\' to hold it there while you investigate. Then navigate to Accounting → Bank Accounts → View Suspense Account to find it, contact the tenant to confirm identity, and use the Transfer button to move it to the correct tenancy once identified. Also note the bank charge that is easy to miss.',
     csv: `Date,Reference,Payee,Credit (£),Debit (£)
 01/09/2024,OB-001,Opening Balance - {AGENCY} Client Account,8420.00,
 02/09/2024,TFR-43001,Prof. Aaron Bailey - 268 Greenleach Lane (Ref TvLE84DkIQ),1400.00,
@@ -4952,7 +4952,7 @@ const GLOSSARY = [
   { term: 'Charge Type', category: 'Accounting', def: 'A categorisation for income or expenditure items in Street. When adding a one-off or recurring charge, you select the charge type which determines how it is classified in the system.', example: 'Adding a tenancy renewal fee on the owner ledger requires selecting the correct charge type from the list.' },
   { term: 'Charges Settings', category: 'Setup', def: 'Found in Company Settings → Accounting → Charges, this allows you to set default charge amounts per charge type and disable any unused charges across the system.', example: 'Setting a default £120 inventory fee amount means it pre-populates whenever an inventory charge is added.' },
   { term: 'Payment Batch', category: 'Workflow', def: 'A grouped processing run that calculates and sends payments to multiple landlords simultaneously. Run monthly or as required. Each landlord\'s net payment is calculated and dispatched.', example: 'November payment batch: 11 landlords paid, 1 on hold. Total disbursed: £9,240.' },
-  { term: 'Payment Hold', category: 'Workflow', def: 'A flag placed on a landlord\'s account to prevent their payment from being processed in the current payment batch. The balance remains in the client account.', example: 'Landlord Dr. Dave Bennett requests a hold for November — his £820 carries to December.' },
+  { term: 'Payment Hold', category: 'Workflow', def: 'Excluding a specific landlord from the current payment run. In Street\'s Payments to Make page, you can untick any owner\'s checkbox to exclude them from that run. Their balance remains in the client account and they can be included in a future payment run.', example: 'Landlord Dr. Dave Bennett requests to defer his November payment — untick him in the Owners tab so his £820 remains in the client account until December.' },
   { term: 'Disbursement', category: 'Accounting', def: 'A payment made from the client account to a third party — typically a contractor or landlord. Disbursements must be authorised and tracked in Street.', example: 'Paying Worsley Electrical Ltd £420 for boiler repair is a disbursement from client funds.' },
   { term: 'VAT', category: 'Fees', def: 'Value Added Tax, applied to most agency fees if the agency is VAT registered. Street automatically calculates and adds VAT to management fees and charges when enabled in settings.', example: '£120 management fee + 20% VAT = £144 total charged to landlord.' },
   { term: 'Month-End Process', category: 'Setup', def: 'The regular cycle of reconciling the bank statement, allocating all funds, processing landlord and contractor payments, and reviewing ledgers to confirm all balances are correct. Street does not have a period lock — discipline and the correct workflow sequence ensure accuracy.', example: 'November month-end: import statement, reconcile all transactions, allocate funds, pay landlords and contractors, confirm suspense account is empty.' },
@@ -5143,7 +5143,7 @@ const BTS_DATA = {
     steps: [
       'Calculates each landlord\'s net balance from all allocations in the period',
       'Deducts any charges, fees, or contractor payments posted in the period',
-      'Checks each landlord\'s payment hold status before including in the batch',
+      'Checks which landlords are ticked to be included in this batch before processing',
       'Generates a payment instruction for each landlord (BACS or bank transfer)',
       'Posts payment entries on each landlord ledger reducing their balance to zero',
       'Updates the client bank account balance to reflect all outgoing payments',
@@ -5156,10 +5156,9 @@ const BTS_DATA = {
       'Compares each transaction in Street against the imported bank statement',
       'Flags transactions that exist in Street but not on the bank statement',
       'Flags bank statement entries that don\'t match a Street transaction',
-      'Marks matched pairs as reconciled, removing them from the outstanding list',
-      'Calculates the running difference between Street balance and bank balance',
-      'Generates a reconciliation report once balance difference reaches zero',
-      'Locks reconciled transactions to prevent accidental editing'
+      'Marks matched pairs as reconciled, removing them from the unreconciled transactions count',
+      'Calculates the running difference between the total unreconciled transactions remaining',
+      'When the unreconciled count reaches zero, the Reconcile button disappears from Bank Accounts — reconciliation is complete'
     ]
   },
   'M11S1': {
@@ -5197,7 +5196,7 @@ const MISTAKES_DATA = {
   ],
   'M8S1': [
     { icon: '⚠️', text: 'Running payment batch before all rent is allocated for the period', impact: 'Critical' },
-    { icon: '⚠️', text: 'Forgetting to place a hold — paying a landlord who asked to defer', impact: 'High' },
+    { icon: '⚠️', text: 'Forgetting to untick a landlord who asked not to be paid this month — paying them by mistake', impact: 'High' },
     { icon: '⚠️', text: 'Not reviewing the batch summary before confirming — missed errors', impact: 'High' },
     { icon: '⚠️', text: 'Processing payments without generating statements — landlords get no record', impact: 'Medium' }
   ],
@@ -5218,9 +5217,10 @@ const MISTAKES_DATA = {
     { icon: '⚠️', text: 'Refunding more than the deposit amount — client account goes negative', impact: 'Critical' }
   ],
   'M13S1': [
-    { icon: '⚠️', text: 'Locking the period before reconciliation is complete', impact: 'Critical' },
+    { icon: '⚠️', text: 'Sending statements before reconciliation is complete — figures on statements may be wrong', impact: 'Critical' },
     { icon: '⚠️', text: 'Sending statements before confirming payments have processed', impact: 'High' },
-    { icon: '⚠️', text: 'Not reviewing arrears before month-end — outstanding tenants missed', impact: 'Medium' }
+    { icon: '⚠️', text: 'Not reviewing arrears before month-end — outstanding tenants missed', impact: 'Medium' },
+    { icon: '⚠️', text: 'Leaving the suspense account with unresolved items — compliance risk', impact: 'High' }
   ]
 };
 
@@ -5267,19 +5267,19 @@ const SCENARIO_BRANCHES = {
     situation: 'It\'s Monday morning. Three rent payments arrived overnight. Prof. Aaron Bailey paid £1,400 ✅. Dr. Sienna Knight paid £2,600 ✅. But Mr. Jason Walker has only sent £1,100 — he\'s £100 short on his expected £1,200 rent at 142 Ladymere Drive (Ref: aKRzQbqY27). His landlord, Miss Tiffany Ward, is scheduled for payment today.',
     question: 'How do you handle Jason Walker\'s £100 shortfall?',
     options: [
-      { id: 'a', label: 'Allocate £1,100 as a partial payment, flag the £100 shortfall on the tenancy ledger, and hold Miss Tiffany Ward\'s landlord payment until the full rent arrives', type: 'correct', outcome: '✅ Correct. Recording a partial payment keeps the ledger accurate and your audit trail clean. Holding the landlord payment prevents disbursing more than you\'ve received — a fundamental client money rule.' },
+      { id: 'a', label: 'Reconcile the £1,100 payment on the Reconcile page, allocate it as a partial payment on the tenancy ledger, and exclude Miss Tiffany Ward from this payment run by unticking her in the Owners tab until the full rent arrives', type: 'correct', outcome: '✅ Correct. Reconciling and allocating the £1,100 keeps the ledger accurate — the outstanding £100 remains as a charge on the tenancy. Unticking Miss Tiffany Ward from the Owners tab means her balance stays in the client account until the full amount is received and she can be included in a future run.' },
       { id: 'b', label: 'Allocate the full £1,200 — the missing £100 will probably arrive tomorrow and it\'s not worth holding the landlord up', type: 'wrong', outcome: '❌ Never allocate more than you\'ve received. This creates a fraudulent entry on the ledger and could result in paying Miss Tiffany Ward £100 of money you don\'t yet hold. This is a client money breach.' },
       { id: 'c', label: 'Don\'t allocate anything — leave £1,100 in suspense until the full £1,200 arrives', type: 'partial', outcome: '⚠️ Leaving it in suspense creates reconciliation problems and shows the tenant\'s rent as completely unpaid. Record the £1,100 as a partial payment now, then record the £100 when it arrives.' },
-      { id: 'd', label: 'Allocate £1,100, immediately pay Miss Tiffany Ward the reduced net amount, and chase Jason Walker separately', type: 'partial', outcome: '⚠️ Paying the landlord before discussing the shortfall with her is not ideal. She may prefer to wait for the full amount. Always hold the payment and communicate before disbursing a partial amount.' }
+      { id: 'd', label: 'Reconcile and allocate £1,100, immediately pay Miss Tiffany Ward the reduced net amount, and chase Jason Walker separately', type: 'partial', outcome: '⚠️ Paying the landlord before discussing the shortfall with her is not ideal. She may prefer to wait for the full rent. The safer approach is to untick her from this payment run and contact her first before disbursing a partial amount.' }
     ]
   },
   'M8S1': {
     situation: 'It\'s the 25th — payment batch day for all {AGENCY} landlords. Two rents are outstanding: Mr. Dan Anderson\'s £1,800 is 3 days late with no sign of payment. Dr. Sienna Knight\'s £2,600 cleared the bank this morning but hasn\'t been allocated in Street yet. 10 other landlords\' rents are all fully allocated and ready.',
     question: 'It\'s 9am. What is the correct order of actions before running the payment batch?',
     options: [
-      { id: 'a', label: 'Allocate Dr. Sienna Knight\'s £2,600 first → run unallocated receipts report → confirm zero unallocated → place Mr. Dan Anderson\'s landlord on hold → run batch for remaining 10 landlords', type: 'correct', outcome: '✅ Correct sequence. Allocate all cleared funds before running any batch. The unallocated report is your final check. Holding Anderson\'s landlord protects the client account. Then process the 10 fully-funded landlords.' },
+      { id: 'a', label: 'Allocate Dr. Sienna Knight\'s £2,600 first → check the Allocate Funds page confirms no unallocated funds remain → untick Mr. Dan Anderson\'s landlord in the Owners tab → run batch for the remaining 10 landlords', type: 'correct', outcome: '✅ Correct sequence. Allocate all cleared funds before running any batch — the Allocate Funds page shows you what\'s ready. Unticking Anderson\'s landlord in the Owners tab means his balance stays in the client account. Then process the 10 fully-funded landlords.' },
       { id: 'b', label: 'Run the batch now — the missing allocations can be sorted afterwards and adjustments made', type: 'wrong', outcome: '❌ Running a batch before allocating cleared funds means landlords receive incorrect amounts. Reversing payment batches is extremely complex and risks a client account deficit. Always allocate first.' },
-      { id: 'c', label: 'Wait until both outstanding rents are received before running the batch for anyone', type: 'partial', outcome: '⚠️ Anderson\'s rent may not arrive for days. Holding all 10 other landlords hostage for one late payment isn\'t correct. Allocate what\'s cleared, hold the affected landlord, and proceed for everyone else.' },
+      { id: 'c', label: 'Wait until both outstanding rents are received before running the batch for anyone', type: 'partial', outcome: '⚠️ Anderson\'s rent may not arrive for days. Keeping 10 other landlords waiting because of one late payment isn\'t correct. Allocate what\'s cleared, untick Anderson\'s landlord from the Owners tab, and proceed for everyone else.' },
       { id: 'd', label: 'Run the batch but manually reduce Mrs. Alexandra Scott\'s payment to compensate for the shortfall', type: 'wrong', outcome: '❌ Manual adjustments to cover shortfalls are a compliance breach. Never touch one landlord\'s payment to balance another\'s account. Each client\'s money must be accounted for separately and correctly.' }
     ]
   },
@@ -5314,10 +5314,10 @@ const SCENARIO_BRANCHES = {
     ]
   },
   'M13S1': {
-    situation: 'It\'s the 30th November — month-end for {AGENCY}. You need to complete reconciliation, generate statements, and lock the period. But two items are outstanding: the November bank statement hasn\'t been reconciled yet, and one landlord statement (Dr. Eleanor Rogers) needs a special note about Dr. Dylan Butler\'s arrears before it can be sent.',
+    situation: 'It\'s the 30th November — month-end for {AGENCY}. You need to complete reconciliation, generate statements, and confirm the period is clean. But two items are outstanding: the November bank statement hasn\'t been reconciled yet, and one landlord statement (Dr. Eleanor Rogers) needs a special note about Dr. Dylan Butler\'s arrears before it can be sent.',
     question: 'What is the correct order to complete November month-end?',
     options: [
-      { id: 'a', label: 'Reconcile bank statement first → confirm zero difference → generate all statements (adding the arrears note to Dr. Eleanor Rogers\') → send batch to all landlords → confirm dispatch log', type: 'correct', outcome: '✅ Correct sequence. Reconciliation must always come before statements — you can\'t issue a statement if the accounts aren\'t reconciled. The arrears note is required before sending Dr. Eleanor Rogers\' statement. Confirm dispatch to close the month.' },
+      { id: 'a', label: 'Reconcile bank statement first → confirm zero difference → generate all statements (adding the arrears note to Dr. Eleanor Rogers\') → send batch to all landlords → confirm all statements dispatched and suspense account is empty', type: 'correct', outcome: '✅ Correct sequence. Reconciliation must always come before statements — you cannot issue accurate statements if the accounts aren\'t reconciled. The arrears note is added to Dr. Eleanor Rogers\' statement before it is sent. Street has no period lock, so confirming everything is complete is your month-end close.' },
       { id: 'b', label: 'Generate and send all statements first while everyone\'s online, then reconcile the bank statement afterwards', type: 'wrong', outcome: '❌ Sending statements before reconciliation means the figures on the statements may be wrong. If the reconciliation reveals an error, you\'ve already issued incorrect statements to landlords — retracting and resending is embarrassing and erodes trust.' },
       { id: 'c', label: 'Send all statements except Dr. Eleanor Rogers\' — she can wait until the arrears situation is resolved', type: 'partial', outcome: '⚠️ You should not indefinitely delay a landlord\'s statement. Add a clear note about the arrears position to her statement and send it. She deserves to know exactly what\'s happening with her property\'s rent account.' },
       { id: 'd', label: 'Skip reconciliation this month — the accounts look correct from memory and it\'s a busy period', type: 'wrong', outcome: '❌ Skipping reconciliation is never acceptable. It\'s a regulatory requirement. You might feel confident the accounts are right, but an undetected error compounds month-on-month and becomes exponentially harder to fix — and will fail an audit.' }
@@ -5333,8 +5333,8 @@ const TASK_PROOFS = {
   'M5S1_t3': { q: 'What reference number did Mr. Jason Walker\'s payment arrive with on the bank statement?', placeholder: 'e.g. aKRzQbqY27', hint: 'Check Accounting → Bank Accounts → Unreconciled transactions' },
   'M7S1_t2': { q: 'What was the total invoice amount including VAT for the Manchester Heating Solutions boiler repair?', placeholder: 'e.g. £336.00', hint: 'Net £280 + 20% VAT = ?' },
   'M7S1_t3': { q: 'After posting the contractor invoice, what balance remained on Prof. Scarlett Cooper\'s landlord ledger?', placeholder: 'e.g. £862.40', hint: 'Net rent received minus the contractor invoice total' },
-  'M8S1_t2': { q: 'How many landlords were included (not held) in the November payment batch, and what was the total disbursed?', placeholder: 'e.g. 11 landlords, £9,240 total', hint: 'Review the batch summary before confirming' },
-  'M8S1_t3': { q: 'Which landlord did you place on payment hold, and what was the reason you recorded?', placeholder: 'e.g. Miss Tiffany Ward — partial rent from Jason Walker...' },
+  'M8S1_t2': { q: 'How many landlords were ticked and included in the November payment batch, and what was the total disbursed?', placeholder: 'e.g. 11 landlords, £9,240 total', hint: 'Review the batch summary before confirming' },
+  'M8S1_t3': { q: 'Which landlord did you exclude from this payment run, and what was the reason you noted?', placeholder: 'e.g. Dr. Dave Bennett — deferred payment request until next month' },
   'M9S1_t2': { q: 'What was the difference between Street\'s balance and the bank statement when you first attempted reconciliation?', placeholder: 'e.g. £150.00', hint: 'The bank says one figure, Street shows another — what\'s the gap?' },
   'M9S1_t4': { q: 'Which transaction was missing from Street that caused the reconciliation difference? How did you post it?', placeholder: 'Describe the transaction and how you resolved it...' },
   'M11S1_t2': { q: 'What was the deposit reference number for Prof. Mandy Price\'s tenancy at 38 Partington Street?', placeholder: 'e.g. DEP-38001 or TDS reference', hint: 'Find it on the tenancy record in Street' },
@@ -5684,7 +5684,7 @@ const AGENCY_SIM_DATA = {
         'Run unallocated receipts report — confirm all rent is allocated for November',
         'Navigate to Accounting → Landlord Payments → New Batch',
         'Review all 12 landlord balances: Prof. Scarlett Cooper (£862.40 after repair), Dr. Dave Bennett, Mrs. Alexandra Scott, Prof. Fred Watson, Miss Tiffany Ward (HOLD), etc.',
-        'Place hold on Miss Tiffany Ward (142 Ladymere Drive) — Jason Walker partial payment only',
+        'Untick Miss Tiffany Ward (142 Ladymere Drive) in the Owners tab — Jason Walker only paid partial rent',
         'Note Dr. Dylan Butler (285 Chatsworth Road) arrears — discuss Dr. Eleanor Rogers payment with manager',
         'Confirm and process batch for all other landlords',
         'Verify client account balance post-payment'
@@ -5717,13 +5717,13 @@ const AGENCY_SIM_DATA = {
       preview: 'All 12 landlords must receive November statements today. Miss Tiffany Ward and Dr. Eleanor Rogers statements need special notes.',
       priority: 'normal',
       steps: [
-        'Navigate to Accounting → Statements → Landlord Statements',
-        'Select November as the statement period',
-        'Preview statement for Miss Tiffany Ward — ensure hold reason is noted (partial rent from Jason Walker)',
-        'Preview statement for Dr. Eleanor Rogers — ensure Dr. Dylan Butler arrears position is clearly noted',
-        'Preview Prof. Scarlett Cooper statement — confirm Manchester Heating Solutions deduction shows clearly',
-        'Send batch to all 12 landlords via email',
-        'Check dispatch log confirms all 12 sent successfully'
+        'In Street, landlord statements are generated automatically when payments are confirmed in Payments to Make',
+        'Navigate to each owner ledger (Property → Accounting → Owner Ledger → Statements tab) to view and resend statements',
+        'For Miss Tiffany Ward — check her Statements tab to confirm November statement was sent',
+        'For Dr. Eleanor Rogers — resend her statement if needed via three dots → Resend; confirm the arrears note for Dr. Dylan Butler is reflected',
+        'For Prof. Scarlett Cooper — confirm the Manchester Heating Solutions deduction appears on her statement',
+        'Use three dots → Resend on any landlord\'s statement tab to re-send if needed',
+        'Confirm all 12 landlords have received their statements via the Statements tab on each owner ledger'
       ]
     },
     {
