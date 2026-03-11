@@ -1766,24 +1766,11 @@ body {
             <div class="card-header"><div class="card-title"><div class="card-icon">⏱️</div>Recent Activity</div></div>
             <div class="card-body" id="recent-activity-list"></div>
           </div>
-          <!-- Google Sheets Config -->
-          <div class="sheets-setup-card">
-            <div class="flex-center gap-8 mb-16">
-              <div class="card-icon">📊</div>
-              <div class="font-bold" style="font-size:15px">Google Sheets Integration</div>
-              <div class="sheets-status" id="sheets-status">
-                <div class="sheets-dot disconnected" id="sheets-dot"></div>
-                <span id="sheets-status-text">Not configured</span>
-              </div>
-            </div>
-            <p class="text-sm text-muted mb-16">Connect to Google Sheets to auto-save all progress, reflections, and completions. See the setup guide below.</p>
-            <div class="form-group mb-8">
-              <label class="form-label" style="font-size:11px">Apps Script Web App URL</label>
-              <input type="text" class="form-input" id="sheets-url" placeholder="https://script.google.com/macros/s/YOUR_ID/exec" style="background:var(--bg);border-color:var(--border);color:var(--text);font-size:13px">
-            </div>
-            <button class="btn btn-primary" style="width:auto;padding:10px 20px;font-size:13px" onclick="testSheetsConnection()">Test Connection</button>
-            <button class="btn btn-ghost btn-sm" style="margin-left:8px" onclick="showSheetsSetupGuide()">Setup Guide</button>
-          </div>
+          <!-- Google Sheets Config (admin only - hidden from client view) -->
+          <div id="sheets-status" style="display:none"></div>
+          <input type="hidden" id="sheets-url" value="">
+          <div id="sheets-dot" style="display:none"></div>
+          <span id="sheets-status-text" style="display:none"></span>
         </div>
 
         <!-- ANALYTICS VIEW -->
@@ -1815,17 +1802,6 @@ body {
       <button class="btn btn-ghost" onclick="closeModal()">Review</button>
       <button class="btn btn-primary" id="modal-next-btn" onclick="nextModule()">Next Module →</button>
     </div>
-  </div>
-</div>
-
-<!-- SHEETS GUIDE MODAL -->
-<div class="modal-overlay" id="sheets-modal">
-  <div class="modal" style="max-width:620px;text-align:left">
-    <div class="flex-center justify-between mb-16">
-      <div class="modal-title" style="font-size:20px">📊 Google Sheets Setup</div>
-      <button class="btn btn-ghost btn-icon" onclick="document.getElementById('sheets-modal').classList.remove('show')">✕</button>
-    </div>
-    <div id="sheets-guide-modal-content"></div>
   </div>
 </div>
 
@@ -1987,11 +1963,11 @@ const MODULES = [
           details: 'The agency is **{AGENCY}**, a letting agent managing 12 properties in Manchester. They are new to Street and need to set up accounting before going live.'
         },
         workflow: [
-          { step: 'Navigate to Accounting', desc: 'From the main menu, click on Accounting. Note that the area may appear largely empty or with limited data in a fresh account.', path: 'Main Menu → Accounting' },
-          { step: 'Explore the Accounting Overview', desc: 'Review the dashboard. Identify areas that show zero balances or "not configured" states.', path: 'Accounting → Overview' },
-          { step: 'Check Bank Accounts', desc: 'Navigate to Bank Accounts and note there are no client money bank accounts set up yet.', path: 'Accounting → Bank Accounts' },
-          { step: 'Note the Chart of Accounts', desc: 'Street will have a default chart of accounts, but you should review whether it matches agency needs.', path: 'Accounting → Chart of Accounts' },
-          { step: 'Identify Missing Setup', desc: 'Create a mental checklist of what needs to be configured before processing any real transactions.', path: 'Accounting → Settings' }
+          { step: 'Navigate to Accounting', desc: 'From the main menu, click on Accounting in the left-hand panel. This is where all client money transactions are managed.', path: 'Accounting (left panel)' },
+          { step: 'Explore the Accounting Overview', desc: 'Review what is available. Identify areas that show zero balances — this indicates what hasn\'t been set up or used yet.', path: 'Accounting → Overview' },
+          { step: 'Check Bank Accounts', desc: 'Navigate to Bank Accounts. These are the client money bank accounts configured in Street. Without at least one bank account added, no transactions can be processed.', path: 'Accounting → Bank Accounts' },
+          { step: 'View the Suspense Account', desc: 'From Bank Accounts, click \'view suspense account\'. This is where unidentified or unallocated funds are held temporarily. In a new account it will be empty.', path: 'Accounting → Bank Accounts → View Suspense Account' },
+          { step: 'Check Accounting Settings', desc: 'Navigate to Company Settings → Accounting. Review the setup tabs: Bank Accounts, Invoice Settings, Deposits, and Reconciliation & Allocation — these must be configured before any transactions can be processed.', path: 'Settings → Company Settings → Accounting' }
         ],
         tasks: [
           { id: 't1', title: 'Read the Street Accounting Help Centre overview article', type: 'read', desc: 'Visit the Help Centre link above and read the introductory accounting guidance.' },
@@ -2099,20 +2075,20 @@ const MODULES = [
         scenario: {
           title: 'Understanding the Full Accounting Flow',
           context: 'Before setting up the demo account, you need to map out how a single rent transaction flows through Street Accounting from start to finish.',
-          details: 'Tenant **James Wilson** is paying £1,200/month rent for a property managed by **{AGENCY}**. The agency fee is 10% + VAT. Follow the money from tenant to landlord.'
+          details: 'Tenant **Prof. Aaron Bailey** is paying £1,400/month rent at 268 Greenleach Lane, Worsley M28 1UZ for landlord **Prof. Scarlett Cooper**, managed by **{AGENCY}**. The agency fee is 12% + VAT. Follow the money from tenant to landlord.'
         },
         workflow: [
-          { step: 'Rent arrives in client account', desc: 'Tenant pays £1,200 via bank transfer. It arrives in the client bank account.', path: 'Accounting → Bank Accounts → Client Account' },
-          { step: 'Payment appears in Street', desc: 'Street sees the incoming £1,200 and it initially sits as unallocated.', path: 'Accounting → Unallocated Receipts' },
-          { step: 'Allocate to tenancy', desc: 'The payment is matched to James Wilson\'s tenancy, crediting his rent account.', path: 'Accounting → Receipts → Allocate' },
-          { step: 'System deducts agency fee', desc: 'Street calculates 10% = £120 + VAT (£24) = £144 total fee, credited to the agency.', path: 'Accounting → Fees' },
-          { step: 'Net amount credited to landlord', desc: '£1,200 - £144 = £1,056 is credited to the landlord\'s ledger.', path: 'Landlord Account → Ledger' },
-          { step: 'Landlord payment scheduled', desc: 'Street schedules a £1,056 payment to the landlord on the agreed payment date.', path: 'Accounting → Payments → Landlord Payments' }
+          { step: 'Rent arrives in client account', desc: 'Prof. Aaron Bailey pays £1,400 via bank transfer. It arrives in the client money bank account.', path: 'Accounting → Bank Accounts' },
+          { step: 'Import bank statement', desc: 'Download your bank statement CSV and import it into Street via Accounting → Bank Accounts → Import Statement. The £1,400 appears as an unreconciled transaction.', path: 'Accounting → Bank Accounts → Import Statement' },
+          { step: 'Reconcile the payment', desc: 'On the Reconcile page, the £1,400 appears as a Linked Payment (green) if a matching rule exists, or a Suggested Match (blue). Confirm it and Street receipts the money onto Prof. Aaron Bailey\'s tenancy ledger.', path: 'Accounting → Bank Accounts → Reconcile' },
+          { step: 'Allocate funds', desc: 'Navigate to Allocate Funds. Prof. Scarlett Cooper appears in the Owners in Credit tab. Street shows: £1,400 received, 12% fee (£168) + VAT (£33.60) = £201.60, net to landlord = £1,198.40.', path: 'Accounting → Allocate Funds → Owners in Credit' },
+          { step: 'Net amount credited to landlord', desc: 'Click Allocate for Prof. Scarlett Cooper. The £1,198.40 net rent is confirmed on the owner ledger and a landlord statement is generated automatically.', path: 'Accounting → Allocate Funds → Allocate' },
+          { step: 'Landlord payment created', desc: 'Navigate to Payments to Make → Owners tab. Prof. Scarlett Cooper\'s £1,198.40 is listed. Select, click Pay, then export the payment file to your bank.', path: 'Accounting → Payments to Make → Owners' }
         ],
         tasks: [
           { id: 't1', title: 'Map the full transaction flow from rent receipt to landlord payment', type: 'read', desc: 'Draw or write out the 6-step flow described above.' },
           { id: 't2', title: 'Navigate to Accounting → Bank Accounts in the demo', type: 'demo', desc: 'Familiarise yourself with the bank accounts area.' },
-          { id: 't3', title: 'Find the Unallocated Receipts area in Street', type: 'demo', desc: 'This is where payments land before allocation.' },
+          { id: 't3', title: 'Navigate to Accounting → Bank Accounts', type: 'demo', desc: 'This is where imported bank statements and the suspense account are managed.' },
           { id: 't4', title: 'Identify where landlord payment schedules are managed', type: 'demo', desc: 'Navigate to the payments section of accounting.' },
           { id: 't5', title: 'Confirm you can describe the 6-step flow verbally', type: 'confirm', desc: 'You should be able to describe this from memory.' }
         ],
@@ -2138,11 +2114,11 @@ const MODULES = [
         id: 'M3S1',
         title: 'Accounting Readiness Audit',
         helpArticle: {
-          title: 'Setting Up Street Accounting from Scratch',
-          url: 'https://intercom.help/streetcouk/en/collections/3887357-accounting',
-          summary: 'Before processing any transactions, the demo account requires: client money bank accounts, chart of accounts review, accounting periods, fee settings, and payment account configuration.'
+          title: 'Accounting Settings in Street',
+          url: 'https://intercom.help/streetcouk/en/articles/7050146-accounting-settings',
+          summary: 'Before processing any transactions, Street requires: Invoice Settings and Invoice Sequencing (Setup tab), client money bank accounts with opening balances (Bank Accounts tab), deposit schemes (Deposits tab), and reconciliation settings (Reconciliation & Allocation tab). Navigate to Settings → Company Settings → Accounting.'
         },
-        concepts: ['Accounting Readiness', 'Initial Setup Checklist', 'Bank Account Configuration', 'Accounting Periods', 'Fee Configuration'],
+        concepts: ['Accounting Readiness', 'Initial Setup Checklist', 'Bank Account Configuration', 'Invoice Settings', 'Fee Configuration'],
         knowledgeCheck: [
           {
             q: 'What is the most important first step when setting up accounting in a fresh Street account?',
@@ -2176,17 +2152,17 @@ const MODULES = [
           { step: 'Navigate to Settings → Accounting', desc: 'Find the accounting configuration area. Note which sections are empty or have default values only.', path: 'Settings → Accounting' },
           { step: 'Review Accounting Settings', desc: 'Check: accounting start date, VAT registration, management fee defaults, payment frequency settings.', path: 'Settings → Accounting → General' },
           { step: 'Configure Client Money Bank Accounts', desc: 'Add your client money bank account(s). These will be used to post all rent receipts, deposits and outgoing payments.', path: 'Settings → Accounting → Bank Accounts → Add Bank Account' },
-          { step: 'Set Accounting Period Start', desc: 'Set the date from which Street should start recording accounting data. This is typically your go-live date.', path: 'Settings → Accounting → Accounting Period' },
-          { step: 'Review Fee Configuration', desc: 'Confirm management fees are set up correctly. These will be applied automatically when processing rent.', path: 'Settings → Fees → Management Fees' },
-          { step: 'Check Chart of Accounts', desc: 'Review default nominal codes. These should reflect your agency\'s accounting structure.', path: 'Settings → Accounting → Chart of Accounts' },
-          { step: 'Validate Readiness', desc: 'After completing setup, navigate to Accounting. You should now see bank accounts, available ledgers, and the system ready for transactions.', path: 'Accounting → Overview' }
+          { step: 'Set Up Invoice Settings', desc: 'In Setup tab, configure your Invoice Sequencing and Invoice Settings. These must be completed before using accounting — they control how invoices are numbered and formatted.', path: 'Settings → Company Settings → Accounting → Setup' },
+          { step: 'Configure Deposit Settings', desc: 'In the Deposits tab, set up deposit schemes (Custodial, Insured, or Held by Owner). Add the scheme type, name and bank details used for each scheme.', path: 'Settings → Company Settings → Accounting → Deposits' },
+          { step: 'Review Reconciliation & Allocation Settings', desc: 'In the Reconciliation and Allocation tab, decide whether to enable auto-allocation on tenancy ledgers. This controls whether Street automatically allocates tenant payments to charges daily.', path: 'Settings → Company Settings → Accounting → Reconciliation and Allocation' },
+          { step: 'Validate Readiness', desc: 'After completing setup, navigate to Accounting. You should now see your bank accounts listed and the system ready to process its first bank statement import.', path: 'Accounting → Bank Accounts' }
         ],
         tasks: [
           { id: 't1', title: 'Navigate to Settings → Accounting in the demo account', type: 'demo', desc: 'Find the accounting settings area and open each section.' },
           { id: 't2', title: 'Set up at least one client money bank account', type: 'demo', desc: 'Add a test bank account to receive client funds.' },
-          { id: 't3', title: 'Set the accounting period start date', type: 'demo', desc: 'Configure when accounting records should begin.' },
-          { id: 't4', title: 'Review and confirm management fee settings', type: 'demo', desc: 'Check that fee rates are set correctly for the demo.' },
-          { id: 't5', title: 'Review the chart of accounts', type: 'demo', desc: 'Understand the nominal codes available by default.' },
+          { id: 't3', title: 'Set up Invoice Settings in Settings → Company Settings → Accounting → Setup', type: 'demo', desc: 'Configure invoice sequencing and invoice settings — required before any accounting can begin.' },
+          { id: 't4', title: 'Add or review a deposit scheme in the Deposits tab', type: 'demo', desc: 'Check what scheme type is configured (Custodial, Insured, or Held by Owner).' },
+          { id: 't5', title: 'Review the Reconciliation and Allocation settings', type: 'demo', desc: 'Check whether auto-allocation is enabled and understand what this controls.' },
           { id: 't6', title: 'Confirm the account is ready for accounting workflows', type: 'confirm', desc: 'You should now be able to process test transactions.' }
         ],
         reflections: [
@@ -2211,10 +2187,10 @@ const MODULES = [
         title: 'Configuring Core Accounting Settings',
         helpArticle: {
           title: 'Accounting Settings in Street',
-          url: 'https://intercom.help/streetcouk/en/collections/3887357-accounting',
-          summary: 'Core accounting settings control how the agency\'s fee structure, VAT treatment, payment defaults, and client money handling are configured across the system.'
+          url: 'https://intercom.help/streetcouk/en/articles/7050146-accounting-settings',
+          summary: 'Accounting settings live at Settings → Company Settings → Accounting. The tabs are: Setup (Invoice Settings), Bank Accounts (client/deposit/business accounts with opening balances), Payment Advice & Statements, Deposits (scheme types), NRL Tax, Reconciliation & Allocation (auto-allocation), Portfolio, and Charges (default charge amounts).'
         },
-        concepts: ['VAT Registration', 'Management Fee %', 'Payment Frequency', 'Default Nominal Codes', 'Client Account Rules'],
+        concepts: ['VAT Registration', 'Management Fee %', 'Payment Advice Settings', 'Invoice Settings', 'Reconciliation & Allocation'],
         knowledgeCheck: [
           {
             q: 'If a letting agency is VAT registered, what happens to management fees in Street?',
@@ -2246,18 +2222,18 @@ const MODULES = [
         },
         workflow: [
           { step: 'Access Accounting Settings', desc: 'Navigate to Settings → Accounting. This is the control centre for all accounting configuration.', path: 'Settings → Accounting' },
-          { step: 'Enable VAT Registration', desc: 'Toggle VAT registration on and enter the agency\'s VAT number. Set the VAT rate (typically 20%).', path: 'Settings → Accounting → VAT' },
-          { step: 'Set Default Management Fee', desc: 'Set 12% as the default management fee. This will automatically apply to all new properties unless overridden.', path: 'Settings → Fees → Management Fee → Default %' },
-          { step: 'Configure Payment Schedule', desc: 'Set landlord payment frequency to Monthly. Specify the payment day (e.g. 25th of each month).', path: 'Settings → Accounting → Landlord Payments → Payment Schedule' },
-          { step: 'Review Nominal Code Defaults', desc: 'Confirm that management fee income, VAT control, and rent received nominal codes are correctly mapped.', path: 'Settings → Accounting → Nominal Codes' },
-          { step: 'Save and Verify', desc: 'Save all settings. Navigate to a test property and confirm the fee shows correctly on the accounting tab.', path: 'Properties → Test Property → Accounting' }
+          { step: 'Configure Invoice Settings', desc: 'Go to Setup tab and configure Invoice Sequencing and Invoice Settings for your branch. This determines how agency invoices are numbered and formatted — required before processing any transactions.', path: 'Settings → Company Settings → Accounting → Setup' },
+          { step: 'Configure Bank Accounts', desc: 'In the Bank Accounts tab, add your client account (for receiving and paying client money), deposit account, and business account. Enter correct opening balances — these represent your actual bank balances at go-live.', path: 'Settings → Company Settings → Accounting → Bank Accounts' },
+          { step: 'Set Payment Advice Preferences', desc: 'In Payment Advice & Statements tab, configure whether payment advice emails are sent to landlords and contractors when payments are processed. You can also attach invoices to payment advice emails.', path: 'Settings → Company Settings → Accounting → Payment Advice & Statements' },
+          { step: 'Configure Reconciliation & Allocation', desc: 'In the Reconciliation and Allocation tab, decide whether to enable auto-allocation. If enabled, Street will automatically allocate incoming tenant payments to outstanding charges on a daily basis.', path: 'Settings → Company Settings → Accounting → Reconciliation and Allocation' },
+          { step: 'Review Charges Settings', desc: 'In the Charges tab, set default charge amounts per charge type and disable any charge types your agency does not use.', path: 'Settings → Company Settings → Accounting → Charges' }
         ],
         tasks: [
-          { id: 't1', title: 'Enable VAT registration in settings', type: 'demo', desc: 'Navigate to Settings → Accounting and enable VAT.' },
-          { id: 't2', title: 'Set the default management fee to 12%', type: 'demo', desc: 'Configure the standard fee rate.' },
-          { id: 't3', title: 'Configure monthly landlord payment schedule', type: 'demo', desc: 'Set payment frequency and preferred day.' },
-          { id: 't4', title: 'Review nominal code mapping', type: 'demo', desc: 'Confirm key nominal codes are correctly set.' },
-          { id: 't5', title: 'Test fee display on a property record', type: 'confirm', desc: 'Verify the fee shows correctly after setup.' }
+          { id: 't1', title: 'Navigate to Settings → Company Settings → Accounting and open each tab', type: 'demo', desc: 'Explore Setup, Bank Accounts, Payment Advice, Deposits, NRL Tax, Reconciliation & Allocation, Charges.' },
+          { id: 't2', title: 'Add a client money bank account in the Bank Accounts tab', type: 'demo', desc: 'Select account type \'client account\' and enter an opening balance.' },
+          { id: 't3', title: 'Configure Payment Advice & Statements settings', type: 'demo', desc: 'Toggle whether payment advice emails are sent to landlords and/or contractors.' },
+          { id: 't4', title: 'Review the Reconciliation and Allocation settings', type: 'demo', desc: 'Decide whether auto-allocation should be enabled for your setup.' },
+          { id: 't5', title: 'Review and configure the Charges tab', type: 'demo', desc: 'Set default charge amounts and disable unused charge types.' }
         ],
         reflections: [
           { id: 'r1', q: 'What is the impact on landlord statements if the VAT registration setting is enabled partway through a month, with some fees already processed at the old rate?' },
@@ -2279,9 +2255,9 @@ const MODULES = [
         id: 'M5S1',
         title: 'Processing a Standard Rent Payment',
         helpArticle: {
-          title: 'Recording Rent Receipts in Street',
-          url: 'https://intercom.help/streetcouk/en/collections/3887357-accounting',
-          summary: 'When rent is received, it must be recorded in Street against the correct tenancy. Street then automatically calculates fees and updates the landlord ledger.'
+          title: 'Receipt and Reconcile — Street Accounting Workflow',
+          url: 'https://intercom.help/streetcouk/en/articles/9805629-receipting-and-reconciling',
+          summary: 'The core Street workflow: (1) Import bank statement CSV via Accounting → Bank Accounts → Import Statement. (2) On the Reconcile page, work through Linked Payments (green), Suggested Matches (blue), Attention (orange), and No Matches transactions. (3) Navigate to Allocate Funds to allocate money on owner ledgers. (4) Proceed to Payments to Make.'
         },
         concepts: ['Rent Receipt', 'Payment Allocation', 'Tenancy Ledger', 'Fee Calculation', 'Landlord Credit'],
         knowledgeCheck: [
@@ -2309,15 +2285,15 @@ const MODULES = [
           details: `Three payments have arrived:\n\n• **£1,400** — Prof. Aaron Bailey, 268 Greenleach Lane, Worsley M28 1UZ (due today) — Landlord: Prof. Scarlett Cooper\n• **£1,800** — Mr. Dan Anderson, 20 Vicars Street, Eccles M30 0DG (due yesterday — 1 day late) — Landlord: Prof. Fred Watson\n• **£1,100** — Mr. Jason Walker, 142 Ladymere Drive, Worsley M28 7UX (partial — £100 shortfall, expects balance next week) — Landlord: Miss Tiffany Ward\n\nAll properties managed by {AGENCY} at 12% management fee + VAT.`
         },
         workflow: [
-          { step: 'Open Accounting → Receipts', desc: 'Navigate to the receipts area where all incoming bank payments are listed.', path: 'Accounting → Receipts' },
-          { step: 'Identify Unallocated Payments', desc: 'You will see the three incoming payments listed as unallocated. Each shows the amount and date received.', path: 'Accounting → Receipts → Unallocated' },
-          { step: 'Allocate Full Payment (£1,400)', desc: 'Select the £1,400 payment. Search for Prof. Aaron Bailey\'s tenancy at 268 Greenleach Lane. Match the full amount to the current rent period.', path: 'Accounting → Receipts → Allocate → Search Tenancy' },
-          { step: 'Street Calculates Fee', desc: 'Street automatically calculates: 12% of £1,400 = £168 + VAT (£33.60) = £201.60 fee. Landlord Prof. Scarlett Cooper net = £1,198.40.', path: 'Accounting → Receipts → Allocation Summary' },
-          { step: 'Handle Partial Payment (£1,100)', desc: 'Select £1,100 payment. Allocate to Mr. Jason Walker\'s tenancy at 142 Ladymere Drive. Mark as partial. Note the £100 shortfall. Do NOT generate Miss Tiffany Ward\'s landlord payment yet.', path: 'Accounting → Receipts → Allocate → Partial Payment' },
-          { step: 'Review Landlord Ledger', desc: 'Check Prof. Scarlett Cooper and Prof. Fred Watson\'s ledgers to confirm rent received, 12% fees deducted, and current net balance are all correct.', path: 'Landlord Account → Ledger → Current Balance' }
+          { step: 'Import Your Bank Statement', desc: 'Download your client account bank statement as a CSV file from your bank. Navigate to Accounting → Bank Accounts, click on your client account and select \'Import Statement\'. Upload the CSV file.', path: 'Accounting → Bank Accounts → Import Statement' },
+          { step: 'Go to Reconcile Page', desc: 'After importing, you are taken to the Reconcile page (also accessible via Accounting → Bank Accounts → Reconcile). Street categorises each transaction: Linked Payments (green), Suggested Matches (blue), Attention (orange), No Matches.', path: 'Accounting → Bank Accounts → Reconcile' },
+          { step: 'Reconcile Linked & Suggested Payments', desc: 'The £1,400 from Prof. Aaron Bailey and £1,800 from Mr. Dan Anderson appear as Linked Payments (matching rules set up previously). Confirm them — Street receipts money onto the tenancy ledger and marks them as reconciled. Use Bulk Reconcile if available.', path: 'Accounting → Bank Accounts → Reconcile → Linked Payments' },
+          { step: 'Handle No Match: Partial £1,100 Payment', desc: 'Mr. Jason Walker\'s £1,100 appears as No Match (£100 short of £1,200). Click \'more\' → search for his tenancy at 142 Ladymere Drive → confirm. The shortfall of £100 remains outstanding on the tenancy ledger.', path: 'Accounting → Bank Accounts → Reconcile → No Matches' },
+          { step: 'Allocate Funds for Landlords', desc: 'Navigate to Accounting → Allocate Funds. The Owners in Credit tab shows Prof. Scarlett Cooper (net £1,198.40), Prof. Fred Watson (net £1,540.80). Use Preview Statement to review, then click Allocate for each.', path: 'Accounting → Allocate Funds → Owners in Credit' },
+          { step: 'Review Owner Ledger', desc: 'Check Prof. Scarlett Cooper\'s owner ledger (Tenancy/Property → Ownership → Accounting tab) to confirm: £1,400 rent received, £201.60 fee (12%+VAT), £1,198.40 net balance available for payment.', path: 'Property → Ownership → Accounting (Owner Ledger)' }
         ],
         tasks: [
-          { id: 't1', title: 'Navigate to Accounting → Receipts in the demo', type: 'demo', desc: 'Find where incoming payments are displayed.' },
+          { id: 't1', title: 'Navigate to Accounting → Bank Accounts and explore the Import Statement option', type: 'demo', desc: 'This is where bank statement CSV files are uploaded to begin the reconciliation process.' },
           { id: 't2', title: 'Allocate the £1,400 payment to Prof. Aaron Bailey\'s tenancy at 268 Greenleach Lane', type: 'demo', desc: 'Match the incoming payment to the correct tenancy.' },
           { id: 't3', title: 'Confirm the 12% management fee (£201.60 inc VAT) has been automatically generated', type: 'demo', desc: 'Check that Street created the fee entry after allocation.' },
           { id: 't4', title: 'Record the £1,100 partial payment for 142 Ladymere Drive and note the £100 shortfall', type: 'demo', desc: 'Allocate a partial amount and flag the balance outstanding.' },
@@ -2345,10 +2321,10 @@ const MODULES = [
         title: 'Processing Management Fees',
         helpArticle: {
           title: 'Landlord Fees and Charges in Street',
-          url: 'https://intercom.help/streetcouk/en/collections/3887357-accounting',
+          url: 'https://intercom.help/streetcouk/en/articles/8155171-owner-ledger',
           summary: 'Management fees are auto-calculated when rent is allocated. Additional charges such as renewal fees, inventory fees and one-off charges can be manually added to a landlord\'s account.'
         },
-        concepts: ['Management Fee', 'Renewal Fee', 'Inventory Fee', 'Ad-hoc Charge', 'Invoice', 'Nominal Code'],
+        concepts: ['Management Fee', 'Renewal Fee', 'Inventory Fee', 'Ad-hoc Charge', 'One-off Charge', 'Recurring Charge'],
         knowledgeCheck: [
           {
             q: 'A landlord is charged a tenancy renewal fee. Where in Street is this added?',
@@ -2370,21 +2346,21 @@ const MODULES = [
         workflow: [
           { step: 'Open Landlord Account — Prof. Scarlett Cooper', desc: 'Navigate to Prof. Scarlett Cooper\'s contact record (268 Greenleach Lane) and open her accounting view.', path: 'Contacts → Landlords → Prof. Scarlett Cooper → Accounting' },
           { step: 'Add New Charge — Inventory Fee', desc: 'Click "Add Charge". Select charge type: Inventory Fee. Enter £120. Street automatically calculates VAT (£24.00). Total: £144.00.', path: 'Landlord Account → Charges → Add Charge' },
-          { step: 'Select Nominal Code', desc: 'Assign the correct nominal code for this charge type (e.g. Fees Income or Management Income). Add a description: "Inventory fee — new tenancy Prof. Aaron Bailey".', path: 'Add Charge → Nominal Code' },
+          { step: 'Add a One-Off Charge on the Owner Ledger', desc: 'On the owner ledger for Prof. Scarlett Cooper, click \'Add\' → \'Add a one off charge\'. Enter the charge type, amount and description: e.g. "Inventory fee — new tenancy Prof. Aaron Bailey — 268 Greenleach Lane".', path: 'Owner Ledger → Add → One Off Charge' },
           { step: 'Confirm Charge on Ledger', desc: 'Save the charge. It now appears on Prof. Scarlett Cooper\'s ledger, reducing her next payment by £144.00.', path: 'Landlord Account → Ledger → Review' },
           { step: 'Add Renewal Fee — Miss Tiffany Ward', desc: 'Open Miss Tiffany Ward\'s account (142 Ladymere Drive). Add £60 renewal fee + £12 VAT = £72 total. Description: "Tenancy renewal — Mr. Jason Walker".', path: 'Contacts → Landlords → Miss Tiffany Ward' },
           { step: 'Add Coordination Fee — Dr. Eleanor Rogers', desc: 'Open Dr. Eleanor Rogers\'s account (285 Chatsworth Road). Add £240 coordination fee + £48 VAT = £288 total. Description: "Maintenance coordination — boiler works".', path: 'Contacts → Landlords → Dr. Eleanor Rogers' },
           { step: 'Run Pre-Payment Review', desc: 'Before processing payments, run a ledger review to confirm all three charges are correct and no errors exist.', path: 'Accounting → Landlord Payments → Pre-Payment Report' }
         ],
         tasks: [
-          { id: 't1', title: 'Add the £120 inventory fee charge to Prof. Scarlett Cooper\'s account (268 Greenleach Lane)', type: 'demo', desc: 'Navigate to her landlord account and add the fee with the correct nominal code.' },
+          { id: 't1', title: 'Add the £120 inventory fee charge to Prof. Scarlett Cooper\'s account (268 Greenleach Lane)', type: 'demo', desc: 'Navigate to her Owner Ledger (Property → Ownership → Accounting) and add the One Off Charge.' },
           { id: 't2', title: 'Confirm VAT (£24.00) is correctly calculated on the inventory fee', type: 'demo', desc: 'Check that Street has applied 20% VAT — total should show £144.00.' },
           { id: 't3', title: 'View Prof. Scarlett Cooper\'s landlord ledger to confirm the charge appears', type: 'demo', desc: 'Verify it shows as a deduction on the account.' },
           { id: 't4', title: 'Add the renewal fee to Miss Tiffany Ward and coordination fee to Dr. Eleanor Rogers', type: 'demo', desc: 'Repeat the process for both remaining landlords.' },
           { id: 't5', title: 'Check the pre-payment report before running payments', type: 'confirm', desc: 'Confirm all three charges are correct before landlord payment batch.' }
         ],
         reflections: [
-          { id: 'r1', q: 'Prof. Scarlett Cooper disputes the £120 inventory fee charge. How would you trace when it was added, by whom, and what nominal code it was posted to in Street?' },
+          { id: 'r1', q: 'Prof. Scarlett Cooper disputes the £120 inventory fee charge. How would you trace when it was added, by whom, and what charge type was used? Where in Street does the audit trail live?' },
           { id: 'r2', q: 'What is the difference between a "charge" and an "invoice" in Street Accounting, and when would you use each for {AGENCY} landlords?' }
         ]
       }
@@ -2404,7 +2380,7 @@ const MODULES = [
         title: 'Posting a Contractor Invoice',
         helpArticle: {
           title: 'Contractor Payments and Invoices in Street',
-          url: 'https://intercom.help/streetcouk/en/collections/3887357-accounting',
+          url: 'https://intercom.help/streetcouk/en/articles/7050149-payments-to-make',
           summary: 'Contractor invoices are raised against individual properties. The cost is posted to the landlord\'s ledger and paid from the client account. Street tracks each contractor payment against the related work order.'
         },
         concepts: ['Contractor Invoice', 'Work Order', 'Landlord Debit', 'Client Account Payment', 'Disbursement'],
@@ -2472,9 +2448,9 @@ const MODULES = [
         id: 'M8S1',
         title: 'Running the Monthly Landlord Payment Batch',
         helpArticle: {
-          title: 'Processing Landlord Payments in Street',
-          url: 'https://intercom.help/streetcouk/en/collections/3887357-accounting',
-          summary: 'Street\'s payment batch tool calculates the net payment due to each landlord, deducting all fees and charges. Payments can be reviewed before being processed and sent via bank transfer.'
+          title: 'Payments to Make — Street Accounting Workflow',
+          url: 'https://intercom.help/streetcouk/en/articles/7050149-payments-to-make',
+          summary: 'After allocating funds, go to Accounting → Payments to Make. The Owners tab lists all landlords due payment with their property, reference and amount. Select payees, confirm the payment bank account in Payment Settings, click Pay to create a payment file. Then go to the Payment Files tab and click Export to download as CSV or bank SIF file for submission to your bank. When payment is confirmed, statements are automatically emailed to landlords.'
         },
         concepts: ['Payment Batch', 'Net Payment', 'Payment Run', 'BACS', 'Payment Hold', 'Statement Generation'],
         knowledgeCheck: [
@@ -2507,21 +2483,20 @@ const MODULES = [
           details: `Month-end summary for {AGENCY}:\n• 11 landlords have correct balances ready for payment\n• 1 landlord (Dr. Dave Bennett — 6 Woodside Avenue M28 3HR) has requested a payment hold until next month\n• Total to be paid: £18,489.60 across 11 landlords (net of 12% fees + VAT)\n• Dr. Dave Bennett's £2,482.40 remains held in client account\n\nYou need to run the batch, hold Dr. Dave Bennett, and generate statements for all 12 landlords.`
         },
         workflow: [
-          { step: 'Navigate to Landlord Payments', desc: 'Open the Payments section and select the landlord payment batch tool.', path: 'Accounting → Landlord Payments → New Batch' },
-          { step: 'Select Payment Period', desc: 'Select the current month. Street will calculate the net payment for every landlord who has rent allocated in this period.', path: 'Landlord Payments → Select Period' },
-          { step: 'Review Payment Summary', desc: 'Street shows each landlord: Prof. Scarlett Cooper £1,198.40 · Mrs. Alexandra Scott £2,225.60 · Prof. Fred Watson £1,540.80 · Miss Tiffany Ward £1,027.20 · Dr. Eleanor Rogers £2,396.80 etc.', path: 'Landlord Payments → Review Summary' },
-          { step: 'Place Hold on Dr. Dave Bennett', desc: 'Find Dr. Dave Bennett (6 Woodside Avenue) in the list. Toggle "Hold Payment". His £2,482.40 remains in client account. Add note: "Landlord requested hold — Nov".', path: 'Landlord Payments → Dr. Dave Bennett → Hold Payment' },
-          { step: 'Confirm and Process Batch', desc: 'Review final totals: £18,489.60 to 11 landlords. Confirm and process. Street generates payment instructions for each.', path: 'Landlord Payments → Confirm → Process' },
-          { step: 'Generate Landlord Statements', desc: 'After processing, generate statements for all 12 landlords including Dr. Dave Bennett (zero payment, hold noted) and any expiring tenancy landlords.', path: 'Landlord Payments → Generate Statements → All' },
-          { step: 'Verify Client Account Balance', desc: 'Confirm client account has reduced by £18,489.60. The remaining balance should equal Dr. Dave Bennett\'s held amount plus any deposits held.', path: 'Accounting → Bank Accounts → Client Account' }
+          { step: 'Navigate to Payments to Make', desc: 'After completing Allocate Funds, go to Accounting → Payments to Make. You will see tabs for Owners, Contractors, Agency, Tenants, and Deposits.', path: 'Accounting → Payments to Make' },
+          { step: 'Review the Owners Tab', desc: 'The Owners tab lists every landlord with money to pay: Prof. Scarlett Cooper £1,198.40 · Dr. Dave Bennett £2,482.40 · Mrs. Alexandra Scott £2,225.60 etc. Each row shows the owner name, property and payment reference.', path: 'Accounting → Payments to Make → Owners' },
+          { step: 'Select Payees', desc: 'Tick the checkbox next to each landlord you want to include in this payment run. For Dr. Dave Bennett (hold requested), leave his box unticked — his £2,482.40 remains in the client account.', path: 'Accounting → Payments to Make → Owners → Select' },
+          { step: 'Set Payment Account', desc: 'In the Payment Settings section at the bottom left, select which bank account you are paying from. Ensure you select the correct client account that you will physically pay from.', path: 'Accounting → Payments to Make → Payment Settings' },
+          { step: 'Click Pay and Confirm', desc: 'Click the Pay button at the bottom right. A confirmation page shows the total (£18,489.60 to 11 landlords). Confirm — this deducts funds from ledgers and generates landlord statements automatically, emailed to each landlord.', path: 'Accounting → Payments to Make → Pay → Confirm' },
+          { step: 'Export Payment File', desc: 'Go to the Payment Files tab. Find the newly created file. Click Export to download as CSV or Bank Export (SIF/Pegasus format). Upload this file to your bank to physically make the payments.', path: 'Accounting → Payments to Make → Payment Files → Export' }
         ],
         tasks: [
-          { id: 't1', title: 'Navigate to Landlord Payments in the demo', type: 'demo', desc: 'Find the payment batch tool in the Accounting module.' },
-          { id: 't2', title: 'Create a new payment batch for the current period', type: 'demo', desc: 'Select the current month and review the calculated payments for all 12 {AGENCY} landlords.' },
-          { id: 't3', title: 'Place a payment hold on Dr. Dave Bennett (6 Woodside Avenue)', type: 'demo', desc: 'Apply the hold and add a note: Landlord requested hold.' },
-          { id: 't4', title: 'Confirm and process the payment batch for the 11 remaining landlords', type: 'demo', desc: 'Complete the batch (use test data, do not process real payments).' },
-          { id: 't5', title: 'Generate statements for all 12 landlords including Dr. Dave Bennett', type: 'demo', desc: 'Confirm statements are generated for all landlords including the held one.' },
-          { id: 't6', title: 'Verify client account balance after the £18,489.60 batch payment', type: 'confirm', desc: 'Confirm the account balance reconciles correctly.' }
+          { id: 't1', title: 'Navigate to Accounting → Payments to Make', type: 'demo', desc: 'Explore the Owners, Contractors, Agency, Tenants, and Deposits tabs.' },
+          { id: 't2', title: 'Review the Owners tab — note all 12 {AGENCY} landlords listed', type: 'demo', desc: 'Confirm each landlord shows correct property, reference and net payment amount.' },
+          { id: 't3', title: 'Deselect Dr. Dave Bennett (6 Woodside Avenue) to place a payment hold', type: 'demo', desc: 'Leave his checkbox unticked — his balance remains in the client account.' },
+          { id: 't4', title: 'Set the payment account in Payment Settings and click Pay', type: 'demo', desc: 'Select the correct client account and process the payment run for 11 landlords.' },
+          { id: 't5', title: 'Go to Payment Files tab and export the payment file', type: 'demo', desc: 'Download the CSV or bank SIF file that would be uploaded to your bank.' },
+          { id: 't6', title: 'Confirm landlord statements were generated automatically', type: 'confirm', desc: 'Statements are generated and emailed to landlords when the payment is confirmed.' }
         ],
         reflections: [
           { id: 'r1', q: 'You process the {AGENCY} payment batch and realise after processing that Prof. Fred Watson\'s fee was set incorrectly at 10% instead of 12%. What steps would you take in Street to investigate and correct this?' },
@@ -2544,9 +2519,9 @@ const MODULES = [
         id: 'M9S1',
         title: 'Monthly Bank Reconciliation',
         helpArticle: {
-          title: 'Bank Reconciliation in Street',
-          url: 'https://intercom.help/streetcouk/en/collections/3887357-accounting',
-          summary: 'Bank reconciliation confirms that every transaction in Street matches the real bank statement. Street\'s reconciliation tool allows you to match transactions, flag differences and close the reconciliation period.'
+          title: 'Receipt and Reconcile — Street Reconciliation',
+          url: 'https://intercom.help/streetcouk/en/articles/9805629-receipting-and-reconciling',
+          summary: 'After importing a bank statement via Accounting → Bank Accounts → Import Statement, the Reconcile page categorises transactions as: Linked Payments (green — matching rule exists), Suggested Matches (blue — system found a probable match), Attention (orange — multiple conflicting rules), No Matches (grey — manual action needed). Bulk Reconcile processes all linked payments at once. For No Matches: link payment, search manually, add to suspense, or split.'
         },
         concepts: ['Bank Reconciliation', 'Statement Import', 'Transaction Matching', 'Unmatched Entries', 'Reconciliation Report'],
         knowledgeCheck: [
@@ -2568,19 +2543,19 @@ const MODULES = [
           details: 'Bank statement balance: £18,750\nStreet balance: £18,900\nDifference: £150\n\nYou need to find and resolve this £150 discrepancy before closing the period.'
         },
         workflow: [
-          { step: 'Open Bank Reconciliation', desc: 'Navigate to Accounting → Bank Accounts → Client Account → Reconcile.', path: 'Accounting → Bank Accounts → Reconcile' },
-          { step: 'Import/Enter Bank Statement', desc: 'Import the bank statement or manually enter the closing balance from the real bank statement.', path: 'Reconciliation → Import Statement' },
-          { step: 'Match Transactions', desc: 'Street shows a list of system transactions. Match each one to the corresponding bank statement entry. Tick matched items.', path: 'Reconciliation → Match Transactions' },
-          { step: 'Identify Unmatched Items', desc: 'Investigate any entries that don\'t match. Check for: timing differences, missing entries, duplicate posts, or bank charges.', path: 'Reconciliation → Unmatched Items' },
-          { step: 'Find the £150 Difference', desc: 'In this case, a £150 bank charge was not recorded in Street. Post it as a bank charge transaction.', path: 'Accounting → Transactions → Post Bank Charge' },
-          { step: 'Complete Reconciliation', desc: 'Once all items are matched and the difference is zero, close the reconciliation. Street generates a reconciliation report.', path: 'Reconciliation → Complete → Generate Report' }
+          { step: 'Import Bank Statement CSV', desc: 'Download your end-of-month bank statement CSV from online banking. Navigate to Accounting → Bank Accounts → click your client account → Import Statement. Upload the CSV file.', path: 'Accounting → Bank Accounts → Import Statement' },
+          { step: 'Review Transaction Categories', desc: 'On the Reconcile page, Street categorises all transactions. Check the tiles: Linked Payments (green), Suggested Matches (blue), Attention (orange — conflicting rules), No Matches (grey). Total unreconciled count shown.', path: 'Accounting → Bank Accounts → Reconcile' },
+          { step: 'Bulk Reconcile Linked Payments', desc: 'Click the Bulk Reconcile button to reconcile all Linked Payments (those matching existing matching rules) in one step. These are receipted onto the relevant ledgers automatically.', path: 'Accounting → Bank Accounts → Reconcile → Bulk Reconcile' },
+          { step: 'Handle Suggested Matches', desc: 'For Suggested Matches (blue), review the system suggestion — if correct, confirm. If not, click \'not a match? click here\' to manually search or add to suspense.', path: 'Accounting → Bank Accounts → Reconcile → Suggested Match' },
+          { step: 'Resolve No Matches', desc: 'For each No Match: click \'more\' to see options — link the payment (create/use a matching rule), search for existing transaction, add to suspense account, or split the payment.', path: 'Accounting → Bank Accounts → Reconcile → No Matches' },
+          { step: 'Confirm All Reconciled', desc: 'Once all transactions are reconciled, the Unreconciled Transactions count drops to zero. The Reconcile button disappears from Bank Accounts. Move on to Allocate Funds.', path: 'Accounting → Bank Accounts (no reconcile button = complete)' }
         ],
         tasks: [
-          { id: 't1', title: 'Navigate to the Bank Reconciliation tool in the demo', type: 'demo', desc: 'Find Accounting → Bank Accounts → Reconcile.' },
-          { id: 't2', title: 'Review the list of unreconciled transactions', type: 'demo', desc: 'Identify which transactions haven\'t been matched yet.' },
-          { id: 't3', title: 'Match at least 3 transactions in the demo', type: 'demo', desc: 'Practice matching system records to bank entries.' },
-          { id: 't4', title: 'Identify any unmatched items and investigate', type: 'demo', desc: 'Find differences and understand their cause.' },
-          { id: 't5', title: 'Generate a reconciliation report', type: 'confirm', desc: 'Confirm the report shows a balanced position.' }
+          { id: 't1', title: 'Navigate to Accounting → Bank Accounts and import the November bank statement CSV (download below)', type: 'demo', desc: 'Use the Import Statement button on the client account.' },
+          { id: 't2', title: 'Review the Reconcile page — note how transactions are categorised', type: 'demo', desc: 'Identify the number of Linked, Suggested, Attention and No Match transactions.' },
+          { id: 't3', title: 'Use Bulk Reconcile to process all Linked Payments at once', type: 'demo', desc: 'This reconciles and receipts all matching rule payments in one click.' },
+          { id: 't4', title: 'Manually reconcile at least one No Match transaction', type: 'demo', desc: 'Click more → search for the tenancy → confirm the transaction.' },
+          { id: 't5', title: 'Confirm the Unreconciled count reaches zero', type: 'confirm', desc: 'All transactions should be reconciled before moving to Allocate Funds.' }
         ],
         reflections: [
           { id: 'r1', q: 'You find that a rent payment was recorded twice in Street but only once on the bank statement. What steps do you take to resolve this?' },
@@ -2603,9 +2578,9 @@ const MODULES = [
         id: 'M10S1',
         title: 'Clearing the Suspense Account',
         helpArticle: {
-          title: 'Managing the Suspense Account in Street',
-          url: 'https://intercom.help/streetcouk/en/collections/3887357-accounting',
-          summary: 'The suspense account holds unallocated money temporarily. Regular review ensures no funds are lost, unidentified, or incorrectly held. Each entry should be investigated and cleared promptly.'
+          title: 'Suspense Account — Street Accounting',
+          url: 'https://intercom.help/streetcouk/en/articles/8787363-suspense-account',
+          summary: 'Access via Accounting → Bank Accounts → View Suspense Account. Use it to hold payments of unknown origin temporarily. Add money directly or via the Reconcile page (click \'more\' → \'add to suspense account\'). To resolve: click Transfer on a suspense entry, select the ledger type (tenancy/owner/contractor/agency), search for the correct entity, enter amount and description, confirm. Dormant funds (held 6+ years) are automatically tagged.'
         },
         concepts: ['Suspense Account', 'Unallocated Funds', 'Payment Investigation', 'Allocation Error', 'Clearing Entry'],
         knowledgeCheck: [
@@ -2784,7 +2759,7 @@ const MODULES = [
         title: 'The Monthly Accounting Checklist',
         helpArticle: {
           title: 'End of Month Procedures in Street',
-          url: 'https://intercom.help/streetcouk/en/collections/3887357-accounting',
+          url: 'https://intercom.help/streetcouk/en/articles/7050148-allocate-funds',
           summary: 'Street\'s end-of-month process ensures all transactions are complete, accounts reconcile, landlords are paid and statements sent. A defined checklist prevents errors being carried forward.'
         },
         concepts: ['Month-End Checklist', 'Period Close', 'Arrears Review', 'Outstanding Items', 'Compliance Sign-Off'],
@@ -2795,26 +2770,26 @@ const MODULES = [
               'Run bank reconciliation',
               'Send landlord statements',
               'Process landlord payment batch',
-              'Lock/close the accounting period'
+              'Archive all transactions and mark the month as read-only'
             ],
             correct: 3,
-            feedback: 'The accounting period should be locked LAST — only after all other tasks are complete and verified. Locking prevents further changes, so everything must be correct first.'
+            feedback: 'Street does not have an accounting period lock. The correct final step is to verify the period is clean: suspense account empty, all funds allocated, bank reconciled. Your discipline in completing tasks in the right order is what keeps the books accurate.'
           }
         ],
         scenario: {
           title: 'Complete Month-End Close — {AGENCY} November',
-          context: 'You are closing the books for October. Work through the full month-end checklist, identifying and resolving any issues before locking the period.',
-          details: 'Known issues to resolve:\n• 2 tenants have outstanding arrears (needs arrears review)\n• Suspense account has one unresolved item (£450)\n• One contractor payment not yet posted\n• Bank reconciliation not yet run\n\nAll of these must be resolved before period close.'
+          context: 'You are closing the books for October. Work through the full month-end checklist, identifying and resolving any issues before confirming the period is clean.',
+          details: 'Known issues to resolve:\n• 2 tenants have outstanding arrears (needs arrears review)\n• Suspense account has one unresolved item (£450)\n• One contractor payment not yet posted\n• Bank reconciliation not yet run\n\nAll of these must be resolved before you can confirm the month is complete.'
         },
         workflow: [
-          { step: '1. Check All Rent is Allocated', desc: 'Run the unallocated receipts report. Confirm no rent is sitting in suspense. Allocate any outstanding items.', path: 'Accounting → Reports → Unallocated Receipts' },
+          { step: '1. Check All Rent is Allocated', desc: 'Navigate to Accounting → Allocate Funds. Check the Tenancies in Credit tab — any tenancies listed here have unallocated funds that have not yet been matched to charges. Resolve any outstanding items.', path: 'Accounting → Allocate Funds → Tenancies in Credit' },
           { step: '2. Review Arrears', desc: 'Run the arrears report. Review tenants in arrears. Note action taken: payment plan, notice, or hold.', path: 'Accounting → Reports → Arrears' },
           { step: '3. Clear Suspense Account', desc: 'Investigate and allocate or escalate the £450 suspense item.', path: 'Accounting → Suspense Account' },
           { step: '4. Post Outstanding Contractor Payment', desc: 'Find and post the missing contractor invoice before running reconciliation.', path: 'Accounting → Contractor Payments' },
           { step: '5. Run Bank Reconciliation', desc: 'Reconcile the client account against the bank statement. Resolve any differences.', path: 'Accounting → Reconciliation' },
           { step: '6. Process Landlord Payments', desc: 'Run the payment batch. Review all amounts. Process and confirm payments.', path: 'Accounting → Landlord Payments' },
           { step: '7. Generate & Send Statements', desc: 'Generate and email all landlord statements for the month.', path: 'Accounting → Statements' },
-          { step: '8. Lock Accounting Period', desc: 'Once all tasks are complete and verified, lock October. This prevents accidental changes.', path: 'Accounting → Period Management → Lock Period' }
+          { step: '8. Confirm Period is Clean', desc: 'Once all tasks are complete and verified, review the bank account balance, suspense account (should be empty or explained) and confirm no unallocated funds remain. Street does not have a period lock — your month-end discipline ensures accuracy.', path: 'Accounting → Bank Accounts → View Suspense Account' }
         ],
         tasks: [
           { id: 't1', title: 'Run the unallocated receipts report and confirm it is clear', type: 'demo', desc: 'Ensure no payments are sitting unallocated.' },
@@ -2823,10 +2798,10 @@ const MODULES = [
           { id: 't4', title: 'Complete bank reconciliation', type: 'demo', desc: 'Reconcile and confirm zero difference.' },
           { id: 't5', title: 'Process landlord payment batch', type: 'demo', desc: 'Run and confirm all payments.' },
           { id: 't6', title: 'Generate and send all landlord statements', type: 'demo', desc: 'Dispatch statements to all landlords.' },
-          { id: 't7', title: 'Lock the accounting period', type: 'confirm', desc: 'Close October once all checks are complete.' }
+          { id: 't7', title: 'Confirm the period is clean', type: 'confirm', desc: 'Verify: suspense account is empty, all funds allocated, bank reconciled, statements sent. October is now closed by process, not by a lock.' }
         ],
         reflections: [
-          { id: 'r1', q: 'Why should the accounting period be locked after month-end? What would happen if staff could still post transactions to a closed period?' },
+          { id: 'r1', q: 'Street does not have an accounting period lock. What does this mean for how your team should handle month-end discipline? What processes would you put in place to prevent retroactive edits?' },
           { id: 'r2', q: 'Design your own month-end checklist for a 20-property agency using Street. What would your checklist include and in what order?' }
         ]
       }
@@ -2869,7 +2844,7 @@ const MODULES = [
           details: `**Issue 1:** Landlord Prof. Scarlett Cooper (268 Greenleach Lane, M28 1UZ) called — her statement shows a £120 charge she doesn\'t recognise.\n\n**Issue 2:** Bank reconciliation is showing a £250 unmatched item from 3 weeks ago — no reference or tenancy match found.\n\n**Issue 3:** Tenant overpayment from last month (£75 from Dr. Dylan Butler, 285 Chatsworth Road) was never cleared from suspense — it\'s been sitting there for 6 weeks.`
         },
         workflow: [
-          { step: 'Issue 1: Trace the Unknown Charge', desc: 'Open Prof. Scarlett Cooper\'s ledger (268 Greenleach Lane). Find the £120 charge. Check: when posted, by whom, what nominal code, what description. Use the audit trail.', path: 'Landlord Account → Ledger → Filter by Date → Audit Trail' },
+          { step: 'Issue 1: Trace the Unknown Charge', desc: 'Open Prof. Scarlett Cooper\'s Owner Ledger (268 Greenleach Lane). Find the £120 charge. Check: when posted, by whom, what charge type, what description. Use the entry history as the audit trail.', path: 'Property → Ownership → Accounting (Owner Ledger) → Filter by Date' },
           { step: 'Identify Charge Type', desc: 'Determine if it was an automated fee, manual charge or contractor invoice. If incorrect, create a reversal entry.', path: 'Charge Entry → View Details → Reversal' },
           { step: 'Issue 2: Investigate Unmatched Bank Item', desc: 'Open Bank Reconciliation. Find the unmatched £250. Cross-reference against receipts, payments, and bank statement narrative.', path: 'Accounting → Reconciliation → Unmatched Items' },
           { step: 'Resolve the Unmatched Item', desc: 'Determine if the £250 is a legitimate transaction not yet posted in Street, or a bank error. Post the missing transaction or raise with bank.', path: 'Accounting → Post Transaction → Match' },
@@ -2904,21 +2879,21 @@ const MODULES = [
         title: 'Full Month: Start to Finish',
         helpArticle: {
           title: 'Street Accounting: Complete Workflow Reference',
-          url: 'https://intercom.help/streetcouk/en/collections/3887357-accounting',
+          url: 'https://intercom.help/streetcouk/en/articles/9805629-receipting-and-reconciling',
           summary: 'The capstone assessment covers the full Street Accounting lifecycle: setup → receipt → allocation → fees → charges → payments → statements → reconciliation → period close.'
         },
-        concepts: ['End-to-End Workflow', 'Setup Verification', 'Rent Processing', 'Fee Management', 'Payment Batch', 'Reconciliation', 'Period Close'],
+        concepts: ['End-to-End Workflow', 'Setup Verification', 'Rent Processing', 'Fee Management', 'Payment Batch', 'Reconciliation', 'Month-End Verification'],
         knowledgeCheck: [
           {
             q: 'You join a new agency and are told "accounting is ready to use." What is the FIRST thing you check before processing any transactions?',
             options: [
               'Process the first rent payment to test the system',
-              'Verify that client money bank accounts, fee settings, and accounting periods are correctly configured',
+              'Verify that client money bank accounts, fee settings, and bank balances are correctly configured',
               'Send statements to all landlords',
               'Run the bank reconciliation'
             ],
             correct: 1,
-            feedback: 'Always verify setup before processing. Even if told it\'s ready, you should confirm: bank accounts are configured, fees are correct, accounting periods are set, and the chart of accounts is appropriate.'
+            feedback: 'Always verify setup before processing. Even if told it\'s ready, you should confirm: bank accounts are configured with correct opening balances, management fee percentages are set, Invoice Settings are complete, and payment schedules are correct.'
           },
           {
             q: 'A tenant pays £1,200 rent. After allocation and fee deduction (10% + VAT), how much does the landlord receive?',
@@ -2929,23 +2904,23 @@ const MODULES = [
           {
             q: 'Which of these actions is correct at month end?',
             options: [
-              'Lock the accounting period, then reconcile, then pay landlords',
-              'Reconcile → pay landlords → generate statements → lock period',
-              'Pay landlords → lock period → reconcile',
-              'Generate statements → lock period → reconcile → pay landlords'
+              'Pay landlords → reconcile → generate statements',
+              'Reconcile → allocate funds → pay landlords → generate statements',
+              'Generate statements → pay landlords → reconcile',
+              'Allocate funds → generate statements → reconcile → pay landlords'
             ],
             correct: 1,
-            feedback: 'Correct order: Reconcile → Allocate all rent → Process payments → Generate statements → Lock period. Locking always comes last.'
+            feedback: 'Correct Street order: Reconcile (import & match bank statement) → Allocate Funds (owners in credit) → Payments to Make (pay landlords) → Generate Statements. There is no period lock in Street — clean completion of each step is what closes the month.'
           }
         ],
         scenario: {
           title: '🏅 Capstone: Complete Month for {AGENCY}',
           context: 'You are the accounts manager at {AGENCY}, managing 5 properties. You must complete the full month from setup verification through to period close.',
-          details: `**Setup Check:**\n• Verify accounting is correctly configured\n• Confirm bank accounts, fee settings\n\n**Income:**\n• £850 rent — 268 Greenleach Lane (full payment, on time)\n• £1,100 rent — 6 Woodside Avenue (full payment, 2 days early)\n• £950 rent — 142 Ladymere Drive (partial — £900 paid, £50 outstanding)\n• £1,200 rent — 20 Vicars Street (full payment)\n• Flat 5 — no payment (arrears from last month)\n\n**Charges:**\n• £280 boiler repair — 268 Greenleach Lane (Worsley Electrical Ltd)\n• £90 renewal fee — Dr. Eleanor Rogers\n\n**Payments:**\n• Pay all landlords except 142 Ladymere Drive (hold pending full payment)\n• 285 Chatsworth Road — escalate arrears\n\n**Close:**\n• Reconcile bank account\n• Generate statements for all landlords\n• Lock the period`
+          details: `**Setup Check:**\n• Verify accounting is correctly configured\n• Confirm bank accounts, fee settings\n\n**Income:**\n• £850 rent — 268 Greenleach Lane (full payment, on time)\n• £1,100 rent — 6 Woodside Avenue (full payment, 2 days early)\n• £950 rent — 142 Ladymere Drive (partial — £900 paid, £50 outstanding)\n• £1,200 rent — 20 Vicars Street (full payment)\n• Flat 5 — no payment (arrears from last month)\n\n**Charges:**\n• £280 boiler repair — 268 Greenleach Lane (Worsley Electrical Ltd)\n• £90 renewal fee — Dr. Eleanor Rogers\n\n**Payments:**\n• Pay all landlords except 142 Ladymere Drive (hold pending full payment)\n• 285 Chatsworth Road — escalate arrears\n\n**Close:**\n• Reconcile bank account\n• Generate statements for all landlords\n• Confirm period is clean: suspense empty, all payments processed, statements sent`
         },
         workflow: [
-          { step: 'Phase 1: Setup Verification', desc: 'Verify: bank accounts configured, fee at 10%+VAT set, accounting period open, payment schedule confirmed.', path: 'Settings → Accounting → Verify All' },
-          { step: 'Phase 2: Post All Rent Receipts', desc: 'Allocate all 4 received payments. Post to correct tenancies. Note partial at 142 Ladymere Drive. Flag 285 Chatsworth Road arrears (Dr. Dylan Butler).', path: 'Accounting → Receipts → Allocate' },
+          { step: 'Phase 1: Setup Verification', desc: 'Verify: bank accounts configured with correct opening balances, management fee at 10%+VAT set, Invoice Settings complete, payment schedule confirmed.', path: 'Settings → Accounting → Setup & Bank Accounts' },
+          { step: 'Phase 2: Import & Reconcile All Payments', desc: 'Import the Capstone bank statement CSV (download below). On the Reconcile page, work through all Linked/Suggested/No Match transactions. Confirm all 4 received payments. Note partial at 142 Ladymere Drive. Flag 285 Chatsworth Road as No Match (arrears — Dr. Dylan Butler).', path: 'Accounting → Bank Accounts → Import Statement → Reconcile' },
           { step: 'Phase 3: Post Contractor Invoice', desc: 'Post £280 boiler repair at 268 Greenleach Lane. Debit to Prof. Scarlett Cooper. Schedule payment to Worsley Electrical Ltd.', path: 'Accounting → Contractor Payments' },
           { step: 'Phase 4: Post Renewal Fee', desc: 'Add £90 renewal fee + VAT to Dr. Eleanor Rogers account.', path: 'Landlord Account → Charges → Renewal Fee' },
           { step: 'Phase 5: Review All Ledgers', desc: 'Check each landlord ledger for accuracy before running payments.', path: 'Accounting → Landlord Accounts' },
@@ -2953,7 +2928,7 @@ const MODULES = [
           { step: 'Phase 7: Escalate Arrears', desc: 'Raise arrears note at 285 Chatsworth Road. Record action taken in Street.', path: 'Tenancy → Flat 5 → Arrears → Note Action' },
           { step: 'Phase 8: Bank Reconciliation', desc: 'Reconcile the client account. All postings must match bank statement.', path: 'Accounting → Reconciliation' },
           { step: 'Phase 9: Generate Statements', desc: 'Generate and send statements to all 5 landlords including 142 Ladymere Drive (with hold explanation) and 285 Chatsworth Road (arrears noted).', path: 'Accounting → Statements → All' },
-          { step: 'Phase 10: Lock Period', desc: 'Confirm all checks passed. Lock the accounting period.', path: 'Accounting → Period Management → Lock' }
+          { step: 'Phase 10: Final Verification', desc: 'Confirm all checks passed: suspense account is empty or explained, all landlords paid, all contractor invoices reconciled, tenancy ledgers balanced. Street does not have a period lock — accuracy is maintained through discipline and the correct workflow sequence.', path: 'Accounting → Bank Accounts → View Suspense Account' }
         ],
         tasks: [
           { id: 't1', title: 'Complete Phase 1: Verify all accounting settings are correctly configured', type: 'demo', desc: 'Setup check — confirm before processing anything.' },
@@ -2965,7 +2940,7 @@ const MODULES = [
           { id: 't7', title: 'Complete Phase 7: Record arrears action at 285 Chatsworth Road', type: 'demo', desc: 'Document what action has been taken.' },
           { id: 't8', title: 'Complete Phase 8: Run and complete bank reconciliation', type: 'demo', desc: 'Reconcile with zero difference.' },
           { id: 't9', title: 'Complete Phase 9: Generate and send all 5 landlord statements', type: 'demo', desc: 'Dispatch statements with notes for held and arrears accounts.' },
-          { id: 't10', title: 'Complete Phase 10: Lock the accounting period', type: 'confirm', desc: 'Final close — only when all tasks confirmed.' }
+          { id: 't10', title: 'Complete Phase 10: Final Verification', type: 'confirm', desc: 'Confirm period is clean: suspense empty, all landlords paid, statements sent, bank reconciled. Street has no lock — process discipline closes the month.' }
         ],
         reflections: [
           { id: 'r1', q: 'Reflect on the full month-end process you just completed. What was the most important step and why?' },
@@ -4127,200 +4102,7 @@ function shareCert() {
   }
 }
 
-// ===== SHEETS GUIDE =====
-function showSheetsSetupGuide() {
-  const guide = `
-    <div class="alert alert-info mb-16">
-      <div class="alert-icon">📋</div>
-      <div>Follow these steps to connect the simulator to Google Sheets for automatic progress saving.</div>
-    </div>
-    <div class="workflow-steps">
-      <div class="workflow-step">
-        <div class="workflow-step-num">1</div>
-        <div class="workflow-step-content">
-          <div class="workflow-step-title">Create a Google Sheet</div>
-          <div class="workflow-step-desc">Create a new Google Sheet with these column headers: User ID, Email, Company, Name, Timestamp, Module ID, Scenario ID, Type, Task ID, Task Done, Reflection ID, Reflection Text, Overall Progress</div>
-        </div>
-      </div>
-      <div class="workflow-step">
-        <div class="workflow-step-num">2</div>
-        <div class="workflow-step-content">
-          <div class="workflow-step-title">Create a Google Apps Script</div>
-          <div class="workflow-step-desc">In Google Sheets, go to Extensions → Apps Script. Paste this code:</div>
-          <pre style="background:var(--bg);padding:12px;border-radius:6px;font-size:12px;margin-top:8px;overflow:auto">function doPost(e) {
-// Paste this entire script into Extensions → Apps Script in your Google Sheet
-// It automatically creates 3 sheets: Raw Events, Learner Summary, Module Progress
-
-const HEADERS_RAW = [
-  'Timestamp','Date','Learner Name','Email','Company','User ID',
-  'Event Type','Module ID','Module Title','Scenario ID','Scenario Title',
-  'Task ID','Task Done','Reflection ID','Reflection Text',
-  'KC Score','Tasks Done','Tasks Total','Reflections Done','Reflections Total',
-  'Overall Progress %','Modules Completed','Modules Total','Confidence Score','Scenario Complete'
-];
-
-const HEADERS_SUMMARY = [
-  'User ID','Learner Name','Email','Company',
-  'First Seen','Last Active','Overall Progress %',
-  'Modules Completed','Modules Total','Confidence Score','Status'
-];
-
-const HEADERS_MODULES = [
-  'User ID','Learner Name','Email','Module ID','Module Title',
-  'Scenario Complete','KC Score','Tasks Done','Tasks Total',
-  'Reflections Done','Reflections Total','Last Updated'
-];
-
-function getOrCreateSheet(ss, name, headers) {
-  let sheet = ss.getSheetByName(name);
-  if (!sheet) {
-    sheet = ss.insertSheet(name);
-    sheet.appendRow(headers);
-    sheet.getRange(1, 1, 1, headers.length)
-      .setBackground('#12152A').setFontColor('#ffffff')
-      .setFontWeight('bold').setFontSize(11);
-    sheet.setFrozenRows(1);
-  }
-  return sheet;
-}
-
-function doPost(e) {
-  try {
-    const ss   = SpreadsheetApp.getActiveSpreadsheet();
-    const data = JSON.parse(e.postData.contents);
-    const now  = new Date();
-    const dateStr = Utilities.formatDate(now, Session.getScriptTimeZone(), 'dd/MM/yyyy HH:mm:ss');
-
-    // ── Sheet 1: Raw Events (every ping) ──────────────────────────────
-    const rawSheet = getOrCreateSheet(ss, 'Raw Events', HEADERS_RAW);
-    rawSheet.appendRow([
-      data.timestamp || now.toISOString(),
-      dateStr,
-      data.learnerName    || data.name    || '',
-      data.learnerEmail   || data.email   || '',
-      data.learnerCompany || data.company || '',
-      data.userId         || '',
-      data.eventType      || data.type    || '',
-      data.moduleId       || '',
-      data.moduleTitle    || '',
-      data.scenarioId     || '',
-      data.scenarioTitle  || '',
-      data.taskId         || '',
-      data.taskDone       || '',
-      data.reflectionId   || '',
-      data.reflectionText || '',
-      data.kcScore        || '',
-      data.tasksDone      || '',
-      data.tasksTotal     || '',
-      data.reflectionsDone    || '',
-      data.reflectionsTotal   || '',
-      data.overallProgressPct || data.overallProgress || '',
-      data.modulesCompleted   || '',
-      data.modulesTotal       || '',
-      data.confidenceScore    || '',
-      data.scenarioComplete   || ''
-    ]);
-
-    // ── Sheet 2: Learner Summary (one row per learner, upserted) ──────
-    const sumSheet = getOrCreateSheet(ss, 'Learner Summary', HEADERS_SUMMARY);
-    const userId   = data.userId || data.email || 'unknown';
-    const sumData  = sumSheet.getDataRange().getValues();
-    let sumRow = -1;
-    for (let i = 1; i < sumData.length; i++) {
-      if (sumData[i][0] === userId) { sumRow = i + 1; break; }
-    }
-    const progress = data.overallProgressPct || data.overallProgress || 0;
-    const status   = progress >= 100 ? '🏅 Certified'
-                   : progress > 0    ? '▶ In Progress'
-                   : '— Not Started';
-    const summaryValues = [
-      userId,
-      data.learnerName    || data.name    || '',
-      data.learnerEmail   || data.email   || '',
-      data.learnerCompany || data.company || '',
-      sumRow > 0 ? sumData[sumRow-1][4] : dateStr,  // First Seen (keep original)
-      dateStr,                                        // Last Active (always update)
-      progress,
-      data.modulesCompleted || '',
-      data.modulesTotal     || '',
-      data.confidenceScore  || '',
-      status
-    ];
-    if (sumRow > 0) {
-      sumSheet.getRange(sumRow, 1, 1, summaryValues.length).setValues([summaryValues]);
-    } else {
-      sumSheet.appendRow(summaryValues);
-    }
-
-    // ── Sheet 3: Module Progress (one row per learner+module, upserted) ─
-    if (data.moduleId && data.moduleId !== 'test' && data.moduleId !== 'system') {
-      const modSheet  = getOrCreateSheet(ss, 'Module Progress', HEADERS_MODULES);
-      const modData   = modSheet.getDataRange().getValues();
-      const rowKey    = userId + '|' + data.moduleId;
-      let modRow      = -1;
-      for (let i = 1; i < modData.length; i++) {
-        if ((modData[i][0] + '|' + modData[i][3]) === rowKey) { modRow = i + 1; break; }
-      }
-      const modValues = [
-        userId,
-        data.learnerName   || data.name  || '',
-        data.learnerEmail  || data.email || '',
-        data.moduleId,
-        data.moduleTitle   || '',
-        data.scenarioComplete || '',
-        data.kcScore          || (modRow > 0 ? modData[modRow-1][6] : ''),
-        data.tasksDone        || (modRow > 0 ? modData[modRow-1][7] : ''),
-        data.tasksTotal       || (modRow > 0 ? modData[modRow-1][8] : ''),
-        data.reflectionsDone  || (modRow > 0 ? modData[modRow-1][9] : ''),
-        data.reflectionsTotal || (modRow > 0 ? modData[modRow-1][10]: ''),
-        dateStr
-      ];
-      if (modRow > 0) {
-        modSheet.getRange(modRow, 1, 1, modValues.length).setValues([modValues]);
-      } else {
-        modSheet.appendRow(modValues);
-      }
-    }
-
-    return ContentService
-      .createTextOutput(JSON.stringify({ success: true }))
-      .setMimeType(ContentService.MimeType.JSON);
-
-  } catch(err) {
-    return ContentService
-      .createTextOutput(JSON.stringify({ success: false, error: err.message }))
-      .setMimeType(ContentService.MimeType.JSON);
-  }
-}
-
-// Optional: run this once to pre-create all three sheets with headers
-function setup() {
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
-  getOrCreateSheet(ss, 'Raw Events',      HEADERS_RAW);
-  getOrCreateSheet(ss, 'Learner Summary', HEADERS_SUMMARY);
-  getOrCreateSheet(ss, 'Module Progress', HEADERS_MODULES);
-  SpreadsheetApp.getUi().alert('✅ Sheets created. Now deploy as Web App.');
-}</pre>
-        </div>
-      </div>
-      <div class="workflow-step">
-        <div class="workflow-step-num">3</div>
-        <div class="workflow-step-content">
-          <div class="workflow-step-title">Deploy as Web App</div>
-          <div class="workflow-step-desc">Click <strong>Deploy → New Deployment → Web App</strong>. Set <em>Execute as</em> to <strong>Me</strong>. Set <em>Who has access</em> to <strong>Anyone</strong>. Click Deploy and copy the URL. You can re-deploy to the same URL after any code changes using "Manage Deployments".</div>
-        </div>
-      </div>
-      <div class="workflow-step">
-        <div class="workflow-step-num">4</div>
-        <div class="workflow-step-content">
-          <div class="workflow-step-title">Paste URL in Simulator &amp; Test</div>
-          <div class="workflow-step-desc">Paste the deployment URL into the Apps Script URL field in the Dashboard and click <strong>Test Connection</strong>. Check your Google Sheet — you should see a new row in the <em>Raw Events</em> tab. The script auto-creates three tabs: <strong>Raw Events</strong> (every action), <strong>Learner Summary</strong> (one row per learner, always current), and <strong>Module Progress</strong> (per learner per module).</div>
-        </div>
-      </div>
-    </div>`;
-  document.getElementById('sheets-guide-modal-content').innerHTML = guide;
-  document.getElementById('sheets-modal').classList.add('show');
-}
+// Google Sheets integration runs silently in the background
 
 // ===== BANK STATEMENT CSV DATA =====
 // All amounts calculated from real demo tenancy data.
@@ -4463,16 +4245,16 @@ const GLOSSARY = [
   { term: 'Tenancy Deposit Scheme (TDS)', category: 'Deposits', def: 'A government-approved third-party scheme that holds or insures tenant deposits. The three main schemes are TDS, DPS, and mydeposits.', example: '{AGENCY} uses TDS to protect all tenant deposits. Scheme ref: TDS-2024-XXXX.' },
   { term: 'Deduction', category: 'Deposits', def: 'An amount withheld from a tenant\'s deposit at end of tenancy for legitimate costs such as cleaning, damage, or unpaid rent. Must be evidenced and agreed or disputed through the scheme.', example: '£200 cleaning deduction from £1,100 deposit → £900 refunded to tenant.' },
   { term: 'Arrears', category: 'Workflow', def: 'Rent that is overdue and unpaid. In Street, arrears are tracked on the tenant ledger. Aged arrears require action such as payment plans, notices, or escalation.', example: 'Tenant owes 6 weeks rent = £1,425 in arrears. Street flags this for action.' },
-  { term: 'Nominal Code', category: 'Accounting', def: 'A reference code assigned to each type of income or expenditure in the chart of accounts. Used to categorise transactions for reporting and accounting purposes.', example: 'Management fee income might be nominal code 4000. Rent received might be code 3000.' },
-  { term: 'Chart of Accounts', category: 'Setup', def: 'The complete list of nominal codes (account codes) used by the agency. Controls how all transactions are categorised in Street\'s accounting module.', example: 'A typical chart includes: Rent Received (3000), Management Fees (4000), VAT Control (2200).' },
+  { term: 'Charge Type', category: 'Accounting', def: 'A categorisation for income or expenditure items in Street. When adding a one-off or recurring charge, you select the charge type which determines how it is classified in the system.', example: 'Adding a tenancy renewal fee on the owner ledger requires selecting the correct charge type from the list.' },
+  { term: 'Charges Settings', category: 'Setup', def: 'Found in Company Settings → Accounting → Charges, this allows you to set default charge amounts per charge type and disable any unused charges across the system.', example: 'Setting a default £120 inventory fee amount means it pre-populates whenever an inventory charge is added.' },
   { term: 'Payment Batch', category: 'Workflow', def: 'A grouped processing run that calculates and sends payments to multiple landlords simultaneously. Run monthly or as required. Each landlord\'s net payment is calculated and dispatched.', example: 'November payment batch: 11 landlords paid, 1 on hold. Total disbursed: £9,240.' },
   { term: 'Payment Hold', category: 'Workflow', def: 'A flag placed on a landlord\'s account to prevent their payment from being processed in the current payment batch. The balance remains in the client account.', example: 'Landlord Dr. Dave Bennett requests a hold for November — his £820 carries to December.' },
   { term: 'Disbursement', category: 'Accounting', def: 'A payment made from the client account to a third party — typically a contractor or landlord. Disbursements must be authorised and tracked in Street.', example: 'Paying Worsley Electrical Ltd £420 for boiler repair is a disbursement from client funds.' },
   { term: 'VAT', category: 'Fees', def: 'Value Added Tax, applied to most agency fees if the agency is VAT registered. Street automatically calculates and adds VAT to management fees and charges when enabled in settings.', example: '£120 management fee + 20% VAT = £144 total charged to landlord.' },
-  { term: 'Accounting Period', category: 'Setup', def: 'A defined date range (usually monthly) during which transactions are posted. At period end, the period is closed (locked) to prevent retrospective changes.', example: 'November accounting period: 01/11 to 30/11. Locked on 30/11 after all tasks complete.' },
-  { term: 'Period Lock', category: 'Setup', def: 'Closing and locking an accounting period in Street prevents any further entries being posted to that period. Done at month-end after all tasks are complete.', example: 'After reconciliation, payments and statements are done — lock November to prevent errors.' },
+  { term: 'Month-End Process', category: 'Setup', def: 'The regular cycle of reconciling the bank statement, allocating all funds, processing landlord and contractor payments, and reviewing ledgers to confirm all balances are correct. Street does not have a period lock — discipline and the correct workflow sequence ensure accuracy.', example: 'November month-end: import statement, reconcile all transactions, allocate funds, pay landlords and contractors, confirm suspense account is empty.' },
+  { term: 'Reconciliation & Allocation Settings', category: 'Setup', def: 'Found in Company Settings → Accounting, this setting controls whether Street auto-allocates incoming tenant payments to outstanding charges on tenancy ledgers. Can be set with priority order for different charge types.', example: 'With auto-allocation enabled and rent charges prioritised, incoming tenant payments are automatically matched to the correct rent period daily.' },
   { term: 'Reversal Entry', category: 'Accounting', def: 'An equal and opposite journal entry used to correct a previously posted transaction. Used instead of deleting entries to maintain a full audit trail.', example: 'Wrong allocation reversed by posting -£950 to incorrect tenancy, then +£950 to correct one.' },
-  { term: 'Audit Trail', category: 'Compliance', def: 'A chronological record of every transaction, change, and action taken in Street Accounting. Used to investigate errors, disputes, and compliance checks.', example: 'The audit trail shows: charge posted at 14:32 on 3rd Nov by Jane Smith, nominal code 4001.' },
+  { term: 'Audit Trail', category: 'Compliance', def: 'A chronological record of every transaction, change, and action taken in Street Accounting. Used to investigate errors, disputes, and compliance checks.', example: 'The audit trail shows: charge posted at 14:32 on 3rd Nov by Jane Smith, charge type: management fee.' },
   { term: 'BACS', category: 'Payments', def: 'Bankers\' Automated Clearing Service — the UK payment system used to make bulk bank transfers. Landlord payment batches in Street can generate BACS files for submission to your bank.', example: 'After confirming the payment batch, Street generates a BACS file for the bank\'s same-day processing.' },
   { term: 'Net Payment', category: 'Payments', def: 'The amount paid to a landlord after all fees, charges, and deductions have been taken. Net = Gross rent - management fee - VAT - charges.', example: 'Gross rent £1,200, fee £144, boiler £280 → Net landlord payment £776.' },
   { term: 'Gross Rent', category: 'Accounting', def: 'The full rent amount received from the tenant before any deductions. The starting point for all calculations on the landlord ledger.', example: 'Gross rent for 268 Greenleach Lane: £950/month. After 12% fee + VAT: landlord receives £813.20.' },
@@ -4619,26 +4401,26 @@ function renderConfidenceWidget(container) {
 // ===== BEHIND THE SCENES DATA =====
 const BTS_DATA = {
   'M5S1': {
-    title: 'What Street Does When You Allocate Rent',
+    title: 'What Street Does During Import, Reconcile & Allocate',
     steps: [
-      'Creates a debit entry on the tenant\'s rent account for the period due',
-      'Posts a credit entry matching the received payment to the tenant ledger',
-      'Automatically calculates the management fee based on configured percentage',
-      'Posts the fee as a debit on the landlord\'s ledger',
-      'Credits the landlord ledger with the net rent amount',
-      'Makes the net balance available for the next payment run',
-      'Updates the client account balance to reflect the allocation'
+      'Imports bank statement CSV and parses each line into transaction records',
+      'Matches imported transactions against existing Street entries using reference and amount',
+      'Categorises each transaction: Linked (exact match), Suggested (probable match), No Match',
+      'On reconciliation: links the bank line to the Street transaction and marks both as reconciled',
+      'On allocation: reads the Owners in Credit tab to show landlords with funds ready to pay out',
+      'Calculates management fee automatically and posts it to the agency ledger',
+      'Credits the landlord ledger with the net rent and makes the balance available for payment run'
     ]
   },
   'M6S1': {
-    title: 'What Street Does When You Add a Charge',
+    title: 'What Street Does When You Add a One-Off Charge',
     steps: [
-      'Creates a charge record linked to the landlord\'s account',
-      'Posts a debit entry on the landlord\'s ledger reducing their balance',
-      'Calculates VAT if applicable and posts separately to the VAT control account',
-      'Makes the charge visible on the next landlord statement',
-      'Reduces the net payment amount in the next payment batch',
-      'Creates an income entry in the agency\'s fee income nominal account'
+      'Creates a charge record linked to the landlord\'s account on the Owner Ledger',
+      'Posts a debit entry on the landlord\'s ledger reducing their available balance',
+      'Calculates VAT if applicable and includes it in the charge total',
+      'Makes the charge immediately visible on the next landlord statement',
+      'Reduces the net payment amount in the next payment batch automatically',
+      'Records the charge description and date for the audit trail'
     ]
   },
   'M7S1': {
@@ -4699,9 +4481,9 @@ const MISTAKES_DATA = {
   ],
   'M6S1': [
     { icon: '⚠️', text: 'Forgetting to apply VAT to a charge when the agency is VAT registered', impact: 'High' },
-    { icon: '⚠️', text: 'Using the wrong nominal code — mixing fees with rent income', impact: 'Medium' },
+    { icon: '⚠️', text: 'Using the wrong charge type — selecting a maintenance charge instead of a fee', impact: 'Medium' },
     { icon: '⚠️', text: 'Adding a charge to the wrong landlord account', impact: 'High' },
-    { icon: '⚠️', text: 'Posting a charge without a description — makes audit trail useless', impact: 'Medium' }
+    { icon: '⚠️', text: 'Posting a charge without a description — makes the audit trail useless', impact: 'Medium' }
   ],
   'M7S1': [
     { icon: '⚠️', text: 'Paying a contractor before confirming the landlord has sufficient balance', impact: 'Critical' },
@@ -5061,7 +4843,7 @@ const AGENCY_SIM_DATA = {
       preview: 'Payments from Prof. Aaron Bailey £1,400 (268 Greenleach Lane), Dr. Sienna Knight £2,600 (222 Manchester Road), Mr. Jason Walker £1,100 partial (142 Ladymere Drive, £100 short) have arrived.',
       priority: 'urgent',
       steps: [
-        'Open Accounting → Receipts → Unallocated',
+        'Open Accounting → Allocate Funds → Tenancies in Credit',
         'Allocate £1,400 to Prof. Aaron Bailey tenancy — 268 Greenleach Lane (Ref: TvLE84DkIQ)',
         'Allocate £2,600 to Dr. Sienna Knight tenancy — 222 Manchester Road (Ref: cgMZoDISq2)',
         'Allocate £1,100 to Mr. Jason Walker tenancy — 142 Ladymere Drive (Ref: aKRzQbqY27) — mark as partial, £100 outstanding',
@@ -5110,7 +4892,7 @@ const AGENCY_SIM_DATA = {
       iconBg: 'rgba(245,158,11,0.1)',
       from: 'Month-End Checklist',
       subject: 'Bank reconciliation required before November close',
-      preview: '{AGENCY} client account balance needs to be reconciled against November bank statement before period can be locked.',
+      preview: '{AGENCY} client account balance needs to be reconciled against November bank statement before month-end can be confirmed.',
       priority: 'normal',
       bankStmt: 'module13',
       steps: [
@@ -5380,7 +5162,6 @@ document.addEventListener('keydown', e => {
   if (e.key === 'ArrowLeft' && e.altKey) prevScenario();
   if (e.key === 'Escape') {
     closeModal();
-    document.getElementById('sheets-modal').classList.remove('show');
     closeGlossaryPanel();
     closeReconGame();
     closeAgencySim();
