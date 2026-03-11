@@ -208,6 +208,89 @@ body {
   background: rgba(255,255,255,0.08);
 }
 
+/* ===== LOGIN STATE PANELS ===== */
+.login-state { display: none; }
+.login-state.active { display: block; }
+
+.login-loading-wrap {
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  min-height: 220px; gap: 20px;
+  text-align: center;
+}
+.login-spinner {
+  width: 48px; height: 48px;
+  border: 3px solid rgba(255,255,255,0.1);
+  border-top-color: var(--purple);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.login-loading-text {
+  color: rgba(255,255,255,0.5);
+  font-size: 14px;
+}
+
+.login-pending-wrap {
+  text-align: center;
+  padding: 8px 0;
+}
+.login-pending-icon {
+  font-size: 52px;
+  margin-bottom: 20px;
+  display: block;
+  animation: fadeUp 0.5s ease both;
+}
+.login-pending-title {
+  color: var(--white);
+  font-size: 22px; font-weight: 700;
+  margin-bottom: 12px;
+  letter-spacing: -0.3px;
+}
+.login-pending-body {
+  color: rgba(255,255,255,0.5);
+  font-size: 14px; line-height: 1.7;
+  margin-bottom: 28px;
+  max-width: 360px;
+  margin-left: auto; margin-right: auto;
+}
+.login-pending-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(245,158,11,0.12);
+  border: 1px solid rgba(245,158,11,0.25);
+  border-radius: 999px;
+  padding: 8px 18px;
+  color: #fbbf24;
+  font-size: 13px; font-weight: 600;
+  margin-bottom: 24px;
+}
+.login-pending-back {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.12);
+  color: rgba(255,255,255,0.4);
+  border-radius: var(--radius-sm);
+  padding: 10px 20px;
+  font-family: inherit; font-size: 13px;
+  cursor: pointer; transition: var(--transition);
+}
+.login-pending-back:hover { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.7); }
+
+.login-return-row {
+  display: flex; gap: 8px; align-items: center;
+}
+.login-return-row .form-input { flex: 1; }
+.btn-return {
+  background: rgba(91,75,231,0.2);
+  border: 1.5px solid rgba(91,75,231,0.4);
+  color: #a78bfa;
+  border-radius: var(--radius-sm);
+  padding: 14px 18px;
+  font-family: inherit; font-size: 14px; font-weight: 600;
+  cursor: pointer; transition: var(--transition);
+  white-space: nowrap;
+}
+.btn-return:hover { background: rgba(91,75,231,0.35); }
+
 /* ===== WELCOME BANNER ===== */
 .welcome-banner {
   background: var(--navy);
@@ -1926,35 +2009,62 @@ body {
 <!-- ===== LOGIN SCREEN ===== -->
 <div id="screen-login" class="screen active">
   <div class="login-card">
-    <div class="login-logo">
-      <div class="login-logo-icon">🏠</div>
-      <div>
-        <span>Street</span>
-        <small>Accounting Simulator</small>
+
+    <!-- ===== STATE: FORM ===== -->
+    <div class="login-state active" id="login-state-form">
+      <div class="login-logo">
+        <div class="login-logo-icon">🏠</div>
+        <div>
+          <span>Street</span>
+          <small>Accounting Simulator</small>
+        </div>
+      </div>
+      <div class="login-title">Welcome to the Advanced Accounting Learning Simulator</div>
+      <p class="login-sub">Master Street Accounting from setup to day-to-day workflows. Earn your certification at the end.</p>
+      <div class="form-group">
+        <label class="form-label">Your Full Name</label>
+        <input type="text" class="form-input" id="login-name" placeholder="e.g. Sarah Thompson" value="">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Email Address</label>
+        <input type="email" class="form-input" id="login-email" placeholder="sarah@agencyname.co.uk" value="">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Agency / Company Name</label>
+        <input type="text" class="form-input" id="login-company" placeholder="e.g. Your Agency Name" value="">
+      </div>
+      <button class="btn btn-primary" onclick="startApp()">
+        <span>Start Learning Journey</span>
+        <span>→</span>
+      </button>
+      <div class="divider-text">returning user?</div>
+      <div class="login-return-row">
+        <input type="email" class="form-input" id="login-email-return" placeholder="Enter your email to resume">
+        <button class="btn-return" onclick="returnLogin()">Resume →</button>
       </div>
     </div>
-    <div class="login-title">Welcome to the Advanced Accounting Learning Simulator</div>
-    <p class="login-sub">Master Street Accounting from setup to day-to-day workflows. Earn your certification at the end.</p>
-    <div class="form-group">
-      <label class="form-label">Your Full Name</label>
-      <input type="text" class="form-input" id="login-name" placeholder="e.g. Sarah Thompson" value="">
+
+    <!-- ===== STATE: LOADING ===== -->
+    <div class="login-state" id="login-state-loading">
+      <div class="login-loading-wrap">
+        <div class="login-spinner"></div>
+        <div class="login-loading-text" id="login-loading-text">Checking your access…</div>
+      </div>
     </div>
-    <div class="form-group">
-      <label class="form-label">Email Address</label>
-      <input type="email" class="form-input" id="login-email" placeholder="sarah@agencyname.co.uk" value="">
+
+    <!-- ===== STATE: PENDING APPROVAL ===== -->
+    <div class="login-state" id="login-state-pending">
+      <div class="login-pending-wrap">
+        <span class="login-pending-icon">📬</span>
+        <div class="login-pending-title" id="pending-title">Registration Received!</div>
+        <div class="login-pending-badge">⏳ Awaiting Approval</div>
+        <p class="login-pending-body" id="pending-body">
+          Thanks for registering to use our Accounting Simulator. Your onboarding specialist will approve your access — please notify us so we can assure you can begin accessing the training sim.
+        </p>
+        <button class="login-pending-back" onclick="setLoginState('form')">← Back to login</button>
+      </div>
     </div>
-    <div class="form-group">
-      <label class="form-label">Agency / Company Name</label>
-      <input type="text" class="form-input" id="login-company" placeholder="e.g. Your Agency Name" value="">
-    </div>
-    <button class="btn btn-primary" onclick="startApp()">
-      <span>Start Learning Journey</span>
-      <span>→</span>
-    </button>
-    <div class="divider-text">or continue existing session</div>
-    <button class="btn" style="width:100%;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.6);font-size:14px;" onclick="loadExistingSession()">
-      🔄 Resume Progress
-    </button>
+
   </div>
 </div>
 
@@ -3374,7 +3484,11 @@ async function saveToSheets(data) {
   const modsDone     = MODULES.filter(m => state.progress[m.id]?.moduleComplete).length;
   const confidScore  = typeof computeConfidenceScore === 'function' ? computeConfidenceScore().overall : '';
 
+  // Build full progress snapshot to keep Learner Summary row in sync
+  const progressSnapshot = JSON.stringify({ user: state.user, progress: state.progress, activity: state.activity, savedAt: new Date().toISOString() });
+
   const payload = {
+    action: 'logEvent',
     // Learner identity
     userId:           state.user.id,
     learnerName:      state.user.name,
@@ -3384,7 +3498,7 @@ async function saveToSheets(data) {
     timestamp:        new Date().toISOString(),
 
     // Event details
-    eventType:        data.type,                          // session_start | help_read | kc | task | reflection | scenario_complete
+    eventType:        data.type,
     moduleId:         data.mId,
     moduleTitle:      mod?.title || '',
     scenarioId:       data.sId,
@@ -3400,7 +3514,7 @@ async function saveToSheets(data) {
     branchChoice:     data.branchChoice || scenProg.branchChoice || '',
     branchCorrect:    data.branchCorrect !== undefined ? String(data.branchCorrect) : (scenProg.branchCorrect !== null ? String(scenProg.branchCorrect) : ''),
 
-    // Proof of practice (summarise filled count)
+    // Proof of practice
     proofInputsFilled: Object.values(scenProg.proofInputs || {}).filter(v => v?.trim().length > 2).length,
 
     // Scores
@@ -3415,7 +3529,10 @@ async function saveToSheets(data) {
     modulesCompleted:    modsDone,
     modulesTotal:        MODULES.length,
     confidenceScore:     confidScore,
-    scenarioComplete:    scenProg.complete ? 'true' : 'false'
+    scenarioComplete:    scenProg.complete ? 'true' : 'false',
+
+    // Full progress JSON — kept in sync on Learner Summary row
+    progressSnapshot:    progressSnapshot
   };
 
   try {
@@ -3459,35 +3576,194 @@ function updateSheetsStatus(connected) {
   if (txt) txt.textContent = connected ? 'Connected' : 'Not configured';
 }
 
-// ===== APP INITIALIZATION =====
-function startApp() {
-  const name = document.getElementById('login-name')?.value?.trim();
-  const email = document.getElementById('login-email')?.value?.trim();
+// ===== LOGIN STATE MANAGER =====
+function setLoginState(state, opts = {}) {
+  ['form', 'loading', 'pending'].forEach(s => {
+    document.getElementById(`login-state-${s}`)?.classList.remove('active');
+  });
+  document.getElementById(`login-state-${state}`)?.classList.add('active');
+
+  if (state === 'loading' && opts.text) {
+    const el = document.getElementById('login-loading-text');
+    if (el) el.textContent = opts.text;
+  }
+  if (state === 'pending') {
+    const title = document.getElementById('pending-title');
+    const body  = document.getElementById('pending-body');
+    if (opts.isNew && title) title.textContent = 'Registration Received!';
+    if (!opts.isNew && title) title.textContent = 'Access Pending';
+    if (body && opts.isNew) body.textContent = 'Thanks for registering to use our Accounting Simulator — your onboarding specialist will approve your access. Please notify us so we can assure you can begin accessing the training sim.';
+    if (body && !opts.isNew) body.textContent = 'Your account has been registered but is still awaiting approval. Please contact your onboarding specialist to confirm access has been enabled.';
+  }
+}
+
+// ===== SHEETS GET (readable, for login/register) =====
+async function callSheetsGet(params) {
+  const url = localStorage.getItem('sheetsUrl') || state.sheetsUrl;
+  if (!url) return null;
+  try {
+    const qs = new URLSearchParams(params).toString();
+    const resp = await fetch(`${url}?${qs}`);
+    if (!resp.ok) return null;
+    return await resp.json();
+  } catch(e) {
+    console.warn('Sheets GET failed:', e.message);
+    return null;
+  }
+}
+
+// ===== SHEETS POST (fire-and-forget, for saves) =====
+async function callSheetsPost(payload) {
+  const url = localStorage.getItem('sheetsUrl') || state.sheetsUrl;
+  if (!url) return;
+  try {
+    await fetch(url, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+  } catch(e) {
+    console.warn('Sheets POST failed:', e.message);
+  }
+}
+
+// ===== SAVE FULL PROGRESS SNAPSHOT =====
+async function saveProgressSnapshot() {
+  if (!state.user?.email) return;
+  const snapshot = { user: state.user, progress: state.progress, activity: state.activity, savedAt: new Date().toISOString() };
+  saveLocal(); // always keep local copy too
+  await callSheetsPost({
+    action: 'saveProgress',
+    email: state.user.email,
+    progress: JSON.stringify(snapshot)
+  });
+}
+
+// ===== RESTORE PROGRESS FROM SNAPSHOT =====
+function restoreProgressFromSnapshot(snapshot) {
+  if (!snapshot) return;
+  try {
+    const d = typeof snapshot === 'string' ? JSON.parse(snapshot) : snapshot;
+    if (d.progress) state.progress = d.progress;
+    if (d.activity) state.activity = d.activity;
+    // Ensure new modules have defaults
+    initProgress();
+  } catch(e) {
+    console.warn('Could not restore progress snapshot:', e.message);
+  }
+}
+
+// ===== NEW USER REGISTRATION FLOW =====
+async function startApp() {
+  const name    = document.getElementById('login-name')?.value?.trim();
+  const email   = document.getElementById('login-email')?.value?.trim();
   const company = document.getElementById('login-company')?.value?.trim();
   if (!name || !email) { alert('Please enter your name and email to continue.'); return; }
+
+  setLoginState('loading', { text: 'Checking your details…' });
+
+  const result = await callSheetsGet({ action: 'register', name, email, company: company || '' });
+
+  if (!result) {
+    // Sheets not reachable — fall back to localStorage-only mode
+    console.warn('Sheets unavailable — falling back to local mode');
+    _localStartApp(name, email, company);
+    return;
+  }
+
+  if (result.status === 'approved') {
+    // Returning approved user — restore their progress from server
+    state.user = {
+      name:      result.user?.name    || name,
+      email:     result.user?.email   || email,
+      company:   result.user?.company || company,
+      id:        result.user?.id      || ('U_' + btoa(email).replace(/=/g,'').slice(0, 12)),
+      startedAt: new Date().toISOString()
+    };
+    initProgress();
+    if (result.progress) restoreProgressFromSnapshot(result.progress);
+    saveLocal();
+    launchApp();
+  } else if (result.status === 'pending') {
+    // Registered but not yet approved
+    setLoginState('pending', { isNew: !result.existing });
+  } else {
+    alert('Something went wrong. Please try again.');
+    setLoginState('form');
+  }
+}
+
+// ===== RETURNING USER EMAIL-ONLY LOGIN =====
+async function returnLogin() {
+  const email = document.getElementById('login-email-return')?.value?.trim();
+  if (!email) { alert('Please enter your email address.'); return; }
+
+  setLoginState('loading', { text: 'Loading your progress…' });
+
+  const result = await callSheetsGet({ action: 'login', email });
+
+  if (!result) {
+    // Sheets not reachable — try localStorage
+    const local = localStorage.getItem('streetSim_v2');
+    if (local) {
+      try {
+        const d = JSON.parse(local);
+        if (d.user?.email?.toLowerCase() === email.toLowerCase()) {
+          state.user = d.user;
+          state.progress = d.progress || {};
+          state.activity = d.activity || [];
+          initProgress();
+          launchApp();
+          return;
+        }
+      } catch(e) {}
+    }
+    alert('Could not connect to the training system. Please check your connection and try again.');
+    setLoginState('form');
+    return;
+  }
+
+  if (result.status === 'approved') {
+    state.user = {
+      name:      result.user?.name    || email,
+      email:     result.user?.email   || email,
+      company:   result.user?.company || '',
+      id:        result.user?.id      || ('U_' + btoa(email).replace(/=/g,'').slice(0, 12)),
+      startedAt: new Date().toISOString()
+    };
+    initProgress();
+    if (result.progress) restoreProgressFromSnapshot(result.progress);
+    saveLocal();
+    launchApp();
+  } else if (result.status === 'pending') {
+    setLoginState('pending', { isNew: false });
+  } else if (result.status === 'not_found') {
+    alert('No account found with that email. Please register using the form above.');
+    setLoginState('form');
+  } else {
+    alert('Something went wrong. Please try again.');
+    setLoginState('form');
+  }
+}
+
+// ===== LOCAL FALLBACK (no sheets) =====
+function _localStartApp(name, email, company) {
   state.user = {
     name, email, company,
     id: 'U_' + btoa(email).replace(/=/g,'').slice(0, 12),
     startedAt: new Date().toISOString()
   };
   initProgress();
-  loadLocal(); // load any saved progress
-  initProgress(); // ensure new modules have defaults
+  loadLocal();
+  initProgress();
   launchApp();
-}
-
-function loadExistingSession() {
-  if (loadLocal() && state.user.name) {
-    initProgress();
-    launchApp();
-  } else {
-    alert('No saved session found. Please enter your details to start.');
-  }
 }
 
 function launchApp() {
   document.getElementById('screen-login').classList.remove('active');
   document.getElementById('screen-app').classList.add('active');
+  setLoginState('form'); // reset for next logout
   document.getElementById('sidebar-name').textContent = state.user.name;
   document.getElementById('sidebar-company').textContent = state.user.company || 'Street Learner';
   const initials = state.user.name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
@@ -6213,8 +6489,10 @@ function dismissWelcomeAndStart() {
 }
 
 // ===== LOGOUT =====
-function logout() {
-  if (!confirm('Are you sure you want to log out? Your progress has been saved.')) return;
+async function logout() {
+  if (!confirm('Are you sure you want to log out? Your progress will be saved.')) return;
+  // Save full progress snapshot to sheets before clearing
+  await saveProgressSnapshot();
   // Reset runtime state
   state.user = { name: '', email: '', company: '', id: '' };
   state.currentModule = 0;
@@ -6226,16 +6504,20 @@ function logout() {
   // Switch screens
   document.getElementById('screen-app').classList.remove('active');
   document.getElementById('screen-login').classList.add('active');
+  setLoginState('form');
   // Clear login form
   const nameEl = document.getElementById('login-name');
   const emailEl = document.getElementById('login-email');
   const companyEl = document.getElementById('login-company');
+  const returnEl = document.getElementById('login-email-return');
   if (nameEl) nameEl.value = '';
   if (emailEl) emailEl.value = '';
   if (companyEl) companyEl.value = '';
+  if (returnEl) returnEl.value = '';
 }
 
 // ===== KEYBOARD SHORTCUTS =====
+
 document.addEventListener('keydown', e => {
   if (e.key === 'ArrowRight' && e.altKey) nextScenario();
   if (e.key === 'ArrowLeft' && e.altKey) prevScenario();
@@ -6249,7 +6531,224 @@ document.addEventListener('keydown', e => {
   if (e.key === 'g' && e.altKey) openGlossaryPanel();
   if (e.key === 'r' && e.altKey) openReconGame();
   if (e.key === 'f' && e.altKey) openDemoFilesLibrary();
-});
+}); — Copy everything below into your Apps Script editor
+  (Extensions → Apps Script in your Google Sheet) then click Deploy →
+  New Deployment → Web App → Execute as: Me → Who has access: Anyone
+  Copy the deployment URL into the "Sheets URL" field in the simulator.
+
+  REQUIRED SHEET TABS:
+    • "Learner Summary"  — one row per learner, approval column included
+    • "Activity Log"     — one row per event (existing behaviour)
+=======================================================================
+
+const LEARNERS_TAB = 'Learner Summary';
+const EVENTS_TAB   = 'Activity Log';
+
+// ── Columns for Learner Summary (1-indexed) ──────────────────────────
+// A=1 Timestamp | B=2 Learner ID | C=3 Name | D=4 Email | E=5 Company
+// F=6 Approved  | G=7 Progress JSON | H=8 Last Active
+
+function doGet(e) {
+  const action = e.parameter.action || '';
+  const ss     = SpreadsheetApp.getActiveSpreadsheet();
+  let result   = { status: 'error', message: 'Unknown action' };
+
+  try {
+    if (action === 'register') {
+      result = handleRegister(ss, e.parameter);
+    } else if (action === 'login') {
+      result = handleLogin(ss, e.parameter);
+    } else {
+      result = { status: 'ok' };
+    }
+  } catch(err) {
+    result = { status: 'error', message: err.message };
+  }
+
+  return ContentService
+    .createTextOutput(JSON.stringify(result))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
+function doPost(e) {
+  const ss   = SpreadsheetApp.getActiveSpreadsheet();
+  let   data = {};
+  try { data = JSON.parse(e.postData.contents); } catch(err) {}
+
+  let result = { status: 'ok' };
+  try {
+    const action = data.action || 'logEvent';
+    if (action === 'saveProgress') {
+      result = handleSaveProgress(ss, data);
+    } else {
+      result = handleLogEvent(ss, data);
+    }
+  } catch(err) {
+    result = { status: 'error', message: err.message };
+  }
+
+  return ContentService
+    .createTextOutput(JSON.stringify(result))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
+// ── Ensure sheets exist with correct headers ─────────────────────────
+function ensureLearnerSheet(ss) {
+  let sheet = ss.getSheetByName(LEARNERS_TAB);
+  if (!sheet) {
+    sheet = ss.insertSheet(LEARNERS_TAB);
+    const headers = ['Timestamp','Learner ID','Name','Email','Company','Approved','Progress JSON','Last Active'];
+    sheet.appendRow(headers);
+    sheet.getRange(1, 1, 1, headers.length).setFontWeight('bold').setBackground('#12152A').setFontColor('#ffffff');
+    sheet.setColumnWidth(6, 100); // Approved column
+    sheet.setColumnWidth(7, 40);  // Progress JSON (keep narrow — it's large)
+  }
+  return sheet;
+}
+
+function ensureEventSheet(ss) {
+  let sheet = ss.getSheetByName(EVENTS_TAB);
+  if (!sheet) {
+    sheet = ss.insertSheet(EVENTS_TAB);
+    const headers = ['Timestamp','Learner ID','Name','Email','Company','Event Type','Module ID','Module Title',
+                     'Scenario ID','Scenario Title','Task ID','Task Done','KC Score',
+                     'Overall Progress %','Modules Completed','Confidence Score'];
+    sheet.appendRow(headers);
+    sheet.getRange(1, 1, 1, headers.length).setFontWeight('bold').setBackground('#12152A').setFontColor('#ffffff');
+  }
+  return sheet;
+}
+
+// ── Find a learner row by email (returns {row, data} or null) ─────────
+function findLearner(sheet, email) {
+  const values = sheet.getDataRange().getValues();
+  for (let i = 1; i < values.length; i++) {
+    if (String(values[i][3]).toLowerCase() === email.toLowerCase()) {
+      return { row: i + 1, data: values[i] };
+    }
+  }
+  return null;
+}
+
+function isApproved(learnerData) {
+  const v = learnerData[5];
+  return v === true || String(v).toUpperCase() === 'TRUE';
+}
+
+function parseProgress(learnerData) {
+  try { return learnerData[6] ? JSON.parse(learnerData[6]) : null; } catch(e) { return null; }
+}
+
+// ── REGISTER: called on first-time login form submit ─────────────────
+function handleRegister(ss, params) {
+  const sheet    = ensureLearnerSheet(ss);
+  const email    = (params.email || '').trim();
+  const name     = (params.name  || '').trim();
+  const company  = (params.company || '').trim();
+  if (!email) return { status: 'error', message: 'Email required' };
+
+  const existing = findLearner(sheet, email);
+
+  if (existing) {
+    // Email already registered — return their status & progress
+    const approved = isApproved(existing.data);
+    return {
+      status:   approved ? 'approved' : 'pending',
+      existing: true,
+      progress: parseProgress(existing.data),
+      user: {
+        name:    existing.data[2],
+        email:   existing.data[3],
+        company: existing.data[4],
+        id:      existing.data[1]
+      }
+    };
+  }
+
+  // New user — add row with Approved = FALSE
+  const userId = 'U_' + Utilities.base64Encode(email).replace(/=/g,'').slice(0, 12);
+  sheet.appendRow([
+    new Date().toISOString(), // A Timestamp
+    userId,                   // B Learner ID
+    name,                     // C Name
+    email,                    // D Email
+    company,                  // E Company
+    false,                    // F Approved  ← trainer sets this to TRUE in the sheet
+    '',                       // G Progress JSON
+    new Date().toISOString()  // H Last Active
+  ]);
+
+  return { status: 'pending', existing: false };
+}
+
+// ── LOGIN: called on returning-user email-only login ──────────────────
+function handleLogin(ss, params) {
+  const sheet  = ensureLearnerSheet(ss);
+  const email  = (params.email || '').trim();
+  if (!email) return { status: 'error', message: 'Email required' };
+
+  const existing = findLearner(sheet, email);
+  if (!existing) return { status: 'not_found' };
+
+  // Update last active timestamp
+  sheet.getRange(existing.row, 8).setValue(new Date().toISOString());
+
+  const approved = isApproved(existing.data);
+  return {
+    status:   approved ? 'approved' : 'pending',
+    progress: parseProgress(existing.data),
+    user: {
+      name:    existing.data[2],
+      email:   existing.data[3],
+      company: existing.data[4],
+      id:      existing.data[1]
+    }
+  };
+}
+
+// ── SAVE PROGRESS: full state snapshot written to Learner Summary ─────
+function handleSaveProgress(ss, data) {
+  const sheet = ensureLearnerSheet(ss);
+  const email = (data.email || '').trim();
+  if (!email) return { status: 'error', message: 'Email required' };
+
+  const existing = findLearner(sheet, email);
+  if (!existing) return { status: 'not_found' };
+
+  sheet.getRange(existing.row, 7).setValue(data.progress || '');
+  sheet.getRange(existing.row, 8).setValue(new Date().toISOString());
+  return { status: 'saved' };
+}
+
+// ── LOG EVENT: activity row + keep progress snapshot in sync ──────────
+function handleLogEvent(ss, data) {
+  const evSheet = ensureEventSheet(ss);
+  evSheet.appendRow([
+    data.timestamp || new Date().toISOString(),
+    data.userId, data.learnerName, data.learnerEmail, data.learnerCompany,
+    data.eventType, data.moduleId, data.moduleTitle,
+    data.scenarioId, data.scenarioTitle,
+    data.taskId, data.taskDone, data.kcScore,
+    data.overallProgressPct, data.modulesCompleted, data.confidenceScore
+  ]);
+
+  // Keep the Progress JSON column in Learner Summary up to date too
+  if (data.progressSnapshot && data.learnerEmail) {
+    const lSheet = ensureLearnerSheet(ss);
+    const learner = findLearner(lSheet, data.learnerEmail);
+    if (learner) {
+      lSheet.getRange(learner.row, 7).setValue(data.progressSnapshot);
+      lSheet.getRange(learner.row, 8).setValue(new Date().toISOString());
+    }
+  }
+
+  return { status: 'logged' };
+}
+
+=======================================================================
+  END OF APPS SCRIPT
+=======================================================================
+*/
 </script>
 </body>
 </html>
