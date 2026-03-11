@@ -1710,6 +1710,7 @@ body {
         <button class="sidebar-footer-btn" onclick="showView('dashboard')">📊 Dashboard</button>
         <button class="sidebar-footer-btn" onclick="showView('certificate')">🏅 Cert</button>
         <button class="sidebar-footer-btn" onclick="openGlossaryPanel()" title="Alt+G">📖</button>
+        <button class="sidebar-footer-btn" onclick="openDemoFilesLibrary()" title="Demo Files" style="color:rgba(91,75,231,0.9)">📁</button>
       </div>
     </nav>
 
@@ -1730,6 +1731,7 @@ body {
           </div>
           <button class="btn btn-ghost btn-sm" id="recon-topbar-btn" onclick="openReconGame()" style="display:none" title="Alt+R">⚖️ Recon Trainer</button>
           <button class="btn btn-ghost btn-sm" id="agency-topbar-btn" onclick="openAgencySim()" style="display:none" title="Agency Simulation">🏢 Agency Sim</button>
+          <button class="btn btn-ghost btn-sm" id="files-topbar-btn" onclick="openDemoFilesLibrary()" style="display:none" title="Demo Files Library">📁 Demo Files</button>
           <div class="topbar-view-switcher">
             <button class="view-tab active" onclick="showView('learning')" data-view="learning">📚 Learn</button>
             <button class="view-tab" onclick="showView('dashboard')" data-view="dashboard">📊 Dashboard</button>
@@ -1801,6 +1803,22 @@ body {
     <div class="modal-actions">
       <button class="btn btn-ghost" onclick="closeModal()">Review</button>
       <button class="btn btn-primary" id="modal-next-btn" onclick="nextModule()">Next Module →</button>
+    </div>
+  </div>
+</div>
+
+<!-- DEMO FILES LIBRARY PANEL -->
+<div class="glossary-overlay" id="demo-files-overlay" onclick="closeDemoFilesPanel(event)">
+  <div class="glossary-panel" style="width:820px;max-width:96vw" onclick="event.stopPropagation()">
+    <div class="glossary-header">
+      <div>
+        <div class="glossary-title">📁 Demo Files Library</div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.4);margin-top:2px">Bank statements &amp; invoices for your demo account</div>
+      </div>
+      <button class="btn btn-ghost btn-icon" style="color:white;border-color:rgba(255,255,255,0.15)" onclick="closeDemoFilesLibrary()">✕</button>
+    </div>
+    <div style="padding:20px;overflow-y:auto;max-height:calc(90vh - 80px)" id="demo-files-body">
+      <!-- Populated by JS -->
     </div>
   </div>
 </div>
@@ -3605,8 +3623,10 @@ function renderTasksStep(m, s, sp) {
   const allDone = s.tasks.every(t => sp.tasks?.[t.id]);
   const doneCount = s.tasks.filter(t => sp.tasks?.[t.id]).length;
   const typeLabels = { read: 'Read', demo: 'Demo Task', confirm: 'Confirm' };
-  const bankStatementMap = { 'M9S1': 'module9', 'M13S1': 'module13', 'M15S1': 'capstone' };
+  const bankStatementMap = { 'M5S1': 'module5', 'M6S1': 'module6', 'M9S1': 'module9', 'M10S1': 'module10', 'M11S1': 'module11', 'M13S1': 'module13', 'M15S1': 'capstone' };
+  const demoInvoiceMap = { 'M6S1': 'inventory_fee', 'M7S1': 'mhs_441', 'M13S1': 'mhs_509', 'M15S1': 'worsley_electric' };
   const bankStmtId = bankStatementMap[s.id];
+  const invoiceId = demoInvoiceMap[s.id];
   return `
     <div class="fade-up">
       <div class="section-title mb-16">📋 Demo Account <span class="accent">Tasks</span></div>
@@ -3615,6 +3635,7 @@ function renderTasksStep(m, s, sp) {
         <div>Complete each task inside the Street demo account, then tick it off here. Only mark complete once you have actually done it.</div>
       </div>
       ${bankStmtId ? bankStatementCard(bankStmtId) : ''}
+      ${invoiceId ? demoInvoiceCard(invoiceId) : ''}
       <div class="card mb-16">
         <div class="card-header">
           <div class="card-title"><div class="card-icon">✅</div>Task Checklist</div>
@@ -4178,6 +4199,60 @@ const BANK_STATEMENTS = {
 30/11/2024,BGC-00115,Bank Service Charge - November,,15.00
 30/11/2024,CLOSING,Closing Balance - £13271.40,,`
   },
+  module5: {
+    filename: 'October_Rent_Receipts_JBS_Module5_ImportPractice.csv',
+    label: 'October — {AGENCY} Client Account (Module 5 — Import & Allocate)',
+    scenario: 'Use this statement to practise the full Import → Reconcile → Allocate flow. Three rent receipts have arrived: Prof. Aaron Bailey £1,400, Mr. Dan Anderson £1,800, and Mr. Jason Walker £1,200. Import the CSV into Street via Accounting → Bank Accounts → Import Statement, then reconcile and allocate each receipt.',
+    csv: `Date,Reference,Payee,Credit (£),Debit (£)
+01/10/2024,OB-001,Opening Balance - {AGENCY} Client Account,9800.00,
+03/10/2024,TFR-46001,Prof. Aaron Bailey - 268 Greenleach Lane Oct Rent (Ref TvLE84DkIQ),1400.00,
+04/10/2024,TFR-46002,Mr. Dan Anderson - 20 Vicars Street Oct Rent (Ref HzAN6GirLG),1800.00,
+05/10/2024,TFR-46003,Mr. Jason Walker - 142 Ladymere Drive Oct Rent (Ref aKRzQbqY27),1200.00,
+31/10/2024,CLOSING,Closing Balance - £14200.00,,`
+  },
+  module6: {
+    filename: 'October_Statement_JBS_Module6_Charges.csv',
+    label: 'October — {AGENCY} Client Account (Module 6 — Fees & Charges)',
+    scenario: 'This statement shows rent received plus the agency management fee deductions already posted in Street. Compare the gross rent receipts against the net landlord amounts to see the fee calculation in action. Use alongside the charges workflow to confirm each deduction is correctly recorded.',
+    csv: `Date,Reference,Payee,Credit (£),Debit (£)
+01/10/2024,OB-001,Opening Balance - {AGENCY} Client Account,9800.00,
+03/10/2024,TFR-46001,Prof. Aaron Bailey - 268 Greenleach Lane Oct Rent (Ref TvLE84DkIQ),1400.00,
+03/10/2024,FEE-46001,Management Fee 12% + VAT - Prof. Aaron Bailey Oct,,201.60
+04/10/2024,TFR-46002,Mr. Dan Anderson - 20 Vicars Street Oct Rent (Ref HzAN6GirLG),1800.00,
+04/10/2024,FEE-46002,Management Fee 12% + VAT - Mr. Dan Anderson Oct,,259.20
+05/10/2024,TFR-46003,Dr. Sienna Knight - 222 Manchester Road Oct Rent (Ref cgMZoDISq2),2600.00,
+05/10/2024,FEE-46003,Management Fee 12% + VAT - Dr. Sienna Knight Oct,,374.40
+31/10/2024,CLOSING,Closing Balance - £14265.80,,`
+  },
+  module10: {
+    filename: 'September_Bank_Statement_JBS_Module10_Suspense.csv',
+    label: 'September — {AGENCY} Client Account (Module 10 — Suspense Account)',
+    scenario: 'This statement contains a mystery payment of £975 with the reference "RENT SEP" — not enough to match any tenancy automatically. It will land in the suspense account. Practice navigating to Accounting → Suspense Account, investigating the payment, contacting the tenant, and allocating it to the correct tenancy once identified. Also note the bank charge that is easy to miss.',
+    csv: `Date,Reference,Payee,Credit (£),Debit (£)
+01/09/2024,OB-001,Opening Balance - {AGENCY} Client Account,8420.00,
+02/09/2024,TFR-43001,Prof. Aaron Bailey - 268 Greenleach Lane (Ref TvLE84DkIQ),1400.00,
+03/09/2024,TFR-43002,Mr. Dan Anderson - 20 Vicars Street (Ref HzAN6GirLG),1800.00,
+05/09/2024,TFR-43003,RENT SEP - 975.00 - UNKNOWN REF,975.00,
+08/09/2024,TFR-43004,Dr. Sienna Knight - 222 Manchester Rd (Ref cgMZoDISq2),2600.00,
+25/09/2024,PAY-20011,Prof. Scarlett Cooper - Sep Landlord Payment,,1198.40
+25/09/2024,PAY-20012,Mrs. Alexandra Scott - Sep Landlord Payment,,2225.60
+30/09/2024,BGC-00089,Bank Service Charge - September,,15.00
+30/09/2024,CLOSING,Closing Balance - £11756.00,,`
+  },
+  module11: {
+    filename: 'August_Statement_JBS_Module11_Deposits.csv',
+    label: 'August — {AGENCY} Client Account (Module 11 — Deposits)',
+    scenario: 'This statement covers a full deposit lifecycle: Prof. Mandy Price paid a £1,920 deposit on move-in (must be protected within 30 days), and at end of tenancy a net refund of £1,620 is paid back (£300 deduction for cleaning agreed). Practice recording the deposit receipt, protecting it with TDS, posting the deduction, and processing the refund.',
+    csv: `Date,Reference,Payee,Credit (£),Debit (£)
+01/08/2024,OB-001,Opening Balance - {AGENCY} Client Account,7200.00,
+02/08/2024,DEP-38001,Prof. Mandy Price - Deposit 38 Partington Street (Ref PMP-001),1920.00,
+03/08/2024,TFR-38001,Prof. Aaron Bailey - 268 Greenleach Lane Aug Rent (Ref TvLE84DkIQ),1400.00,
+04/08/2024,TFR-38002,Mr. Dan Anderson - 20 Vicars Street Aug Rent (Ref HzAN6GirLG),1800.00,
+25/08/2024,PAY-19001,Prof. Scarlett Cooper - Aug Landlord Payment,,1198.40
+25/08/2024,PAY-19002,Mr. Danielle Walker - Aug Landlord Payment,,1284.00
+28/08/2024,DEP-REFUND,Prof. Mandy Price - Deposit Refund (net of £300 deduction),,1620.00
+31/08/2024,CLOSING,Closing Balance - £8217.60,,`
+  },
   capstone: {
     filename: 'November_Bank_Statement_JBS_Capstone.csv',
     label: 'November — {AGENCY} Client Account (Capstone)',
@@ -4228,6 +4303,358 @@ function bankStatementCard(id) {
       </div>
     </div>`);
 }
+// ===== DEMO INVOICES =====
+const DEMO_INVOICES = {
+  mhs_441: {
+    filename: 'Invoice_MHS-2024-441_Boiler_Repair_268_Greenleach_Lane.html',
+    label: 'Manchester Heating Solutions — Invoice #MHS-2024-441',
+    scenario: 'M7: Post this invoice for the emergency boiler repair at 268 Greenleach Lane. Navigate to the property → Maintenance → Work Order #WO-441, then upload and post the invoice. Net: £280 + VAT (£56) = £336 total.',
+    module: 'M7',
+    contractor: 'Manchester Heating Solutions',
+    property: '268 Greenleach Lane, Worsley M28 1UZ',
+    landlord: 'Prof. Scarlett Cooper',
+    workOrder: 'WO-441',
+    invoiceNum: 'MHS-2024-441',
+    date: '4th November 2024',
+    due: '18th November 2024',
+    workDate: '3rd November 2024',
+    lines: [
+      { desc: 'Emergency call-out charge — boiler fault diagnosis\nEngineer attended 9:15am, diagnosed pressure fault', qty: '1', unit: '£95.00', total: '£95.00' },
+      { desc: 'Labour — 2.5 hrs repair work\nPressure valve replacement, system flush and re-pressurise', qty: '2.5 hrs', unit: '£60.00/hr', total: '£150.00' },
+      { desc: 'Parts — Pressure relief valve + expansion vessel seal kit\nWorcester Bosch compatible, OEM specification', qty: '1 set', unit: '£35.00', total: '£35.00' }
+    ],
+    net: '£280.00', vat: '£56.00', total: '£336.00',
+    bankSort: '20-44-98', bankAcc: '31876542',
+    vatReg: 'GB 312 8874 45', companyNo: '08763219',
+    address: '14 Trafford Park Road, Manchester M17 1JJ',
+    phone: '0161 447 2288', email: 'info@manchesterheating.co.uk'
+  },
+  mhs_509: {
+    filename: 'Invoice_MHS-2024-509_Boiler_Service_268_Greenleach_Lane.html',
+    label: 'Manchester Heating Solutions — Invoice #MHS-2024-509',
+    scenario: 'M13: Post this second Manchester Heating Solutions invoice for a boiler service at the same property. This is the November invoice referenced in the Module 13 bank statement. Net: £280 + VAT (£56) = £336 total. Reference #WO-509.',
+    module: 'M13',
+    contractor: 'Manchester Heating Solutions',
+    property: '268 Greenleach Lane, Worsley M28 1UZ',
+    landlord: 'Prof. Scarlett Cooper',
+    workOrder: 'WO-509',
+    invoiceNum: 'MHS-2024-509',
+    date: '10th November 2024',
+    due: '24th November 2024',
+    workDate: '9th November 2024',
+    lines: [
+      { desc: 'Annual boiler service & safety inspection\nFull service including combustion analysis and flue test', qty: '1', unit: '£120.00', total: '£120.00' },
+      { desc: 'Labour — 1.5 hrs service work\nIncluding full clean and efficiency check', qty: '1.5 hrs', unit: '£60.00/hr', total: '£90.00' },
+      { desc: 'Parts — Service kit (gaskets, seals, inhibitor top-up)\nBoiler specific service components', qty: '1 kit', unit: '£70.00', total: '£70.00' }
+    ],
+    net: '£280.00', vat: '£56.00', total: '£336.00',
+    bankSort: '20-44-98', bankAcc: '31876542',
+    vatReg: 'GB 312 8874 45', companyNo: '08763219',
+    address: '14 Trafford Park Road, Manchester M17 1JJ',
+    phone: '0161 447 2288', email: 'info@manchesterheating.co.uk'
+  },
+  worsley_electric: {
+    filename: 'Invoice_WEL-2024-188_Emergency_Repair_222_Manchester_Road.html',
+    label: 'Worsley Electrical Ltd — Invoice #WEL-2024-188',
+    scenario: 'M15 Capstone: Post this invoice for the emergency electrical repair at 222 Manchester Road. Net: £150 + VAT (£30) = £180 total. Landlord: Mrs. Alexandra Scott. Confirm the debit on her ledger.',
+    module: 'M15',
+    contractor: 'Worsley Electrical Ltd',
+    property: '222 Manchester Road, Eccles M30 0HA',
+    landlord: 'Mrs. Alexandra Scott',
+    workOrder: 'WO-188',
+    invoiceNum: 'WEL-2024-188',
+    date: '9th December 2024',
+    due: '23rd December 2024',
+    workDate: '8th December 2024',
+    lines: [
+      { desc: 'Emergency call-out — RCD trip fault investigation\nCircuit breaker fault on ring main, socket circuit', qty: '1', unit: '£65.00', total: '£65.00' },
+      { desc: 'Labour — 1.5 hrs electrical repair\nReplacement RCD unit, testing and certification', qty: '1.5 hrs', unit: '£55.00/hr', total: '£82.50' },
+      { desc: 'Parts — RCD unit + consumables', qty: '1', unit: '£2.50', total: '£2.50' }
+    ],
+    net: '£150.00', vat: '£30.00', total: '£180.00',
+    bankSort: '30-91-56', bankAcc: '42198763',
+    vatReg: 'GB 289 4421 07', companyNo: '10234876',
+    address: '7 Barton Road Industrial Estate, Worsley M28 2RB',
+    phone: '0161 793 4410', email: 'billing@worsleyelectrical.co.uk'
+  },
+  inventory_fee: {
+    filename: 'Invoice_InventoryPro_INV-2024-773_38_Partington_Street.html',
+    label: 'InventoryPro Ltd — Invoice #INV-2024-773',
+    scenario: 'M6: Post this inventory fee charge against Prof. Mandy Price\'s tenancy at 38 Partington Street. Navigate to the Landlord ledger → Add Charge → Inventory Fee. Net: £120 + VAT (£24) = £144 total.',
+    module: 'M6',
+    contractor: 'InventoryPro Ltd',
+    property: '38 Partington Street, Eccles M30 1LQ',
+    landlord: 'Prof. Mandy Price Landlord',
+    workOrder: 'N/A',
+    invoiceNum: 'INV-2024-773',
+    date: '1st October 2024',
+    due: '15th October 2024',
+    workDate: '30th September 2024',
+    lines: [
+      { desc: 'Check-in inventory report — 38 Partington Street\nFull room-by-room condition schedule, photographic evidence', qty: '1', unit: '£85.00', total: '£85.00' },
+      { desc: 'Digital report production and distribution\nPDF report emailed to landlord, tenant and agency', qty: '1', unit: '£35.00', total: '£35.00' }
+    ],
+    net: '£120.00', vat: '£24.00', total: '£144.00',
+    bankSort: '60-23-14', bankAcc: '19837265',
+    vatReg: 'GB 401 2218 99', companyNo: '12091834',
+    address: '22 Princess Road, Manchester M14 4LG',
+    phone: '0161 882 6600', email: 'invoices@inventorypro.co.uk'
+  }
+};
+
+function generateInvoiceHTML(inv) {
+  const linesHTML = inv.lines.map(l => `
+    <tr>
+      <td style="padding:14px 16px;border-bottom:1px solid #eee;font-size:14px;line-height:1.5">${l.desc.replace(/\n/g,'<br><span style="font-size:12px;color:#888">')}</span></td>
+      <td style="padding:14px 16px;border-bottom:1px solid #eee;font-size:14px;text-align:center">${l.qty}</td>
+      <td style="padding:14px 16px;border-bottom:1px solid #eee;font-size:14px;text-align:right">${l.unit}</td>
+      <td style="padding:14px 16px;border-bottom:1px solid #eee;font-size:14px;text-align:right;font-weight:600">${l.total}</td>
+    </tr>`).join('');
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Invoice ${inv.invoiceNum}</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:Arial,Helvetica,sans-serif;max-width:800px;margin:40px auto;padding:0 24px;color:#1a1a1a;background:#fff}
+  @media print{body{margin:0;padding:16px}}
+  .header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:36px;padding-bottom:20px;border-bottom:3px solid #5B4BE7}
+  .co-name{font-size:22px;font-weight:700;color:#5B4BE7}
+  .co-details{font-size:12px;color:#666;margin-top:6px;line-height:1.7}
+  .inv-label{text-align:right}
+  .inv-title{font-size:30px;font-weight:300;color:#333;letter-spacing:3px;text-transform:uppercase}
+  .inv-num{font-size:15px;font-weight:700;color:#5B4BE7;margin-top:6px}
+  .inv-status{display:inline-block;background:#f0f0ff;border:1.5px solid #5B4BE7;color:#5B4BE7;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;text-transform:uppercase;letter-spacing:0.5px;margin-left:6px}
+  .inv-date{font-size:12px;color:#888;margin-top:4px;line-height:1.6}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:32px;margin-bottom:32px}
+  .sec-title{font-size:10px;text-transform:uppercase;letter-spacing:1.2px;color:#aaa;margin-bottom:8px;font-weight:700}
+  .sec-body{font-size:13px;color:#444;line-height:1.8}
+  .sec-body strong{color:#1a1a1a}
+  table{width:100%;border-collapse:collapse;margin-bottom:20px}
+  thead tr{background:#f8f8f8}
+  th{padding:10px 16px;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;color:#888;font-weight:700}
+  .totals{display:flex;justify-content:flex-end;margin-top:4px;margin-bottom:28px}
+  .totals-inner{width:260px}
+  .t-row{display:flex;justify-content:space-between;padding:7px 0;font-size:13px;color:#555;border-bottom:1px solid #f0f0f0}
+  .t-row.grand{border-top:2px solid #5B4BE7;border-bottom:none;margin-top:6px;padding-top:10px;font-weight:700;font-size:16px;color:#5B4BE7}
+  .bank{background:#f9f8ff;border:1px solid #e8e4ff;border-radius:6px;padding:14px 18px;margin-bottom:20px;font-size:12px;color:#555;line-height:1.8}
+  .bank strong{color:#333}
+  .wo-badge{display:inline-flex;align-items:center;gap:6px;background:#eef2ff;border:1px solid #c7d2fe;border-radius:5px;padding:4px 10px;font-size:12px;font-weight:600;color:#4338ca;margin-top:8px}
+  .footer{margin-top:20px;font-size:11px;color:#bbb;text-align:center;border-top:1px solid #eee;padding-top:14px}
+  .print-btn{display:block;margin:0 auto 20px;padding:10px 24px;background:#5B4BE7;color:white;border:none;border-radius:6px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit}
+  @media print{.print-btn{display:none}}
+</style>
+</head>
+<body>
+<button class="print-btn" onclick="window.print()">🖨️ Print / Save as PDF</button>
+<div class="header">
+  <div>
+    <div class="co-name">${inv.contractor}</div>
+    <div class="co-details">
+      ${inv.address}<br>
+      Tel: ${inv.phone} · ${inv.email}<br>
+      VAT Reg: ${inv.vatReg} · Company No: ${inv.companyNo}
+    </div>
+  </div>
+  <div class="inv-label">
+    <div class="inv-title">Invoice</div>
+    <div class="inv-num">#${inv.invoiceNum} <span class="inv-status">Awaiting Payment</span></div>
+    <div class="inv-date">Invoice Date: ${inv.date}<br>Payment Due: ${inv.due}</div>
+  </div>
+</div>
+<div class="grid">
+  <div>
+    <div class="sec-title">Invoice To</div>
+    <div class="sec-body">
+      <strong>[Your Agency Name]</strong><br>
+      Property Management<br>
+      Re: <strong>${inv.property}</strong><br>
+      Landlord: ${inv.landlord}
+      ${inv.workOrder !== 'N/A' ? `<div class="wo-badge">🔧 Work Order #${inv.workOrder}</div>` : ''}
+    </div>
+  </div>
+  <div>
+    <div class="sec-title">Work Details</div>
+    <div class="sec-body">
+      <strong>${inv.lines[0].desc.split('\n')[0]}</strong><br>
+      Date of Work: ${inv.workDate}<br>
+      Property: ${inv.property}<br>
+      Invoice Ref: ${inv.invoiceNum}
+    </div>
+  </div>
+</div>
+<table>
+  <thead>
+    <tr>
+      <th style="width:55%">Description</th>
+      <th style="text-align:center">Qty</th>
+      <th style="text-align:right">Unit Price</th>
+      <th style="text-align:right">Amount</th>
+    </tr>
+  </thead>
+  <tbody>${linesHTML}</tbody>
+</table>
+<div class="totals">
+  <div class="totals-inner">
+    <div class="t-row"><span>Subtotal (net)</span><span>${inv.net}</span></div>
+    <div class="t-row"><span>VAT @ 20%</span><span>${inv.vat}</span></div>
+    <div class="t-row grand"><span>Total Due</span><span>${inv.total}</span></div>
+  </div>
+</div>
+<div class="bank">
+  <strong>Payment via BACS:</strong> Sort Code: ${inv.bankSort} · Account: ${inv.bankAcc}<br>
+  Reference: <strong>${inv.invoiceNum}</strong> · Payee: ${inv.contractor}<br>
+  Please quote invoice number as payment reference.
+</div>
+<div class="footer">${inv.contractor} · VAT Reg: ${inv.vatReg} · All work subject to standard terms and conditions</div>
+</body>
+</html>`;
+}
+
+function downloadDemoInvoice(id) {
+  const inv = DEMO_INVOICES[id];
+  if (!inv) return;
+  const html = generateInvoiceHTML(inv);
+  const blob = new Blob([html], { type: 'text/html;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = inv.filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function demoInvoiceCard(id) {
+  const inv = DEMO_INVOICES[id];
+  if (!inv) return '';
+  const moduleLabel = inv.module ? `Module ${inv.module.replace('M','')}` : '';
+  return tpl(`
+    <div style="background:linear-gradient(135deg,#eff6ff,#dbeafe);border:1.5px solid rgba(59,130,246,0.3);border-radius:var(--radius);padding:18px 20px;margin:16px 0;display:flex;align-items:flex-start;gap:14px">
+      <div style="width:44px;height:44px;background:rgba(59,130,246,0.15);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">🧾</div>
+      <div style="flex:1">
+        <div style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.7px;color:#1d4ed8;margin-bottom:3px">Contractor Invoice — Ready to Download</div>
+        <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:4px">${inv.label}</div>
+        <div style="font-size:12px;color:#1e40af;line-height:1.5;margin-bottom:10px">${inv.scenario}</div>
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+          <button class="btn btn-sm" onclick="downloadDemoInvoice('${id}')" style="background:#2563eb;color:white;border:none;font-size:13px;padding:8px 18px">
+            ⬇️ Download Invoice (HTML)
+          </button>
+          <span style="font-size:11px;color:#1d4ed8;font-weight:500">📄 ${inv.filename}</span>
+        </div>
+      </div>
+    </div>`);
+}
+
+// ===== DEMO FILES LIBRARY =====
+function openDemoFilesLibrary() {
+  renderDemoFilesLibrary();
+  document.getElementById('demo-files-overlay').classList.add('show');
+}
+function closeDemoFilesLibrary() {
+  document.getElementById('demo-files-overlay').classList.remove('show');
+}
+function closeDemoFilesPanel(e) {
+  if (e.target === document.getElementById('demo-files-overlay')) closeDemoFilesLibrary();
+}
+
+function renderDemoFilesLibrary() {
+  const container = document.getElementById('demo-files-body');
+  const agency = ag();
+  const stmtSections = [
+    { module: 'M5', label: 'Module 5 — Rent Import & Allocation', stmts: ['module5'], color: '#22C55E' },
+    { module: 'M6', label: 'Module 6 — Fees & Charges', stmts: ['module6'], color: '#3B82F6' },
+    { module: 'M9', label: 'Module 9 — Bank Reconciliation', stmts: ['module9'], color: '#F59E0B' },
+    { module: 'M10', label: 'Module 10 — Suspense Account', stmts: ['module10'], color: '#EF4444' },
+    { module: 'M11', label: 'Module 11 — Deposits', stmts: ['module11'], color: '#EC4899' },
+    { module: 'M13', label: 'Module 13 — Month-End Close', stmts: ['module13'], color: '#8B5CF6' },
+    { module: 'M15', label: 'Module 15 — Capstone', stmts: ['capstone'], color: '#FFD700' },
+    { module: 'RECON', label: 'Recon Trainer — Practice Rounds', stmts: ['recon_round1','recon_round2'], color: '#06B6D4' }
+  ];
+  const invoiceSections = [
+    { module: 'M6', label: 'Module 6 — Inventory Fee Charge', invs: ['inventory_fee'] },
+    { module: 'M7', label: 'Module 7 — Contractor Payment', invs: ['mhs_441'] },
+    { module: 'M13', label: 'Module 13 — Month-End Invoice', invs: ['mhs_509'] },
+    { module: 'M15', label: 'Module 15 — Capstone Invoice', invs: ['worsley_electric'] }
+  ];
+  const stmtsHTML = stmtSections.map(sec => {
+    const stmtsCards = sec.stmts.map(id => {
+      const stmt = BANK_STATEMENTS[id];
+      if (!stmt) return '';
+      return `
+        <div style="display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px solid rgba(34,197,94,0.2);border-radius:8px;background:rgba(34,197,94,0.03);margin-bottom:8px">
+          <div style="font-size:20px;flex-shrink:0">📊</div>
+          <div style="flex:1;min-width:0">
+            <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:2px">${stmt.label.replace('{AGENCY}',agency)}</div>
+            <div style="font-size:11px;color:var(--text-muted);font-family:'DM Mono',monospace">${stmt.filename}</div>
+          </div>
+          <button class="btn btn-sm" onclick="downloadBankStatement('${id}')" style="background:#16a34a;color:white;border:none;flex-shrink:0;font-size:12px">⬇️ CSV</button>
+        </div>`;
+    }).join('');
+    return `
+      <div style="margin-bottom:20px">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+          <div style="width:8px;height:8px;border-radius:50%;background:${sec.color};flex-shrink:0"></div>
+          <div style="font-size:12px;font-weight:700;color:var(--text);text-transform:uppercase;letter-spacing:0.5px">${sec.label}</div>
+        </div>
+        ${stmtsCards}
+      </div>`;
+  }).join('');
+  const invoicesHTML = invoiceSections.map(sec => {
+    const invCards = sec.invs.map(id => {
+      const inv = DEMO_INVOICES[id];
+      if (!inv) return '';
+      return `
+        <div style="display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px solid rgba(59,130,246,0.2);border-radius:8px;background:rgba(59,130,246,0.03);margin-bottom:8px">
+          <div style="font-size:20px;flex-shrink:0">🧾</div>
+          <div style="flex:1;min-width:0">
+            <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:2px">${inv.label}</div>
+            <div style="font-size:11px;color:var(--text-muted);font-family:'DM Mono',monospace">${inv.filename}</div>
+            <div style="font-size:11px;color:#1d4ed8;margin-top:2px">Total: ${inv.total} · ${inv.property}</div>
+          </div>
+          <button class="btn btn-sm" onclick="downloadDemoInvoice('${id}')" style="background:#2563eb;color:white;border:none;flex-shrink:0;font-size:12px">⬇️ HTML</button>
+        </div>`;
+    }).join('');
+    return `
+      <div style="margin-bottom:20px">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+          <div style="width:8px;height:8px;border-radius:50%;background:#2563eb;flex-shrink:0"></div>
+          <div style="font-size:12px;font-weight:700;color:var(--text);text-transform:uppercase;letter-spacing:0.5px">${sec.label}</div>
+        </div>
+        ${invCards}
+      </div>`;
+  }).join('');
+
+  container.innerHTML = tpl(`
+    <div class="alert alert-info mb-16" style="font-size:13px">
+      <div class="alert-icon">💡</div>
+      <div>Download any file and use it directly in the {AGENCY} demo account. Bank statements import via <strong>Accounting → Bank Accounts → Import Statement</strong>. Invoices open in your browser — save as PDF or reference the figures when posting.</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px">
+      <div>
+        <div style="font-size:15px;font-weight:700;color:var(--text);margin-bottom:16px;display:flex;align-items:center;gap:8px">
+          <div style="width:32px;height:32px;background:rgba(34,197,94,0.1);border-radius:8px;display:flex;align-items:center;justify-content:center">📊</div>
+          Bank Statement CSVs
+        </div>
+        ${stmtsHTML}
+      </div>
+      <div>
+        <div style="font-size:15px;font-weight:700;color:var(--text);margin-bottom:16px;display:flex;align-items:center;gap:8px">
+          <div style="width:32px;height:32px;background:rgba(59,130,246,0.1);border-radius:8px;display:flex;align-items:center;justify-content:center">🧾</div>
+          Contractor Invoices
+        </div>
+        ${invoicesHTML}
+      </div>
+    </div>
+    <div style="margin-top:16px;padding:14px 16px;background:var(--bg);border-radius:8px;border:1px solid var(--border);font-size:12px;color:var(--text-muted);line-height:1.7">
+      <strong style="color:var(--text)">📌 How to use these files:</strong><br>
+      <strong>CSVs:</strong> Go to Accounting → Bank Accounts → select your client account → Import Statement → upload the CSV file.<br>
+      <strong>Invoices:</strong> Open the HTML file in your browser to view the full invoice. Use the figures to post the invoice in Street via the property's Maintenance → Work Order, or via Accounting → Post Invoice.
+    </div>
+  `);
+}
+
 const GLOSSARY = [
   { term: 'Client Money', category: 'Core', def: 'Funds held by the letting agency on behalf of landlords or tenants. Client money must always be kept strictly separate from agency operating funds. It belongs to the clients, not the agency.', example: 'Rent received from a tenant is client money — it belongs to the landlord until paid out.' },
   { term: 'Client Money Protection (CMP)', category: 'Compliance', def: 'A mandatory scheme that protects landlord and tenant money in the event the agency fails or acts improperly. All ARLA/NAEA registered agents must be members.', example: 'If an agency goes into administration, CMP ensures landlords and tenants can claim their money back.' },
@@ -4575,11 +5002,22 @@ function renderWorkflowStep(m, s, sp) {
 
   // Map scenario IDs to their bank statement keys
   const bankStatementMap = {
+    'M5S1': 'module5',
+    'M6S1': 'module6',
     'M9S1': 'module9',
+    'M10S1': 'module10',
+    'M11S1': 'module11',
     'M13S1': 'module13',
     'M15S1': 'capstone'
   };
+  const demoInvoiceMap = {
+    'M6S1': 'inventory_fee',
+    'M7S1': 'mhs_441',
+    'M13S1': 'mhs_509',
+    'M15S1': 'worsley_electric'
+  };
   const bankStmtId = bankStatementMap[s.id];
+  const invoiceId = demoInvoiceMap[s.id];
   return `
     <div class="fade-up">
       <div class="section-title mb-16">⚡ Street <span class="accent">Workflow</span></div>
@@ -4604,6 +5042,7 @@ function renderWorkflowStep(m, s, sp) {
               </div>`).join('')}
           </div>
           ${bankStmtId ? bankStatementCard(bankStmtId) : ''}
+          ${invoiceId ? demoInvoiceCard(invoiceId) : ''}
         </div>
       </div>
 
@@ -4859,6 +5298,7 @@ const AGENCY_SIM_DATA = {
       subject: 'Invoice #MHS-2024-441 — Boiler repair 268 Greenleach Lane £280+VAT',
       preview: 'Invoice attached for emergency boiler repair at 268 Greenleach Lane, Worsley M28 1UZ. Landlord Prof. Scarlett Cooper pre-approved via phone.',
       priority: 'urgent',
+      invoice: 'mhs_441',
       steps: [
         'Navigate to 268 Greenleach Lane property → Maintenance → Work Order',
         'Post invoice from Manchester Heating Solutions: £280 + VAT (£56) = £336 total',
@@ -5001,6 +5441,7 @@ function renderAgencySim() {
             <div class="sim-task-panel">
               <div class="sim-task-panel-title">📋 Steps to complete in demo account:</div>
               ${item.bankStmt ? bankStatementCard(item.bankStmt) : ''}
+              ${item.invoice ? demoInvoiceCard(item.invoice) : ''}
               <div class="sim-steps">
                 ${item.steps.map((step, i) => `
                   <div class="sim-step">
@@ -5149,11 +5590,13 @@ function showFabs() {
   const agencyFab = document.getElementById('agency-sim-fab');
   const reconTopbar = document.getElementById('recon-topbar-btn');
   const agencyTopbar = document.getElementById('agency-topbar-btn');
+  const filesTopbar = document.getElementById('files-topbar-btn');
   if (glossaryFab) glossaryFab.style.display = 'flex';
   if (reconFab) reconFab.style.display = 'flex';
   if (agencyFab) agencyFab.style.display = 'flex';
   if (reconTopbar) reconTopbar.style.display = 'inline-flex';
   if (agencyTopbar) agencyTopbar.style.display = 'inline-flex';
+  if (filesTopbar) filesTopbar.style.display = 'inline-flex';
 }
 
 // ===== KEYBOARD SHORTCUTS =====
@@ -5165,9 +5608,11 @@ document.addEventListener('keydown', e => {
     closeGlossaryPanel();
     closeReconGame();
     closeAgencySim();
+    closeDemoFilesLibrary();
   }
   if (e.key === 'g' && e.altKey) openGlossaryPanel();
   if (e.key === 'r' && e.altKey) openReconGame();
+  if (e.key === 'f' && e.altKey) openDemoFilesLibrary();
 });
 </script>
 </body>
