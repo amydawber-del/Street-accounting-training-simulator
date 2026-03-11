@@ -720,6 +720,120 @@ body {
 .badge-read { background: var(--purple-glow); color: var(--purple); }
 .badge-confirm { background: rgba(34,197,94,0.1); color: var(--success); }
 
+/* ===== BRANCH DECISION CARD ===== */
+.branch-card {
+  border-radius: var(--radius);
+  margin-bottom: 16px;
+  overflow: hidden;
+  border: 2px solid rgba(245,158,11,0.35);
+}
+.branch-header {
+  display: flex; align-items: center; gap: 10px;
+  padding: 14px 20px;
+  background: rgba(245,158,11,0.08);
+  border-bottom: 1px solid rgba(245,158,11,0.2);
+}
+.branch-header-icon { font-size: 20px; flex-shrink: 0; }
+.branch-header-title { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: #92400e; }
+.branch-header-sub { font-size: 12px; color: #a16207; margin-top: 1px; }
+.branch-body { padding: 20px; background: #fffbeb; }
+.branch-situation {
+  font-size: 14px; line-height: 1.7; color: var(--text);
+  background: white; border: 1px solid rgba(245,158,11,0.2);
+  border-radius: 8px; padding: 14px 16px; margin-bottom: 16px;
+  border-left: 4px solid #F59E0B;
+}
+.branch-question {
+  font-size: 15px; font-weight: 700; color: var(--text);
+  margin-bottom: 14px; line-height: 1.4;
+}
+.branch-options-grid { display: flex; flex-direction: column; gap: 8px; }
+.branch-option-btn {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 13px 16px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: white; cursor: pointer;
+  transition: var(--transition);
+  text-align: left; width: 100%;
+  font-family: inherit;
+}
+.branch-option-btn:hover { border-color: #F59E0B; background: #fefce8; box-shadow: 0 2px 8px rgba(245,158,11,0.12); }
+.branch-opt-letter {
+  width: 26px; height: 26px; border-radius: 6px;
+  background: var(--bg); border: 1.5px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 800; color: var(--text-muted);
+  flex-shrink: 0; margin-top: 1px;
+}
+.branch-opt-text { font-size: 14px; color: var(--text); line-height: 1.5; }
+
+/* Branch revealed state */
+.branch-card.revealed { border-color: transparent; }
+.branch-card.revealed.outcome-correct { border-color: rgba(34,197,94,0.4); }
+.branch-card.revealed.outcome-wrong { border-color: rgba(239,68,68,0.3); }
+.branch-card.revealed.outcome-partial { border-color: rgba(245,158,11,0.4); }
+.branch-revealed-header {
+  display: flex; align-items: center; gap: 10px;
+  padding: 14px 20px; border-bottom: 1px solid rgba(0,0,0,0.06);
+}
+.branch-card.revealed.outcome-correct .branch-revealed-header { background: rgba(34,197,94,0.08); }
+.branch-card.revealed.outcome-wrong .branch-revealed-header { background: rgba(239,68,68,0.06); }
+.branch-card.revealed.outcome-partial .branch-revealed-header { background: rgba(245,158,11,0.07); }
+.branch-results-body { padding: 16px 20px; background: white; }
+.branch-result-item {
+  display: flex; gap: 12px; padding: 10px 0;
+  border-bottom: 1px solid var(--bg);
+  font-size: 14px; align-items: flex-start;
+}
+.branch-result-item:last-of-type { border-bottom: none; }
+.branch-result-letter {
+  width: 26px; height: 26px; border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 800; flex-shrink: 0; margin-top: 1px;
+}
+.branch-result-letter.correct-pick { background: rgba(34,197,94,0.15); color: #15803d; border: 1.5px solid rgba(34,197,94,0.3); }
+.branch-result-letter.wrong-pick { background: rgba(239,68,68,0.12); color: #dc2626; border: 1.5px solid rgba(239,68,68,0.25); }
+.branch-result-letter.neutral { background: var(--bg); color: var(--text-muted); border: 1.5px solid var(--border); }
+.branch-result-label { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 4px; line-height: 1.4; }
+.branch-result-label.chosen { color: var(--text); }
+.branch-result-label.dimmed { color: var(--text-muted); font-weight: 400; }
+.branch-outcome-text {
+  font-size: 13px; line-height: 1.55; margin-top: 6px; padding: 8px 10px;
+  border-radius: 6px;
+}
+.branch-outcome-text.correct { background: rgba(34,197,94,0.07); color: #15803d; border: 1px solid rgba(34,197,94,0.2); }
+.branch-outcome-text.wrong { background: rgba(239,68,68,0.06); color: #dc2626; border: 1px solid rgba(239,68,68,0.15); }
+.branch-outcome-text.partial { background: rgba(245,158,11,0.07); color: #92400e; border: 1px solid rgba(245,158,11,0.2); }
+.branch-footer { padding: 12px 20px; background: var(--bg); border-top: 1px solid var(--border); display: flex; justify-content: flex-end; }
+
+/* ===== PROOF OF PRACTICE ===== */
+.proof-block {
+  margin-top: 10px; padding: 12px 14px;
+  background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+  border: 1.5px solid rgba(14,165,233,0.3);
+  border-radius: 8px;
+}
+.proof-block-label {
+  font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.8px;
+  color: #0369a1; margin-bottom: 5px; display: flex; align-items: center; gap: 5px;
+}
+.proof-block-q { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 6px; line-height: 1.4; }
+.proof-block-hint { font-size: 11px; color: #0284c7; margin-bottom: 8px; line-height: 1.4; }
+.proof-input {
+  width: 100%; padding: 9px 12px;
+  border: 1.5px solid rgba(14,165,233,0.3);
+  border-radius: 6px; font-family: inherit; font-size: 13px;
+  color: var(--text); outline: none; background: white;
+  transition: var(--transition);
+}
+.proof-input:focus { border-color: #0ea5e9; box-shadow: 0 0 0 3px rgba(14,165,233,0.12); }
+.proof-input.filled { border-color: rgba(34,197,94,0.5); background: rgba(34,197,94,0.03); }
+.proof-saved-tag {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 11px; color: var(--success); margin-top: 5px; font-weight: 600;
+}
+
 /* REFLECTION */
 .reflection-area {
   display: flex; flex-direction: column; gap: 16px;
@@ -2986,6 +3100,9 @@ function initProgress() {
           tasks: {},
           reflections: {},
           stepsDone: { help: false, kc: false, scenario: false, workflow: false, tasks: false, reflect: false },
+          branchChoice: null,
+          branchCorrect: null,
+          proofInputs: {},
           complete: false
         };
       }
@@ -3115,6 +3232,13 @@ async function saveToSheets(data) {
     taskDone:         data.done !== undefined ? String(data.done) : '',
     reflectionId:     data.rId || '',
     reflectionText:   data.text || '',
+
+    // Branch decision
+    branchChoice:     data.branchChoice || scenProg.branchChoice || '',
+    branchCorrect:    data.branchCorrect !== undefined ? String(data.branchCorrect) : (scenProg.branchCorrect !== null ? String(scenProg.branchCorrect) : ''),
+
+    // Proof of practice (summarise filled count)
+    proofInputsFilled: Object.values(scenProg.proofInputs || {}).filter(v => v?.trim().length > 2).length,
 
     // Scores
     kcScore:          data.score !== undefined ? data.score : (scenProg.kcScore ?? ''),
@@ -3550,6 +3674,7 @@ function renderScenarioStep(m, s, sp) {
     state.progress[m.id].scenarios[s.id].stepsDone = sp.stepsDone;
     saveLocal();
   }
+  const branchData = SCENARIO_BRANCHES[s.id];
   return `
     <div class="fade-up">
       <div class="section-title mb-16">🎯 Your <span class="accent">Scenario</span></div>
@@ -3565,6 +3690,7 @@ function renderScenarioStep(m, s, sp) {
         </div>
       </div>
       ${m.isSetupModule ? `<div class="alert alert-warning mb-16"><div class="alert-icon">⚠️</div><div><strong>Setup Required:</strong> This scenario assumes you are working in a fresh demo account where accounting has NOT been configured. You must set it up as part of this exercise.</div></div>` : ''}
+      ${branchData ? renderBranchCard(m.id, s.id, sp, branchData) : `
       <div class="card">
         <div class="card-body">
           <div class="alert alert-purple"><div class="alert-icon">🎯</div><div>Read the scenario carefully. Then proceed to the Workflow steps, which will guide you through the exact Street process to complete it.</div></div>
@@ -3573,8 +3699,119 @@ function renderScenarioStep(m, s, sp) {
           <div class="text-sm text-muted">Next: Street workflow steps →</div>
           <button class="btn btn-primary btn-sm" onclick="setStep(3)">View Workflow Steps →</button>
         </div>
+      </div>`}
+    </div>`;
+}
+
+// ===== SCENARIO BRANCH DECISION RENDERING =====
+function renderBranchCard(mId, sId, sp, branchData) {
+  const chosen = sp.branchChoice;
+  const agencyName = ag();
+  const situation = branchData.situation.replace(/\{AGENCY\}/g, agencyName);
+  const question = branchData.question;
+
+  if (!chosen) {
+    // Pre-decision: show options as clickable buttons
+    return `
+      <div class="branch-card" id="branch-card-${sId}">
+        <div class="branch-header">
+          <div class="branch-header-icon">🔀</div>
+          <div>
+            <div class="branch-header-title">Decision Point</div>
+            <div class="branch-header-sub">What would you do in this situation? Choose before seeing the workflow.</div>
+          </div>
+        </div>
+        <div class="branch-body">
+          <div class="branch-situation">${situation}</div>
+          <div class="branch-question">${question}</div>
+          <div class="branch-options-grid">
+            ${branchData.options.map(opt => `
+              <button class="branch-option-btn" onclick="chooseBranch('${mId}','${sId}','${opt.id}')">
+                <div class="branch-opt-letter">${opt.id.toUpperCase()}</div>
+                <div class="branch-opt-text">${opt.label}</div>
+              </button>`).join('')}
+          </div>
+        </div>
+      </div>`;
+  }
+
+  // Post-decision: reveal all outcomes
+  const chosenOpt = branchData.options.find(o => o.id === chosen);
+  const isCorrect = chosenOpt?.type === 'correct';
+  const isPartial = chosenOpt?.type === 'partial';
+  const outcomeClass = isCorrect ? 'outcome-correct' : isPartial ? 'outcome-partial' : 'outcome-wrong';
+  const headerEmoji = isCorrect ? '✅' : isPartial ? '⚠️' : '❌';
+  const headerTitle = isCorrect ? 'Good Thinking!' : isPartial ? 'Partially Right' : 'Not Quite';
+  const headerSub = isCorrect ? 'You chose the correct approach — see why below.' : isPartial ? 'Your instinct was close — see the full picture below.' : 'That approach has problems — read the explanation below.';
+
+  return `
+    <div class="branch-card revealed ${outcomeClass}">
+      <div class="branch-revealed-header">
+        <div style="font-size:20px">${headerEmoji}</div>
+        <div>
+          <div style="font-size:13px;font-weight:700;color:var(--text)">${headerTitle}</div>
+          <div style="font-size:12px;color:var(--text-muted);margin-top:1px">${headerSub}</div>
+        </div>
+        <div style="margin-left:auto;font-size:12px;color:var(--text-muted)">You chose: <strong>${chosen.toUpperCase()}</strong></div>
+      </div>
+      <div class="branch-results-body">
+        <div style="font-size:12px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:10px">All Options:</div>
+        ${branchData.options.map(opt => {
+          const isChosen = opt.id === chosen;
+          const letterClass = opt.type === 'correct' ? 'correct-pick' : isChosen ? 'wrong-pick' : 'neutral';
+          const labelClass = isChosen || opt.type === 'correct' ? 'chosen' : 'dimmed';
+          const showOutcome = isChosen || opt.type === 'correct';
+          const outcomeType = opt.type === 'correct' ? 'correct' : opt.type === 'partial' ? 'partial' : 'wrong';
+          return `
+            <div class="branch-result-item">
+              <div class="branch-result-letter ${letterClass}">${opt.id.toUpperCase()}</div>
+              <div style="flex:1">
+                <div class="branch-result-label ${labelClass}">${opt.label}</div>
+                ${showOutcome ? `<div class="branch-outcome-text ${outcomeType}">${opt.outcome}</div>` : ''}
+              </div>
+            </div>`;
+        }).join('')}
+      </div>
+      <div class="branch-footer">
+        <button class="btn btn-primary btn-sm" onclick="setStep(3)">Continue to Workflow →</button>
       </div>
     </div>`;
+}
+
+function chooseBranch(mId, sId, optId) {
+  if (!state.progress[mId]) state.progress[mId] = { scenarios: {} };
+  if (!state.progress[mId].scenarios[sId]) state.progress[mId].scenarios[sId] = { tasks: {}, reflections: {}, stepsDone: {}, kcAnswers: {}, branchChoice: null, proofInputs: {} };
+  if (state.progress[mId].scenarios[sId].branchChoice) return; // locked once chosen
+  const m = MODULES.find(x => x.id === mId);
+  const s = m?.scenarios.find(x => x.id === sId);
+  const branch = SCENARIO_BRANCHES[sId];
+  const opt = branch?.options.find(o => o.id === optId);
+  state.progress[mId].scenarios[sId].branchChoice = optId;
+  state.progress[mId].scenarios[sId].branchCorrect = opt?.type === 'correct';
+  saveToSheets({ type: 'branch', mId, sId, branchChoice: optId, branchCorrect: opt?.type === 'correct' });
+  renderStep(2, state.currentModule, state.currentScenario);
+}
+
+// ===== PROOF OF PRACTICE INPUT =====
+let proofTimers = {};
+function autoSaveProof(mId, sId, tId, value) {
+  clearTimeout(proofTimers[tId]);
+  proofTimers[tId] = setTimeout(() => saveProofInput(mId, sId, tId, value), 1200);
+}
+
+function saveProofInput(mId, sId, tId, value) {
+  if (!state.progress[mId]) state.progress[mId] = { scenarios: {} };
+  if (!state.progress[mId].scenarios[sId]) state.progress[mId].scenarios[sId] = { tasks: {}, reflections: {}, stepsDone: {}, kcAnswers: {}, branchChoice: null, proofInputs: {} };
+  if (!state.progress[mId].scenarios[sId].proofInputs) state.progress[mId].scenarios[sId].proofInputs = {};
+  state.progress[mId].scenarios[sId].proofInputs[tId] = value;
+  saveLocal();
+  // Update input appearance in place
+  const input = document.getElementById(`proof-${tId}`);
+  const savedTag = document.getElementById(`proof-saved-${tId}`);
+  if (input && value.trim().length > 2) {
+    input.classList.add('filled');
+    if (savedTag) savedTag.style.display = 'inline-flex';
+  }
 }
 
 function renderWorkflowStep(m, s, sp) {
@@ -3627,13 +3864,27 @@ function renderTasksStep(m, s, sp) {
   const demoInvoiceMap = { 'M6S1': 'inventory_fee', 'M7S1': 'mhs_441', 'M13S1': 'mhs_509', 'M15S1': 'worsley_electric' };
   const bankStmtId = bankStatementMap[s.id];
   const invoiceId = demoInvoiceMap[s.id];
+
+  // Branch recap banner if applicable
+  const branchRecap = sp.branchChoice ? (() => {
+    const branch = SCENARIO_BRANCHES[s.id];
+    if (!branch) return '';
+    const opt = branch.options.find(o => o.id === sp.branchChoice);
+    const isCorrect = sp.branchCorrect;
+    return `<div class="alert ${isCorrect ? 'alert-success' : 'alert-warning'} mb-16" style="font-size:13px">
+      <div class="alert-icon">${isCorrect ? '✅' : '⚠️'}</div>
+      <div><strong>Your Decision:</strong> You chose option <strong>${sp.branchChoice.toUpperCase()}</strong> — "${opt?.label}". ${isCorrect ? 'That was the correct approach.' : 'Keep the correct approach in mind as you work through these tasks.'} <span style="opacity:0.7;cursor:pointer" onclick="setStep(2)">[revisit ↩]</span></div>
+    </div>`;
+  })() : '';
+
   return `
     <div class="fade-up">
       <div class="section-title mb-16">📋 Demo Account <span class="accent">Tasks</span></div>
       <div class="alert alert-warning mb-16">
         <div class="alert-icon">🖥️</div>
-        <div>Complete each task inside the Street demo account, then tick it off here. Only mark complete once you have actually done it.</div>
+        <div>Complete each task inside the Street demo account, then tick it off here. For <strong>demo tasks</strong>, fill in the proof field to record what you found — this proves you actually did it.</div>
       </div>
+      ${branchRecap}
       ${bankStmtId ? bankStatementCard(bankStmtId) : ''}
       ${invoiceId ? demoInvoiceCard(invoiceId) : ''}
       <div class="card mb-16">
@@ -3643,17 +3894,43 @@ function renderTasksStep(m, s, sp) {
         </div>
         <div class="card-body">
           <div class="task-list">
-            ${s.tasks.map(t => `
-              <div class="task-item ${sp.tasks?.[t.id] ? 'done' : ''}" onclick="toggleTask('${m.id}','${s.id}','${t.id}')">
-                <div class="task-checkbox">
+            ${s.tasks.map(t => {
+              const proofKey = `${s.id}_${t.id}`;
+              const proof = TASK_PROOFS[proofKey];
+              const proofVal = sp.proofInputs?.[t.id] || '';
+              const hasProof = proofVal.trim().length > 2;
+              return `
+              <div class="task-item ${sp.tasks?.[t.id] ? 'done' : ''}" id="task-item-${t.id}">
+                <div class="task-checkbox" onclick="toggleTask('${m.id}','${s.id}','${t.id}')">
                   <div class="task-check-icon">✓</div>
                 </div>
-                <div class="task-item-info">
-                  <div class="task-item-title">${t.title}</div>
-                  <div class="task-item-desc">${t.desc}</div>
+                <div class="task-item-info" style="width:100%">
+                  <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;cursor:pointer" onclick="toggleTask('${m.id}','${s.id}','${t.id}')">
+                    <div>
+                      <div class="task-item-title">${t.title}</div>
+                      <div class="task-item-desc">${t.desc}</div>
+                    </div>
+                    <div class="task-badge badge-${t.type}" style="flex-shrink:0">${typeLabels[t.type] || t.type}</div>
+                  </div>
+                  ${proof && t.type === 'demo' ? `
+                  <div class="proof-block" style="cursor:default" onclick="event.stopPropagation()">
+                    <div class="proof-block-label">✍️ Proof of Practice</div>
+                    <div class="proof-block-q">${proof.q}</div>
+                    ${proof.hint ? `<div class="proof-block-hint">💡 ${proof.hint}</div>` : ''}
+                    <input
+                      type="text"
+                      class="proof-input ${hasProof ? 'filled' : ''}"
+                      id="proof-${t.id}"
+                      placeholder="${proof.placeholder || 'Enter your answer...'}"
+                      value="${proofVal.replace(/"/g, '&quot;')}"
+                      oninput="autoSaveProof('${m.id}','${s.id}','${t.id}',this.value)"
+                      onblur="saveProofInput('${m.id}','${s.id}','${t.id}',this.value)"
+                    >
+                    <div id="proof-saved-${t.id}" class="proof-saved-tag" style="display:${hasProof ? 'inline-flex' : 'none'}">✅ Saved</div>
+                  </div>` : ''}
                 </div>
-                <div class="task-badge badge-${t.type}">${typeLabels[t.type] || t.type}</div>
-              </div>`).join('')}
+              </div>`;
+            }).join('')}
           </div>
         </div>
         <div class="card-footer">
@@ -4981,7 +5258,94 @@ const WRONG_DATA = {
   }
 };
 
-// ===== ENHANCED WORKFLOW STEP RENDERER =====
+// ===== SCENARIO BRANCH DECISIONS =====
+// Decision points that interrupt each scenario at the critical moment.
+// Key: scenario ID. Each has a situation, a question, and 4 options.
+// Only one option is fully correct. Partial/wrong options show what goes wrong.
+const SCENARIO_BRANCHES = {
+  'M5S1': {
+    situation: 'It\'s Monday morning. Three rent payments arrived overnight. Prof. Aaron Bailey paid £1,400 ✅. Dr. Sienna Knight paid £2,600 ✅. But Mr. Jason Walker has only sent £1,100 — he\'s £100 short on his expected £1,200 rent at 142 Ladymere Drive (Ref: aKRzQbqY27). His landlord, Miss Tiffany Ward, is scheduled for payment today.',
+    question: 'How do you handle Jason Walker\'s £100 shortfall?',
+    options: [
+      { id: 'a', label: 'Allocate £1,100 as a partial payment, flag the £100 shortfall on the tenancy ledger, and hold Miss Tiffany Ward\'s landlord payment until the full rent arrives', type: 'correct', outcome: '✅ Correct. Recording a partial payment keeps the ledger accurate and your audit trail clean. Holding the landlord payment prevents disbursing more than you\'ve received — a fundamental client money rule.' },
+      { id: 'b', label: 'Allocate the full £1,200 — the missing £100 will probably arrive tomorrow and it\'s not worth holding the landlord up', type: 'wrong', outcome: '❌ Never allocate more than you\'ve received. This creates a fraudulent entry on the ledger and could result in paying Miss Tiffany Ward £100 of money you don\'t yet hold. This is a client money breach.' },
+      { id: 'c', label: 'Don\'t allocate anything — leave £1,100 in suspense until the full £1,200 arrives', type: 'partial', outcome: '⚠️ Leaving it in suspense creates reconciliation problems and shows the tenant\'s rent as completely unpaid. Record the £1,100 as a partial payment now, then record the £100 when it arrives.' },
+      { id: 'd', label: 'Allocate £1,100, immediately pay Miss Tiffany Ward the reduced net amount, and chase Jason Walker separately', type: 'partial', outcome: '⚠️ Paying the landlord before discussing the shortfall with her is not ideal. She may prefer to wait for the full amount. Always hold the payment and communicate before disbursing a partial amount.' }
+    ]
+  },
+  'M8S1': {
+    situation: 'It\'s the 25th — payment batch day for all {AGENCY} landlords. Two rents are outstanding: Mr. Dan Anderson\'s £1,800 is 3 days late with no sign of payment. Dr. Sienna Knight\'s £2,600 cleared the bank this morning but hasn\'t been allocated in Street yet. 10 other landlords\' rents are all fully allocated and ready.',
+    question: 'It\'s 9am. What is the correct order of actions before running the payment batch?',
+    options: [
+      { id: 'a', label: 'Allocate Dr. Sienna Knight\'s £2,600 first → run unallocated receipts report → confirm zero unallocated → place Mr. Dan Anderson\'s landlord on hold → run batch for remaining 10 landlords', type: 'correct', outcome: '✅ Correct sequence. Allocate all cleared funds before running any batch. The unallocated report is your final check. Holding Anderson\'s landlord protects the client account. Then process the 10 fully-funded landlords.' },
+      { id: 'b', label: 'Run the batch now — the missing allocations can be sorted afterwards and adjustments made', type: 'wrong', outcome: '❌ Running a batch before allocating cleared funds means landlords receive incorrect amounts. Reversing payment batches is extremely complex and risks a client account deficit. Always allocate first.' },
+      { id: 'c', label: 'Wait until both outstanding rents are received before running the batch for anyone', type: 'partial', outcome: '⚠️ Anderson\'s rent may not arrive for days. Holding all 10 other landlords hostage for one late payment isn\'t correct. Allocate what\'s cleared, hold the affected landlord, and proceed for everyone else.' },
+      { id: 'd', label: 'Run the batch but manually reduce Mrs. Alexandra Scott\'s payment to compensate for the shortfall', type: 'wrong', outcome: '❌ Manual adjustments to cover shortfalls are a compliance breach. Never touch one landlord\'s payment to balance another\'s account. Each client\'s money must be accounted for separately and correctly.' }
+    ]
+  },
+  'M9S1': {
+    situation: 'You\'ve been reconciling October\'s bank statement for {AGENCY}. You\'ve matched all the rent receipts, contractor payments, and landlord disbursements. But when you reach the end, Street shows a £150 difference: the bank statement says £18,750 closing balance, but Street shows £18,900.',
+    question: 'The reconciliation won\'t complete — there\'s a £150 difference. What do you do?',
+    options: [
+      { id: 'a', label: 'Review the unmatched items list carefully — check whether the bank service charge on the final line of the statement has been posted as a transaction in Street yet', type: 'correct', outcome: '✅ Correct instinct. The October statement includes a £150 bank service charge on the last line. It appears on the real bank statement but hasn\'t been posted as a Street transaction yet — that\'s exactly your £150 difference. Post it, then reconcile.' },
+      { id: 'b', label: 'Post a £150 manual adjustment entry in Street to force the reconciliation to zero', type: 'wrong', outcome: '❌ Never create adjustments to force a reconciliation to balance. Every difference represents a real transaction that\'s either missing from Street or entered incorrectly. Manual adjustments mask errors and destroy the audit trail.' },
+      { id: 'c', label: 'Accept the £150 difference and mark the reconciliation as complete — it\'s close enough', type: 'wrong', outcome: '❌ There is no "close enough" in reconciliation. A £150 difference means a real transaction is unaccounted for. This would be flagged immediately in an ARLA/RICS client money audit as a compliance failure.' },
+      { id: 'd', label: 'Re-import the entire bank statement from scratch in case a line was dropped during import', type: 'partial', outcome: '⚠️ Re-importing before investigating is unnecessary and time-consuming. Check the unmatched items list first — the missing transaction is almost always visible there. In this case, it\'s the bank service charge.' }
+    ]
+  },
+  'M10S1': {
+    situation: 'A payment of £975 has arrived in the {AGENCY} client account with only the reference "RENT SEP". No tenancy in Street has exactly £975 rent. The closest rents are £950 (19 Queen Anne Drive) and £1,000 (20 Vicars Street). The payment is sitting unallocated in the suspense account.',
+    question: 'An unidentified £975 is in suspense. What\'s the correct response?',
+    options: [
+      { id: 'a', label: 'Keep it in suspense, immediately add a dated note ("Investigating — RENT SEP £975 arrived, no ref match"), and contact tenants in the £900–£1,050 rent range to identify the sender', type: 'correct', outcome: '✅ Correct. Never allocate money you can\'t identify. The note creates an audit trail showing you investigated promptly. Contacting tenants with similar rents is the fastest way to identify the payment. Do not allocate until confirmed.' },
+      { id: 'b', label: 'Allocate it to the nearest matching tenancy (£950 rent at 19 Queen Anne Drive) — it\'s probably slightly underpaid rent', type: 'wrong', outcome: '❌ Never guess with client money. If you allocate to the wrong tenancy, that landlord receives money they\'re not entitled to, and the real sender\'s landlord shows an arrears they don\'t actually owe. The consequences unwind messily.' },
+      { id: 'c', label: 'Return the £975 to the sender immediately — if they sent it without a proper reference that\'s their problem', type: 'partial', outcome: '⚠️ Returning too quickly is risky — this is almost certainly a genuine rent payment. Give yourself a reasonable investigation window (24–48 hours) to identify the tenant before returning. Don\'t assume bad faith on a reference error.' },
+      { id: 'd', label: 'Move it temporarily to the agency\'s office account while you investigate — it\'s easier to track from there', type: 'wrong', outcome: '❌ Client money can never — under any circumstances — be moved to the agency\'s own account, even temporarily. All unidentified funds must remain in the suspense account. This is a fundamental client money protection rule.' }
+    ]
+  },
+  'M11S1': {
+    situation: 'Prof. Mandy Price\'s tenancy at 38 Partington Street has ended. Her deposit is £1,920. The landlord is claiming £300 for professional cleaning, saying the property was left in a poor state. Prof. Mandy Price disputes this completely and says she left it spotless. Both parties are waiting for you to act.',
+    question: 'The landlord wants you to deduct £300 and pay out £1,620. How do you proceed?',
+    options: [
+      { id: 'a', label: 'Request evidence from both parties (move-in inventory, check-out report, photos). Only proceed with the deduction if it\'s supported by evidence. If still disputed, refer to TDS for formal adjudication', type: 'correct', outcome: '✅ Correct process. You need documented evidence to apply any deduction. Without it, you risk a TDS adjudication ruling against the landlord — and potentially against your agency for facilitating an unsupported deduction. Your role is to process what\'s evidenced and refer disputes.' },
+      { id: 'b', label: 'Process the £300 deduction as instructed by the landlord — they\'re your client and you act on their behalf', type: 'wrong', outcome: '❌ Even though the landlord is your client, applying deductions without evidence breaches tenancy deposit rules. You could face a TDS adjudication, regulatory action, and significant reputational damage. The deposit scheme protects both parties.' },
+      { id: 'c', label: 'Refund the full £1,920 to the tenant to avoid the dispute — it\'s the safest option for the tenant', type: 'wrong', outcome: '❌ Refunding without the landlord\'s agreement (or TDS adjudication) when there\'s a legitimate claim would expose you to landlord legal action. You cannot release funds from a disputed deposit without following the correct process.' },
+      { id: 'd', label: 'Hold the deposit indefinitely until both parties come to an agreement between themselves', type: 'partial', outcome: '⚠️ Holding indefinitely isn\'t acceptable — there are regulatory timeframes. If the parties cannot agree quickly, the correct step is to refer to TDS for adjudication. They will assess the evidence and make a binding decision.' }
+    ]
+  },
+  'M13S1': {
+    situation: 'It\'s the 30th November — month-end for {AGENCY}. You need to complete reconciliation, generate statements, and lock the period. But two items are outstanding: the November bank statement hasn\'t been reconciled yet, and one landlord statement (Dr. Eleanor Rogers) needs a special note about Dr. Dylan Butler\'s arrears before it can be sent.',
+    question: 'What is the correct order to complete November month-end?',
+    options: [
+      { id: 'a', label: 'Reconcile bank statement first → confirm zero difference → generate all statements (adding the arrears note to Dr. Eleanor Rogers\') → send batch to all landlords → confirm dispatch log', type: 'correct', outcome: '✅ Correct sequence. Reconciliation must always come before statements — you can\'t issue a statement if the accounts aren\'t reconciled. The arrears note is required before sending Dr. Eleanor Rogers\' statement. Confirm dispatch to close the month.' },
+      { id: 'b', label: 'Generate and send all statements first while everyone\'s online, then reconcile the bank statement afterwards', type: 'wrong', outcome: '❌ Sending statements before reconciliation means the figures on the statements may be wrong. If the reconciliation reveals an error, you\'ve already issued incorrect statements to landlords — retracting and resending is embarrassing and erodes trust.' },
+      { id: 'c', label: 'Send all statements except Dr. Eleanor Rogers\' — she can wait until the arrears situation is resolved', type: 'partial', outcome: '⚠️ You should not indefinitely delay a landlord\'s statement. Add a clear note about the arrears position to her statement and send it. She deserves to know exactly what\'s happening with her property\'s rent account.' },
+      { id: 'd', label: 'Skip reconciliation this month — the accounts look correct from memory and it\'s a busy period', type: 'wrong', outcome: '❌ Skipping reconciliation is never acceptable. It\'s a regulatory requirement. You might feel confident the accounts are right, but an undetected error compounds month-on-month and becomes exponentially harder to fix — and will fail an audit.' }
+    ]
+  }
+};
+
+// ===== TASK PROOF OF PRACTICE PROMPTS =====
+// Key: `${scenarioId}_${taskId}`. Only applied to 'demo' type tasks.
+// Shows a required input field asking the learner to record what they found.
+const TASK_PROOFS = {
+  'M5S1_t2': { q: 'After allocating Prof. Aaron Bailey\'s £1,400 rent, what net amount appeared on Prof. Scarlett Cooper\'s landlord ledger in the "Owners in Credit" tab?', placeholder: 'e.g. £1,198.40', hint: 'Gross £1,400 minus 12% management fee + 20% VAT on the fee' },
+  'M5S1_t3': { q: 'What reference number did Mr. Jason Walker\'s payment arrive with on the bank statement?', placeholder: 'e.g. aKRzQbqY27', hint: 'Check Accounting → Bank Accounts → Unreconciled transactions' },
+  'M7S1_t2': { q: 'What was the total invoice amount including VAT for the Manchester Heating Solutions boiler repair?', placeholder: 'e.g. £336.00', hint: 'Net £280 + 20% VAT = ?' },
+  'M7S1_t3': { q: 'After posting the contractor invoice, what balance remained on Prof. Scarlett Cooper\'s landlord ledger?', placeholder: 'e.g. £862.40', hint: 'Net rent received minus the contractor invoice total' },
+  'M8S1_t2': { q: 'How many landlords were included (not held) in the November payment batch, and what was the total disbursed?', placeholder: 'e.g. 11 landlords, £9,240 total', hint: 'Review the batch summary before confirming' },
+  'M8S1_t3': { q: 'Which landlord did you place on payment hold, and what was the reason you recorded?', placeholder: 'e.g. Miss Tiffany Ward — partial rent from Jason Walker...' },
+  'M9S1_t2': { q: 'What was the difference between Street\'s balance and the bank statement when you first attempted reconciliation?', placeholder: 'e.g. £150.00', hint: 'The bank says one figure, Street shows another — what\'s the gap?' },
+  'M9S1_t4': { q: 'Which transaction was missing from Street that caused the reconciliation difference? How did you post it?', placeholder: 'Describe the transaction and how you resolved it...' },
+  'M11S1_t2': { q: 'What was the deposit reference number for Prof. Mandy Price\'s tenancy at 38 Partington Street?', placeholder: 'e.g. DEP-38001 or TDS reference', hint: 'Find it on the tenancy record in Street' },
+  'M11S1_t3': { q: 'What was the net refund amount paid to Prof. Mandy Price after the cleaning deduction, and how did it appear on the client account?', placeholder: 'e.g. £1,620.00 — debit on deposit account' },
+  'M13S1_t2': { q: 'After running the November payment batch, how many landlords were paid and what was the total amount disbursed from the client account?', placeholder: 'e.g. 10 landlords, £12,450.20 total' },
+  'M13S1_t4': { q: 'What note did you add to Dr. Eleanor Rogers\' statement about Dr. Dylan Butler\'s arrears position?', placeholder: 'Summarise the note you added...' },
+  'M2S1_t2': { q: 'In the demo account, what was the opening balance shown in Accounting → Bank Accounts?', placeholder: 'e.g. £0.00 — not yet configured, or the actual opening figure...' },
+  'M6S1_t3': { q: 'What charge type did you use, and what was the total amount including VAT added to the landlord ledger?', placeholder: 'e.g. Renewal Fee, £144.00 inc. VAT' },
+  'M10S1_t2': { q: 'How long had the unidentified payment been sitting in the suspense account when you investigated it, and what reference did it arrive with?', placeholder: 'e.g. Arrived same day, reference "RENT SEP"' },
+  'M10S1_t3': { q: 'After investigating, which tenant did the £975 payment belong to, and what was the correct tenancy reference?', placeholder: 'e.g. Wayne Davies, 19 Queen Anne Drive, Ref OpzCicymkj' }
+};
 const _originalRenderWorkflowStep = renderWorkflowStep;
 function renderWorkflowStep(m, s, sp) {
   const basHtml = _originalRenderWorkflowStep(m, s, sp);
