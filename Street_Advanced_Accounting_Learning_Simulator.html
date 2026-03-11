@@ -1,0 +1,3635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Street Advanced Accounting Learning Simulator</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #12152A;
+  --navy-light: #1a1f3a;
+  --navy-lighter: #232845;
+  --purple: #5B4BE7;
+  --purple-light: #7c6ef0;
+  --purple-dark: #4336c4;
+  --purple-glow: rgba(91,75,231,0.15);
+  --white: #ffffff;
+  --bg: #F4F5FA;
+  --card: #ffffff;
+  --border: #E2E4EF;
+  --text: #1a1f3a;
+  --text-muted: #6B7094;
+  --text-light: #9DA3BF;
+  --success: #22C55E;
+  --warning: #F59E0B;
+  --danger: #EF4444;
+  --info: #3B82F6;
+  --radius: 12px;
+  --radius-sm: 8px;
+  --shadow: 0 2px 16px rgba(18,21,42,0.08);
+  --shadow-lg: 0 8px 40px rgba(18,21,42,0.15);
+  --transition: all 0.25s cubic-bezier(0.4,0,0.2,1);
+  --sidebar-w: 280px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ===== SCREEN SYSTEM ===== */
+.screen { display: none; min-height: 100vh; }
+.screen.active { display: flex; }
+
+/* ===== LOGIN SCREEN ===== */
+#screen-login {
+  background: var(--navy);
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+#screen-login::before {
+  content: '';
+  position: absolute;
+  width: 800px; height: 800px;
+  background: radial-gradient(circle, rgba(91,75,231,0.2) 0%, transparent 70%);
+  top: -200px; right: -200px;
+  pointer-events: none;
+}
+#screen-login::after {
+  content: '';
+  position: absolute;
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(91,75,231,0.1) 0%, transparent 70%);
+  bottom: -100px; left: -100px;
+  pointer-events: none;
+}
+.login-card {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 20px;
+  padding: 48px 52px;
+  width: 480px;
+  max-width: 95vw;
+  position: relative;
+  z-index: 1;
+  backdrop-filter: blur(20px);
+  animation: fadeUp 0.6s ease both;
+}
+.login-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 32px;
+}
+.login-logo-icon {
+  width: 44px; height: 44px;
+  background: var(--purple);
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px;
+}
+.login-logo span {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--white);
+  letter-spacing: -0.3px;
+}
+.login-logo small {
+  display: block;
+  font-size: 11px;
+  color: rgba(255,255,255,0.4);
+  font-weight: 400;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+.login-title {
+  color: var(--white);
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1.3;
+  margin-bottom: 8px;
+  letter-spacing: -0.5px;
+}
+.login-sub {
+  color: rgba(255,255,255,0.45);
+  font-size: 14px;
+  margin-bottom: 36px;
+  line-height: 1.6;
+}
+.form-group { margin-bottom: 16px; }
+.form-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.5);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin-bottom: 8px;
+}
+.form-input {
+  width: 100%;
+  padding: 14px 16px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: var(--radius-sm);
+  color: var(--white);
+  font-family: inherit;
+  font-size: 14px;
+  outline: none;
+  transition: var(--transition);
+}
+.form-input:focus {
+  border-color: var(--purple);
+  background: rgba(91,75,231,0.1);
+}
+.form-input::placeholder { color: rgba(255,255,255,0.2); }
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 13px 24px;
+  border-radius: var(--radius-sm);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: var(--transition);
+  text-decoration: none;
+  white-space: nowrap;
+}
+.btn-primary {
+  background: var(--purple);
+  color: var(--white);
+  width: 100%;
+  padding: 15px;
+  font-size: 15px;
+  margin-top: 8px;
+}
+.btn-primary:hover { background: var(--purple-light); transform: translateY(-1px); box-shadow: 0 8px 24px rgba(91,75,231,0.4); }
+.btn-outline {
+  background: transparent;
+  color: var(--purple);
+  border: 1.5px solid var(--purple);
+}
+.btn-outline:hover { background: var(--purple-glow); }
+.btn-ghost {
+  background: transparent;
+  color: var(--text-muted);
+  border: 1.5px solid var(--border);
+}
+.btn-ghost:hover { background: var(--bg); color: var(--text); }
+.btn-sm { padding: 8px 16px; font-size: 13px; }
+.btn-icon {
+  width: 36px; height: 36px;
+  padding: 0;
+  border-radius: 8px;
+}
+.divider-text {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 20px 0;
+  color: rgba(255,255,255,0.2);
+  font-size: 12px;
+}
+.divider-text::before, .divider-text::after {
+  content: ''; flex: 1;
+  height: 1px;
+  background: rgba(255,255,255,0.08);
+}
+
+/* ===== MAIN APP LAYOUT ===== */
+#screen-app {
+  flex-direction: column;
+}
+.app-wrapper {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* ===== SIDEBAR ===== */
+.sidebar {
+  width: var(--sidebar-w);
+  background: var(--navy);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  position: fixed;
+  top: 0; left: 0; bottom: 0;
+  z-index: 100;
+  overflow-y: auto;
+  transition: var(--transition);
+}
+.sidebar-header {
+  padding: 24px 20px 20px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.sidebar-logo {
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 16px;
+}
+.sidebar-logo-icon {
+  width: 36px; height: 36px;
+  background: var(--purple);
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+.sidebar-logo-text { font-size: 15px; font-weight: 700; color: var(--white); line-height: 1.2; }
+.sidebar-logo-sub { font-size: 10px; color: rgba(255,255,255,0.35); text-transform: uppercase; letter-spacing: 0.8px; }
+.sidebar-user {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 12px;
+  background: rgba(255,255,255,0.04);
+  border-radius: var(--radius-sm);
+}
+.sidebar-avatar {
+  width: 32px; height: 32px;
+  background: var(--purple);
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
+  color: white;
+  flex-shrink: 0;
+}
+.sidebar-user-info { min-width: 0; }
+.sidebar-user-name { font-size: 13px; font-weight: 600; color: var(--white); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sidebar-user-co { font-size: 11px; color: rgba(255,255,255,0.35); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sidebar-overall-progress {
+  padding: 16px 20px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.sidebar-progress-label {
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 11px; font-weight: 600;
+  color: rgba(255,255,255,0.35);
+  text-transform: uppercase; letter-spacing: 0.8px;
+  margin-bottom: 8px;
+}
+.progress-bar {
+  height: 5px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--purple), var(--purple-light));
+  border-radius: 999px;
+  transition: width 0.6s cubic-bezier(0.4,0,0.2,1);
+}
+.sidebar-nav {
+  flex: 1;
+  padding: 12px 12px;
+  overflow-y: auto;
+}
+.sidebar-nav-section {
+  margin-bottom: 4px;
+}
+.sidebar-nav-label {
+  font-size: 10px;
+  font-weight: 700;
+  color: rgba(255,255,255,0.25);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 8px 8px 4px;
+}
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 10px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: var(--transition);
+  margin-bottom: 2px;
+}
+.nav-item:hover { background: rgba(255,255,255,0.05); }
+.nav-item.active { background: rgba(91,75,231,0.2); }
+.nav-item.active .nav-item-title { color: var(--white); }
+.nav-item-icon {
+  width: 28px; height: 28px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 7px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px;
+  flex-shrink: 0;
+  transition: var(--transition);
+}
+.nav-item.active .nav-item-icon { background: var(--purple); }
+.nav-item.completed .nav-item-icon { background: rgba(34,197,94,0.2); }
+.nav-item-info { flex: 1; min-width: 0; }
+.nav-item-title {
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(255,255,255,0.6);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  line-height: 1.3;
+}
+.nav-item.completed .nav-item-title { color: rgba(255,255,255,0.45); }
+.nav-item-status {
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px;
+  flex-shrink: 0;
+}
+.status-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.15);
+}
+.status-dot.done { background: var(--success); }
+.status-dot.active { background: var(--purple); box-shadow: 0 0 6px var(--purple); }
+.sidebar-footer {
+  padding: 12px;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  display: flex; gap: 8px;
+}
+.sidebar-footer-btn {
+  flex: 1;
+  padding: 9px 8px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: var(--radius-sm);
+  color: rgba(255,255,255,0.5);
+  font-family: inherit;
+  font-size: 12px;
+  cursor: pointer;
+  transition: var(--transition);
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  font-weight: 500;
+}
+.sidebar-footer-btn:hover { background: rgba(255,255,255,0.08); color: var(--white); }
+
+/* ===== MAIN CONTENT ===== */
+.main-content {
+  margin-left: var(--sidebar-w);
+  flex: 1;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+.topbar {
+  height: 64px;
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 32px;
+  position: sticky; top: 0; z-index: 50;
+  flex-shrink: 0;
+}
+.topbar-left { display: flex; align-items: center; gap: 12px; }
+.topbar-breadcrumb { font-size: 13px; color: var(--text-muted); display: flex; align-items: center; gap: 6px; }
+.topbar-breadcrumb strong { color: var(--text); font-weight: 600; }
+.topbar-right { display: flex; align-items: center; gap: 12px; }
+.topbar-view-switcher {
+  display: flex;
+  background: var(--bg);
+  border-radius: var(--radius-sm);
+  padding: 3px;
+  gap: 2px;
+}
+.view-tab {
+  padding: 7px 14px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  color: var(--text-muted);
+  transition: var(--transition);
+  border: none;
+  background: transparent;
+  font-family: inherit;
+}
+.view-tab.active { background: var(--white); color: var(--text); box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+.content-area {
+  flex: 1;
+  padding: 32px;
+  max-width: 1200px;
+  width: 100%;
+}
+
+/* ===== VIEW CONTAINERS ===== */
+.view-container { display: none; }
+.view-container.active { display: block; }
+
+/* ===== LEARNING VIEW ===== */
+.module-hero {
+  background: var(--navy);
+  border-radius: 16px;
+  padding: 32px 36px;
+  margin-bottom: 28px;
+  position: relative;
+  overflow: hidden;
+}
+.module-hero::before {
+  content: '';
+  position: absolute;
+  width: 300px; height: 300px;
+  background: radial-gradient(circle, rgba(91,75,231,0.3) 0%, transparent 70%);
+  top: -100px; right: -50px;
+  pointer-events: none;
+}
+.module-hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(91,75,231,0.25);
+  color: var(--purple-light);
+  border: 1px solid rgba(91,75,231,0.3);
+  border-radius: 20px;
+  padding: 4px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.module-hero-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--white);
+  margin-bottom: 10px;
+  letter-spacing: -0.5px;
+  line-height: 1.3;
+  position: relative;
+}
+.module-hero-desc {
+  color: rgba(255,255,255,0.55);
+  font-size: 15px;
+  line-height: 1.6;
+  max-width: 600px;
+  position: relative;
+  margin-bottom: 24px;
+}
+.module-hero-meta {
+  display: flex; align-items: center; gap: 20px; flex-wrap: wrap;
+  position: relative;
+}
+.hero-meta-item {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 13px;
+  color: rgba(255,255,255,0.4);
+}
+.hero-meta-item strong { color: rgba(255,255,255,0.7); }
+.module-progress-track {
+  background: rgba(255,255,255,0.07);
+  border-radius: 999px;
+  height: 4px;
+  margin-top: 20px;
+  position: relative;
+  overflow: hidden;
+}
+.module-progress-track .progress-fill { background: var(--purple); }
+
+/* SCENARIO STEP FLOW */
+.step-nav {
+  display: flex;
+  gap: 0;
+  margin-bottom: 28px;
+  background: var(--white);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+.step-tab {
+  flex: 1;
+  display: flex; flex-direction: column; align-items: center;
+  padding: 14px 8px;
+  cursor: pointer;
+  position: relative;
+  border: none; background: transparent;
+  font-family: inherit;
+  transition: var(--transition);
+  border-right: 1px solid var(--border);
+}
+.step-tab:last-child { border-right: none; }
+.step-tab.done { background: rgba(34,197,94,0.04); }
+.step-tab.active { background: var(--purple-glow); }
+.step-tab-num {
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  background: var(--bg);
+  border: 2px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 700;
+  color: var(--text-muted);
+  margin-bottom: 5px;
+  transition: var(--transition);
+}
+.step-tab.active .step-tab-num { background: var(--purple); border-color: var(--purple); color: white; }
+.step-tab.done .step-tab-num { background: var(--success); border-color: var(--success); color: white; }
+.step-tab-label { font-size: 11px; font-weight: 600; color: var(--text-muted); text-align: center; line-height: 1.3; }
+.step-tab.active .step-tab-label { color: var(--purple); }
+.step-tab.done .step-tab-label { color: var(--success); }
+
+/* CARDS */
+.card {
+  background: var(--card);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+.card-header {
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.card-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+  display: flex; align-items: center; gap: 8px;
+}
+.card-icon {
+  width: 32px; height: 32px;
+  background: var(--purple-glow);
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 15px;
+}
+.card-body { padding: 24px; }
+.card-footer {
+  padding: 16px 24px;
+  border-top: 1px solid var(--border);
+  background: var(--bg);
+  display: flex; align-items: center; justify-content: space-between;
+}
+
+/* CONCEPT PILLS */
+.concept-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+.concept-pill {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 6px 14px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
+}
+.concept-pill .dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--purple);
+}
+
+/* KNOWLEDGE CHECK */
+.kc-question { margin-bottom: 20px; }
+.kc-q-text { font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 12px; line-height: 1.5; }
+.kc-options { display: flex; flex-direction: column; gap: 8px; }
+.kc-option {
+  display: flex; align-items: center; gap: 10px;
+  padding: 12px 16px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: var(--transition);
+  font-size: 14px;
+  color: var(--text);
+  background: var(--white);
+}
+.kc-option:hover { border-color: var(--purple); background: var(--purple-glow); }
+.kc-option.selected { border-color: var(--purple); background: var(--purple-glow); color: var(--purple); font-weight: 500; }
+.kc-option.correct { border-color: var(--success); background: rgba(34,197,94,0.06); color: #15803d; }
+.kc-option.wrong { border-color: var(--danger); background: rgba(239,68,68,0.06); color: #dc2626; }
+.kc-option-letter {
+  width: 24px; height: 24px; border-radius: 50%;
+  background: var(--bg);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 700;
+  flex-shrink: 0;
+  border: 1.5px solid var(--border);
+}
+.kc-option.selected .kc-option-letter { background: var(--purple); border-color: var(--purple); color: white; }
+.kc-option.correct .kc-option-letter { background: var(--success); border-color: var(--success); color: white; }
+.kc-option.wrong .kc-option-letter { background: var(--danger); border-color: var(--danger); color: white; }
+.kc-feedback {
+  padding: 12px 16px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  margin-top: 10px;
+  display: none;
+  line-height: 1.5;
+}
+.kc-feedback.show { display: block; }
+.kc-feedback.correct { background: rgba(34,197,94,0.1); color: #15803d; border: 1px solid rgba(34,197,94,0.2); }
+.kc-feedback.wrong { background: rgba(239,68,68,0.08); color: #dc2626; border: 1px solid rgba(239,68,68,0.15); }
+.kc-score {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 10px 20px;
+  background: var(--purple-glow);
+  border: 1px solid rgba(91,75,231,0.2);
+  border-radius: var(--radius-sm);
+  font-size: 14px; font-weight: 600; color: var(--purple);
+  margin-bottom: 20px;
+}
+
+/* WORKFLOW STEPS */
+.workflow-steps { display: flex; flex-direction: column; gap: 0; }
+.workflow-step {
+  display: flex; gap: 16px;
+  padding-bottom: 24px;
+  position: relative;
+}
+.workflow-step::before {
+  content: '';
+  position: absolute;
+  left: 17px;
+  top: 36px;
+  bottom: 0;
+  width: 2px;
+  background: linear-gradient(180deg, var(--border), transparent);
+}
+.workflow-step:last-child { padding-bottom: 0; }
+.workflow-step:last-child::before { display: none; }
+.workflow-step-num {
+  width: 34px; height: 34px; border-radius: 50%;
+  background: var(--navy);
+  color: white;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 700;
+  flex-shrink: 0;
+  position: relative; z-index: 1;
+}
+.workflow-step-content { flex: 1; padding-top: 4px; }
+.workflow-step-title { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+.workflow-step-desc { font-size: 14px; color: var(--text-muted); line-height: 1.6; }
+.workflow-step-path {
+  display: inline-flex; align-items: center; gap: 4px;
+  margin-top: 6px;
+  font-size: 12px; font-weight: 500;
+  background: var(--navy);
+  color: rgba(255,255,255,0.7);
+  padding: 4px 10px;
+  border-radius: 5px;
+  font-family: 'DM Mono', monospace;
+}
+.nav-arrow { color: var(--purple-light); margin: 0 2px; }
+
+/* TASKS */
+.task-list { display: flex; flex-direction: column; gap: 8px; }
+.task-item {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 14px 16px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  transition: var(--transition);
+  cursor: pointer;
+}
+.task-item:hover { border-color: var(--purple); box-shadow: 0 2px 8px rgba(91,75,231,0.08); }
+.task-item.done { border-color: rgba(34,197,94,0.3); background: rgba(34,197,94,0.04); }
+.task-checkbox {
+  width: 20px; height: 20px; border-radius: 5px;
+  border: 2px solid var(--border);
+  flex-shrink: 0;
+  margin-top: 1px;
+  display: flex; align-items: center; justify-content: center;
+  transition: var(--transition);
+  background: var(--white);
+}
+.task-item.done .task-checkbox {
+  background: var(--success); border-color: var(--success);
+}
+.task-check-icon { display: none; color: white; font-size: 11px; font-weight: 800; }
+.task-item.done .task-check-icon { display: block; }
+.task-item-info { flex: 1; }
+.task-item-title { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 2px; line-height: 1.4; }
+.task-item.done .task-item-title { text-decoration: line-through; color: var(--text-muted); }
+.task-item-desc { font-size: 12px; color: var(--text-light); line-height: 1.5; }
+.task-badge {
+  font-size: 11px; font-weight: 600;
+  padding: 3px 8px; border-radius: 4px;
+  flex-shrink: 0;
+}
+.badge-demo { background: rgba(59,130,246,0.1); color: var(--info); }
+.badge-read { background: var(--purple-glow); color: var(--purple); }
+.badge-confirm { background: rgba(34,197,94,0.1); color: var(--success); }
+
+/* REFLECTION */
+.reflection-area {
+  display: flex; flex-direction: column; gap: 16px;
+}
+.reflection-item { }
+.reflection-q {
+  font-size: 14px; font-weight: 600; color: var(--text);
+  margin-bottom: 8px; line-height: 1.5;
+  display: flex; gap: 8px; align-items: flex-start;
+}
+.reflection-q-num {
+  width: 22px; height: 22px; border-radius: 50%;
+  background: var(--purple-glow);
+  color: var(--purple);
+  font-size: 11px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.reflection-textarea {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-family: inherit;
+  font-size: 14px;
+  color: var(--text);
+  resize: vertical;
+  min-height: 80px;
+  outline: none;
+  transition: var(--transition);
+  background: var(--white);
+  line-height: 1.6;
+}
+.reflection-textarea:focus { border-color: var(--purple); box-shadow: 0 0 0 3px var(--purple-glow); }
+.reflection-textarea.saved { border-color: rgba(34,197,94,0.4); background: rgba(34,197,94,0.03); }
+
+/* ALERT BOXES */
+.alert {
+  display: flex; gap: 12px;
+  padding: 14px 16px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  line-height: 1.6;
+  margin-bottom: 16px;
+}
+.alert-info { background: rgba(59,130,246,0.08); border: 1px solid rgba(59,130,246,0.2); color: #1d4ed8; }
+.alert-warning { background: rgba(245,158,11,0.08); border: 1px solid rgba(245,158,11,0.2); color: #92400e; }
+.alert-success { background: rgba(34,197,94,0.08); border: 1px solid rgba(34,197,94,0.2); color: #15803d; }
+.alert-purple { background: var(--purple-glow); border: 1px solid rgba(91,75,231,0.2); color: var(--purple-dark); }
+.alert-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+
+/* SCENARIO CARD */
+.scenario-card {
+  background: linear-gradient(135deg, #f8f9ff 0%, #fff 100%);
+  border: 1.5px solid rgba(91,75,231,0.15);
+  border-radius: var(--radius);
+  padding: 24px;
+  margin-bottom: 16px;
+}
+.scenario-card-label {
+  font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;
+  color: var(--purple); margin-bottom: 10px; display: flex; align-items: center; gap: 6px;
+}
+.scenario-card-title { font-size: 18px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
+.scenario-card-body { font-size: 14px; color: var(--text-muted); line-height: 1.7; }
+.scenario-card-body strong { color: var(--text); }
+
+/* HELP ARTICLE LINK */
+.help-article-card {
+  background: var(--navy);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  display: flex; align-items: center; gap: 16px;
+  margin-bottom: 20px;
+  cursor: pointer;
+  transition: var(--transition);
+}
+.help-article-card:hover { background: var(--navy-light); }
+.help-article-icon {
+  width: 44px; height: 44px;
+  background: rgba(91,75,231,0.3);
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+.help-article-info { flex: 1; }
+.help-article-source { font-size: 11px; color: rgba(255,255,255,0.35); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 3px; }
+.help-article-title { font-size: 15px; font-weight: 600; color: var(--white); margin-bottom: 2px; }
+.help-article-desc { font-size: 12px; color: rgba(255,255,255,0.45); line-height: 1.5; }
+.help-article-arrow { color: rgba(255,255,255,0.3); font-size: 18px; }
+.help-article-confirm {
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 14px;
+  background: rgba(255,255,255,0.06);
+  border-radius: var(--radius-sm);
+  margin-top: 10px;
+}
+.help-article-confirm input[type=checkbox] { 
+  width: 16px; height: 16px; accent-color: var(--purple); cursor: pointer;
+}
+.help-article-confirm label { font-size: 13px; color: rgba(255,255,255,0.6); cursor: pointer; }
+
+/* COMPLETION MODAL */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(18,21,42,0.7);
+  backdrop-filter: blur(4px);
+  z-index: 1000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+}
+.modal-overlay.show { display: flex; }
+.modal {
+  background: var(--white);
+  border-radius: 20px;
+  padding: 40px;
+  max-width: 480px;
+  width: 90%;
+  text-align: center;
+  animation: scaleIn 0.3s cubic-bezier(0.34,1.56,0.64,1);
+  position: relative;
+}
+.modal-emoji { font-size: 56px; margin-bottom: 16px; display: block; }
+.modal-title { font-size: 24px; font-weight: 800; color: var(--text); margin-bottom: 8px; letter-spacing: -0.5px; }
+.modal-sub { font-size: 14px; color: var(--text-muted); line-height: 1.6; margin-bottom: 28px; }
+.modal-stats { display: flex; gap: 16px; justify-content: center; margin-bottom: 28px; }
+.modal-stat {
+  padding: 14px 20px;
+  background: var(--bg);
+  border-radius: var(--radius-sm);
+  text-align: center;
+}
+.modal-stat-num { font-size: 24px; font-weight: 800; color: var(--purple); }
+.modal-stat-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.8px; margin-top: 2px; }
+.modal-actions { display: flex; gap: 10px; justify-content: center; }
+
+/* DASHBOARD VIEW */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 28px;
+}
+.stat-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  box-shadow: var(--shadow);
+}
+.stat-card-icon {
+  width: 40px; height: 40px;
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+  margin-bottom: 14px;
+}
+.stat-card-num { font-size: 30px; font-weight: 800; color: var(--text); letter-spacing: -1px; margin-bottom: 4px; }
+.stat-card-label { font-size: 13px; color: var(--text-muted); }
+.stat-card-change {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 12px; font-weight: 600;
+  padding: 2px 8px; border-radius: 4px;
+  margin-top: 8px;
+}
+.change-up { background: rgba(34,197,94,0.1); color: var(--success); }
+.change-neutral { background: var(--bg); color: var(--text-muted); }
+
+/* MODULE PROGRESS TABLE */
+.module-progress-table { width: 100%; border-collapse: collapse; }
+.module-progress-table th {
+  font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px;
+  color: var(--text-muted); padding: 10px 16px;
+  border-bottom: 1px solid var(--border);
+  text-align: left; background: var(--bg);
+}
+.module-progress-table td {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px; color: var(--text);
+  vertical-align: middle;
+}
+.module-progress-table tr:last-child td { border-bottom: none; }
+.module-progress-table tr:hover td { background: var(--bg); }
+.status-badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 3px 10px; border-radius: 20px;
+  font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;
+}
+.status-badge.not-started { background: var(--bg); color: var(--text-muted); }
+.status-badge.in-progress { background: rgba(245,158,11,0.1); color: #92400e; }
+.status-badge.completed { background: rgba(34,197,94,0.1); color: var(--success); }
+.mini-progress { display: flex; align-items: center; gap: 8px; }
+.mini-bar { height: 5px; flex: 1; background: var(--bg); border-radius: 999px; overflow: hidden; }
+.mini-fill { height: 100%; background: var(--purple); border-radius: 999px; }
+.mini-label { font-size: 12px; font-weight: 600; color: var(--text-muted); min-width: 28px; text-align: right; }
+
+/* ANALYTICS VIEW */
+.analytics-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 24px; }
+.leaderboard-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+}
+.leaderboard-item:last-child { border-bottom: none; }
+.leaderboard-rank {
+  font-size: 14px; font-weight: 800; color: var(--text-muted);
+  min-width: 24px;
+}
+.leaderboard-rank.gold { color: #d97706; }
+.leaderboard-rank.silver { color: #6b7280; }
+.leaderboard-rank.bronze { color: #92400e; }
+.leaderboard-avatar {
+  width: 36px; height: 36px; border-radius: 9px;
+  background: var(--purple);
+  color: white; font-size: 13px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.leaderboard-info { flex: 1; }
+.leaderboard-name { font-size: 14px; font-weight: 600; color: var(--text); }
+.leaderboard-co { font-size: 12px; color: var(--text-muted); }
+.leaderboard-score { font-size: 15px; font-weight: 800; color: var(--purple); }
+
+.chart-bar-group { display: flex; flex-direction: column; gap: 10px; }
+.chart-bar-item { display: flex; align-items: center; gap: 12px; }
+.chart-bar-label { font-size: 12px; font-weight: 500; color: var(--text-muted); min-width: 120px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.chart-bar-track { flex: 1; height: 8px; background: var(--bg); border-radius: 999px; overflow: hidden; }
+.chart-bar-fill { height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--purple), var(--purple-light)); }
+.chart-bar-val { font-size: 12px; font-weight: 700; color: var(--text); min-width: 32px; text-align: right; }
+
+/* CERTIFICATE VIEW */
+.cert-container {
+  max-width: 760px;
+  margin: 0 auto;
+}
+.cert-preview {
+  background: var(--white);
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  overflow: hidden;
+  box-shadow: var(--shadow-lg);
+  margin-bottom: 24px;
+}
+.cert-inner {
+  background: linear-gradient(135deg, #12152A 0%, #1a1f3a 100%);
+  padding: 56px 64px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.cert-inner::before {
+  content: '';
+  position: absolute;
+  width: 600px; height: 600px;
+  border-radius: 50%;
+  border: 80px solid rgba(91,75,231,0.08);
+  top: -200px; left: 50%;
+  transform: translateX(-50%);
+}
+.cert-border-top {
+  height: 4px;
+  background: linear-gradient(90deg, var(--purple), #a78bfa, var(--purple));
+}
+.cert-logo { font-size: 36px; margin-bottom: 12px; position: relative; }
+.cert-issuer { font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.35); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 28px; position: relative; }
+.cert-declare { font-size: 14px; color: rgba(255,255,255,0.45); margin-bottom: 8px; position: relative; }
+.cert-name-display {
+  font-size: 40px; font-weight: 800;
+  color: var(--white); letter-spacing: -1px;
+  margin-bottom: 8px;
+  position: relative;
+  font-style: italic;
+}
+.cert-course { font-size: 16px; color: rgba(255,255,255,0.6); margin-bottom: 32px; position: relative; }
+.cert-badge-row {
+  display: flex; justify-content: center; align-items: center; gap: 24px;
+  margin-bottom: 28px; position: relative;
+}
+.cert-badge-item { text-align: center; }
+.cert-badge-icon {
+  font-size: 28px; margin-bottom: 4px;
+  background: rgba(91,75,231,0.2);
+  width: 56px; height: 56px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 6px;
+  border: 2px solid rgba(91,75,231,0.3);
+}
+.cert-badge-label { font-size: 11px; color: rgba(255,255,255,0.4); }
+.cert-date { font-size: 13px; color: rgba(255,255,255,0.3); position: relative; margin-bottom: 16px; }
+.cert-sig-row { display: flex; justify-content: center; gap: 64px; position: relative; }
+.cert-sig { text-align: center; }
+.cert-sig-line { width: 120px; height: 1px; background: rgba(255,255,255,0.15); margin: 0 auto 6px; }
+.cert-sig-name { font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.5); }
+.cert-sig-role { font-size: 10px; color: rgba(255,255,255,0.25); text-transform: uppercase; letter-spacing: 0.8px; }
+.cert-id { font-size: 10px; color: rgba(255,255,255,0.2); margin-top: 20px; font-family: 'DM Mono', monospace; position: relative; }
+.cert-locked-overlay {
+  padding: 80px 40px;
+  text-align: center;
+}
+.cert-locked-icon { font-size: 48px; margin-bottom: 16px; }
+.cert-locked-title { font-size: 22px; font-weight: 700; margin-bottom: 8px; }
+.cert-locked-sub { font-size: 14px; color: var(--text-muted); max-width: 360px; margin: 0 auto; }
+
+/* TABS WITHIN CARDS */
+.inner-tabs { display: flex; gap: 4px; margin-bottom: 20px; border-bottom: 1px solid var(--border); }
+.inner-tab {
+  padding: 9px 16px; font-size: 13px; font-weight: 600;
+  cursor: pointer; border-bottom: 2px solid transparent;
+  color: var(--text-muted); margin-bottom: -1px;
+  transition: var(--transition); background: none; border-top: none; border-left: none; border-right: none;
+  font-family: inherit;
+}
+.inner-tab.active { color: var(--purple); border-bottom-color: var(--purple); }
+
+/* SECTION DIVIDER */
+.section-title {
+  font-size: 18px; font-weight: 700; color: var(--text);
+  margin-bottom: 16px; display: flex; align-items: center; gap: 8px; letter-spacing: -0.3px;
+}
+.section-title .accent { color: var(--purple); }
+
+/* ANIMATIONS */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.85); }
+  to { opacity: 1; transform: scale(1); }
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+@keyframes slideRight {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(0); }
+}
+.fade-up { animation: fadeUp 0.4s ease both; }
+.delay-1 { animation-delay: 0.1s; }
+.delay-2 { animation-delay: 0.2s; }
+.saving-indicator {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 12px; color: var(--text-muted);
+}
+.saving-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--success); animation: pulse 1.5s infinite;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .sidebar { transform: translateX(-100%); }
+  .sidebar.open { transform: translateX(0); }
+  .main-content { margin-left: 0; }
+  .dashboard-grid { grid-template-columns: 1fr 1fr; }
+  .analytics-grid { grid-template-columns: 1fr; }
+  .step-tab-label { display: none; }
+}
+
+/* TOOLTIP */
+.tooltip { position: relative; }
+.tooltip::after {
+  content: attr(data-tip);
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%; transform: translateX(-50%);
+  background: var(--navy); color: white;
+  font-size: 11px; font-weight: 500;
+  padding: 5px 10px; border-radius: 5px;
+  white-space: nowrap; pointer-events: none;
+  opacity: 0; transition: opacity 0.2s;
+}
+.tooltip:hover::after { opacity: 1; }
+
+/* TAG */
+.tag {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 3px 9px; border-radius: 5px;
+  font-size: 11px; font-weight: 600;
+}
+.tag-setup { background: rgba(245,158,11,0.1); color: #92400e; }
+.tag-workflow { background: var(--purple-glow); color: var(--purple); }
+.tag-advanced { background: rgba(239,68,68,0.08); color: #dc2626; }
+
+/* GRID HELPERS */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.mb-16 { margin-bottom: 16px; }
+.mb-24 { margin-bottom: 24px; }
+.mb-8 { margin-bottom: 8px; }
+.mt-16 { margin-top: 16px; }
+.flex { display: flex; }
+.flex-center { display: flex; align-items: center; }
+.gap-8 { gap: 8px; }
+.gap-12 { gap: 12px; }
+.gap-16 { gap: 16px; }
+.justify-between { justify-content: space-between; }
+.text-muted { color: var(--text-muted); }
+.text-sm { font-size: 13px; }
+.text-xs { font-size: 12px; }
+.font-bold { font-weight: 700; }
+.scroll-area { overflow-y: auto; max-height: 400px; }
+
+/* SETUP NOTICE BANNER */
+.setup-notice {
+  background: linear-gradient(135deg, #fff7ed, #fffbf0);
+  border: 1.5px solid rgba(245,158,11,0.3);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  margin-bottom: 24px;
+  display: flex; gap: 14px;
+  align-items: flex-start;
+}
+.setup-notice-icon { font-size: 24px; flex-shrink: 0; margin-top: 2px; }
+.setup-notice-body {}
+.setup-notice-title { font-size: 15px; font-weight: 700; color: #92400e; margin-bottom: 4px; }
+.setup-notice-text { font-size: 13px; color: #a16207; line-height: 1.6; }
+
+/* CONFETTI PARTICLE */
+.confetti-piece {
+  position: fixed;
+  width: 8px; height: 10px;
+  border-radius: 2px;
+  top: -10px;
+  animation: confettiFall 3s linear forwards;
+  pointer-events: none;
+  z-index: 9999;
+}
+@keyframes confettiFall {
+  0% { transform: translateY(0) rotateZ(0deg); opacity: 1; }
+  100% { transform: translateY(100vh) rotateZ(720deg); opacity: 0; }
+}
+
+/* GOOGLE SHEETS SETUP */
+.sheets-setup-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  margin-bottom: 20px;
+}
+.sheets-status { display: flex; align-items: center; gap: 8px; font-size: 13px; }
+.sheets-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.sheets-dot.connected { background: var(--success); box-shadow: 0 0 6px var(--success); }
+.sheets-dot.disconnected { background: var(--warning); animation: pulse 2s infinite; }
+
+/* PRINT CERT */
+@media print {
+  .sidebar, .topbar, .topbar-right, .cert-actions, .breadcrumb { display: none !important; }
+  .main-content { margin-left: 0; }
+  .cert-inner { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}
+</style>
+</head>
+<body>
+
+<!-- ===== LOGIN SCREEN ===== -->
+<div id="screen-login" class="screen active">
+  <div class="login-card">
+    <div class="login-logo">
+      <div class="login-logo-icon">🏠</div>
+      <div>
+        <span>Street</span>
+        <small>Accounting Simulator</small>
+      </div>
+    </div>
+    <div class="login-title">Welcome to the Advanced Accounting Learning Simulator</div>
+    <p class="login-sub">Master Street Accounting from setup to day-to-day workflows. Earn your certification at the end.</p>
+    <div class="form-group">
+      <label class="form-label">Your Full Name</label>
+      <input type="text" class="form-input" id="login-name" placeholder="e.g. Sarah Thompson" value="">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Email Address</label>
+      <input type="email" class="form-input" id="login-email" placeholder="sarah@agencyname.co.uk" value="">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Agency / Company Name</label>
+      <input type="text" class="form-input" id="login-company" placeholder="e.g. Thompson Properties" value="">
+    </div>
+    <button class="btn btn-primary" onclick="startApp()">
+      <span>Start Learning Journey</span>
+      <span>→</span>
+    </button>
+    <div class="divider-text">or continue existing session</div>
+    <button class="btn" style="width:100%;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.6);font-size:14px;" onclick="loadExistingSession()">
+      🔄 Resume Progress
+    </button>
+  </div>
+</div>
+
+<!-- ===== MAIN APP SCREEN ===== -->
+<div id="screen-app" class="screen">
+  <div class="app-wrapper">
+    <!-- SIDEBAR -->
+    <nav class="sidebar" id="main-sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-logo">
+          <div class="sidebar-logo-icon">🏠</div>
+          <div>
+            <div class="sidebar-logo-text">Street</div>
+            <div class="sidebar-logo-sub">Accounting Simulator</div>
+          </div>
+        </div>
+        <div class="sidebar-user">
+          <div class="sidebar-avatar" id="sidebar-avatar">ST</div>
+          <div class="sidebar-user-info">
+            <div class="sidebar-user-name" id="sidebar-name">—</div>
+            <div class="sidebar-user-co" id="sidebar-company">—</div>
+          </div>
+        </div>
+      </div>
+      <div class="sidebar-overall-progress">
+        <div class="sidebar-progress-label">
+          <span>Overall Progress</span>
+          <span id="sidebar-pct">0%</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" id="sidebar-progress-fill" style="width:0%"></div>
+        </div>
+      </div>
+      <div class="sidebar-nav" id="module-nav">
+        <!-- Populated by JS -->
+      </div>
+      <div class="sidebar-footer">
+        <button class="sidebar-footer-btn" onclick="showView('dashboard')">📊 Dashboard</button>
+        <button class="sidebar-footer-btn" onclick="showView('analytics')">📈 Analytics</button>
+        <button class="sidebar-footer-btn" onclick="showView('certificate')">🏅 Cert</button>
+      </div>
+    </nav>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+      <div class="topbar">
+        <div class="topbar-left">
+          <div class="topbar-breadcrumb">
+            <span id="tb-module">Module 1</span>
+            <span>›</span>
+            <strong id="tb-scenario">Scenario</strong>
+          </div>
+        </div>
+        <div class="topbar-right">
+          <div class="saving-indicator" id="saving-indicator" style="display:none">
+            <div class="saving-dot"></div>
+            <span>Saving...</span>
+          </div>
+          <div class="topbar-view-switcher">
+            <button class="view-tab active" onclick="showView('learning')" data-view="learning">📚 Learn</button>
+            <button class="view-tab" onclick="showView('dashboard')" data-view="dashboard">📊 Dashboard</button>
+            <button class="view-tab" onclick="showView('analytics')" data-view="analytics">📈 Analytics</button>
+            <button class="view-tab" onclick="showView('certificate')" data-view="certificate">🏅 Certificate</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="content-area">
+        <!-- LEARNING VIEW -->
+        <div id="view-learning" class="view-container active">
+          <div id="learning-content"><!-- Rendered by JS --></div>
+        </div>
+
+        <!-- DASHBOARD VIEW -->
+        <div id="view-dashboard" class="view-container">
+          <div class="section-title mb-24">📊 Your Learning <span class="accent">Dashboard</span></div>
+          <div class="dashboard-grid" id="dashboard-stats"></div>
+          <div class="grid-2 mb-24">
+            <div class="card">
+              <div class="card-header"><div class="card-title"><div class="card-icon">📋</div>Module Progress</div></div>
+              <div style="overflow:auto">
+                <table class="module-progress-table" id="module-progress-table"></table>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-header"><div class="card-title"><div class="card-icon">📈</div>Completion by Category</div></div>
+              <div class="card-body">
+                <div class="chart-bar-group" id="category-chart"></div>
+              </div>
+            </div>
+          </div>
+          <div class="card mb-24" id="recent-activity-card">
+            <div class="card-header"><div class="card-title"><div class="card-icon">⏱️</div>Recent Activity</div></div>
+            <div class="card-body" id="recent-activity-list"></div>
+          </div>
+          <!-- Google Sheets Config -->
+          <div class="sheets-setup-card">
+            <div class="flex-center gap-8 mb-16">
+              <div class="card-icon">📊</div>
+              <div class="font-bold" style="font-size:15px">Google Sheets Integration</div>
+              <div class="sheets-status" id="sheets-status">
+                <div class="sheets-dot disconnected" id="sheets-dot"></div>
+                <span id="sheets-status-text">Not configured</span>
+              </div>
+            </div>
+            <p class="text-sm text-muted mb-16">Connect to Google Sheets to auto-save all progress, reflections, and completions. See the setup guide below.</p>
+            <div class="form-group mb-8">
+              <label class="form-label" style="font-size:11px">Apps Script Web App URL</label>
+              <input type="text" class="form-input" id="sheets-url" placeholder="https://script.google.com/macros/s/YOUR_ID/exec" style="background:var(--bg);border-color:var(--border);color:var(--text);font-size:13px">
+            </div>
+            <button class="btn btn-primary" style="width:auto;padding:10px 20px;font-size:13px" onclick="testSheetsConnection()">Test Connection</button>
+            <button class="btn btn-ghost btn-sm" style="margin-left:8px" onclick="showSheetsSetupGuide()">Setup Guide</button>
+          </div>
+        </div>
+
+        <!-- ANALYTICS VIEW -->
+        <div id="view-analytics" class="view-container">
+          <div class="flex-center justify-between mb-24">
+            <div class="section-title">📈 Trainer <span class="accent">Analytics</span></div>
+            <button class="btn btn-outline btn-sm" onclick="exportAnalytics()">⬇️ Export CSV</button>
+          </div>
+          <div class="dashboard-grid" id="analytics-stats"></div>
+          <div class="analytics-grid mb-24">
+            <div class="card">
+              <div class="card-header"><div class="card-title"><div class="card-icon">🏆</div>Leaderboard</div></div>
+              <div class="card-body" id="leaderboard-list"></div>
+            </div>
+            <div class="card">
+              <div class="card-header"><div class="card-title"><div class="card-icon">📊</div>Module Drop-off Analysis</div></div>
+              <div class="card-body" id="dropoff-chart"></div>
+            </div>
+          </div>
+          <div class="card mb-24">
+            <div class="card-header">
+              <div class="card-title"><div class="card-icon">👥</div>All Learners</div>
+              <button class="btn btn-ghost btn-sm" onclick="refreshAnalytics()">↻ Refresh</button>
+            </div>
+            <div style="overflow:auto">
+              <table class="module-progress-table" id="learners-table"></table>
+            </div>
+          </div>
+          <div class="card" id="sheets-guide-card" style="display:none">
+            <div class="card-header"><div class="card-title"><div class="card-icon">📋</div>Google Sheets Setup Guide</div></div>
+            <div class="card-body" id="sheets-guide-content"></div>
+          </div>
+        </div>
+
+        <!-- CERTIFICATE VIEW -->
+        <div id="view-certificate" class="view-container">
+          <div class="cert-container">
+            <div class="section-title mb-16">🏅 Your <span class="accent">Certificate</span></div>
+            <div id="cert-area"></div>
+            <div id="cert-actions" class="flex gap-12 mb-24" style="justify-content:center;display:none">
+              <button class="btn btn-primary" onclick="downloadCert()">⬇️ Download Certificate</button>
+              <button class="btn btn-outline" onclick="printCert()">🖨️ Print Certificate</button>
+              <button class="btn btn-ghost" onclick="shareCert()">🔗 Share</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- COMPLETION MODAL -->
+<div class="modal-overlay" id="completion-modal">
+  <div class="modal">
+    <span class="modal-emoji" id="modal-emoji">🎉</span>
+    <div class="modal-title" id="modal-title">Module Complete!</div>
+    <div class="modal-sub" id="modal-sub">Well done! You've completed this module.</div>
+    <div class="modal-stats" id="modal-stats"></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal()">Review</button>
+      <button class="btn btn-primary" id="modal-next-btn" onclick="nextModule()">Next Module →</button>
+    </div>
+  </div>
+</div>
+
+<!-- SHEETS GUIDE MODAL -->
+<div class="modal-overlay" id="sheets-modal">
+  <div class="modal" style="max-width:620px;text-align:left">
+    <div class="flex-center justify-between mb-16">
+      <div class="modal-title" style="font-size:20px">📊 Google Sheets Setup</div>
+      <button class="btn btn-ghost btn-icon" onclick="document.getElementById('sheets-modal').classList.remove('show')">✕</button>
+    </div>
+    <div id="sheets-guide-modal-content"></div>
+  </div>
+</div>
+
+<script>
+// ========================================
+// STREET ADVANCED ACCOUNTING LEARNING SIMULATOR
+// Full Interactive Training Platform
+// ========================================
+
+// ===== GLOBAL STATE =====
+let state = {
+  user: { name: '', email: '', company: '', id: '' },
+  currentModule: 0,
+  currentScenario: 0,
+  currentStep: 0,
+  progress: {},     // moduleId -> { scenarios: { scenarioId -> { steps: {}, tasks: {}, reflections: {} } } }
+  activity: [],
+  sheetsUrl: localStorage.getItem('sheetsUrl') || 'https://script.google.com/macros/s/AKfycbw74bw0afMulQM57qK8Idv-Rjuk8EFm1cpcDbyi-8jis7wJhzAR_3_8MCI8wbHmEMg/exec',
+  sheetsConnected: false
+};
+
+// ===== MODULE DATA =====
+const MODULES = [
+  {
+    id: 'M1',
+    title: 'Introduction to Property Accounting',
+    icon: '🏠',
+    tag: 'setup',
+    tagLabel: 'Foundations',
+    desc: 'Understand the core principles of property accounting, client money, and how Street approaches real estate finance.',
+    estimatedTime: '20 min',
+    scenarios: [
+      {
+        id: 'M1S1',
+        title: 'What is Client Money?',
+        helpArticle: {
+          title: 'Understanding Client Money in Street',
+          url: 'https://intercom.help/streetcouk/en/collections/3887357-accounting',
+          summary: 'Client money is funds held on behalf of landlords and tenants. Street treats all rent and deposit funds as client money, which must be kept strictly separate from agency operating funds.'
+        },
+        concepts: ['Client Money Definition', 'Separation of Funds', 'Client Money Protection (CMP)', 'Statutory Obligations', 'Audit Trail'],
+        knowledgeCheck: [
+          {
+            q: 'What is client money in the context of property management?',
+            options: ['The agency\'s own operating funds', 'Money held on behalf of landlords and tenants', 'The agent\'s commission fees', 'Money in the agency\'s savings account'],
+            correct: 1,
+            feedback: 'Correct! Client money includes rent received on behalf of landlords, deposits held on behalf of tenants, and any other third-party funds. It must always be kept separate from agency money.'
+          },
+          {
+            q: 'Why must client money be kept separate from agency funds?',
+            options: ['For tax purposes only', 'It is legally required and protects landlords and tenants', 'To make reporting easier', 'It\'s optional if the agency chooses'],
+            correct: 1,
+            feedback: 'Client money protection is a legal requirement. Mixing client and agency money is a serious compliance breach that can result in loss of licence.'
+          },
+          {
+            q: 'In Street, where is client money recorded?',
+            options: ['In the main P&L account', 'In dedicated client money bank accounts within Street Accounting', 'In a spreadsheet alongside the system', 'In the notes section of each tenancy'],
+            correct: 1,
+            feedback: 'Street maintains dedicated client money accounts within the accounting module. All transactions are tracked against specific landlords and tenancies.'
+          }
+        ],
+        scenario: {
+          title: 'Demo Account Orientation',
+          context: 'You have just been given access to a fresh Street demo account. No accounting has been configured yet. Your first task is to understand the accounting structure and identify what needs to be set up before any transactions can be processed.',
+          details: 'The agency is **Thompson Properties**, a letting agent managing 12 properties in Manchester. They are new to Street and need to set up accounting before going live.'
+        },
+        workflow: [
+          { step: 'Navigate to Accounting', desc: 'From the main menu, click on Accounting. Note that the area may appear largely empty or with limited data in a fresh account.', path: 'Main Menu → Accounting' },
+          { step: 'Explore the Accounting Overview', desc: 'Review the dashboard. Identify areas that show zero balances or "not configured" states.', path: 'Accounting → Overview' },
+          { step: 'Check Bank Accounts', desc: 'Navigate to Bank Accounts and note there are no client money bank accounts set up yet.', path: 'Accounting → Bank Accounts' },
+          { step: 'Note the Chart of Accounts', desc: 'Street will have a default chart of accounts, but you should review whether it matches agency needs.', path: 'Accounting → Chart of Accounts' },
+          { step: 'Identify Missing Setup', desc: 'Create a mental checklist of what needs to be configured before processing any real transactions.', path: 'Accounting → Settings' }
+        ],
+        tasks: [
+          { id: 't1', title: 'Read the Street Accounting Help Centre overview article', type: 'read', desc: 'Visit the Help Centre link above and read the introductory accounting guidance.' },
+          { id: 't2', title: 'Log into the Street demo account', type: 'demo', desc: 'Access demo.street.co.uk and navigate to the Accounting section.' },
+          { id: 't3', title: 'Locate the Accounting dashboard', type: 'demo', desc: 'Find and note the main accounting overview screen.' },
+          { id: 't4', title: 'Identify areas with no configuration', type: 'demo', desc: 'Note which sections appear empty, unconfigured or unavailable.' },
+          { id: 't5', title: 'Confirm you understand what client money is', type: 'confirm', desc: 'You should be able to explain it in one sentence.' }
+        ],
+        reflections: [
+          { id: 'r1', q: 'In your own words, explain what client money is and why it must be kept separate from agency funds.' },
+          { id: 'r2', q: 'What did you notice when you first entered the Accounting section of the demo account? What was missing or unconfigured?' },
+          { id: 'r3', q: 'Why do you think setup must be completed before processing any real transactions?' }
+        ]
+      },
+      {
+        id: 'M1S2',
+        title: 'Key Accounting Terms in Street',
+        helpArticle: {
+          title: 'Street Accounting Terminology',
+          url: 'https://intercom.help/streetcouk/en/collections/3887357-accounting',
+          summary: 'Street uses specific accounting terminology. Understanding terms like ledger, suspense, reconciliation, and statement ensures you use the system correctly.'
+        },
+        concepts: ['Ledger', 'Suspense Account', 'Reconciliation', 'Landlord Statement', 'Allocation', 'Charge', 'Invoice'],
+        knowledgeCheck: [
+          {
+            q: 'What is a suspense account used for in Street?',
+            options: ['Storing agency profit', 'Temporarily holding money that hasn\'t been allocated yet', 'Recording contractor invoices', 'Storing deposit funds only'],
+            correct: 1,
+            feedback: 'A suspense account holds unallocated or unidentified funds temporarily. In Street, this is common when a payment arrives but hasn\'t yet been matched to a tenancy or landlord.'
+          },
+          {
+            q: 'What does "bank reconciliation" mean?',
+            options: ['Paying all landlords at once', 'Matching Street\'s records to the real bank statement to confirm they agree', 'Creating a new bank account in Street', 'Closing the accounting period'],
+            correct: 1,
+            feedback: 'Reconciliation means confirming that every transaction in Street matches the actual bank statement. This is a critical control to catch errors and fraud.'
+          }
+        ],
+        scenario: {
+          title: 'Terminology in Practice',
+          context: 'You are reviewing a landlord account in Street. The landlord says their statement looks wrong. To investigate, you need to understand what each term on the statement means.',
+          details: 'Landlord **Robert Chen** has called to say his most recent statement shows a balance he doesn\'t recognise. You need to trace back through the ledger entries to explain the balance to him.'
+        },
+        workflow: [
+          { step: 'Navigate to Landlord Account', desc: 'Find the landlord record in Street and open their accounting view.', path: 'Contacts → Landlords → Select Landlord → Accounting' },
+          { step: 'View Ledger History', desc: 'Review all ledger entries: receipts, charges, fees, payments.', path: 'Landlord Account → Ledger' },
+          { step: 'Identify Each Entry Type', desc: 'Identify what each entry type means: DR (debit), CR (credit), balance.', path: 'Landlord Account → Ledger → Entry Details' },
+          { step: 'Check for Suspense Items', desc: 'Check if any rent received is sitting in suspense rather than allocated to this landlord.', path: 'Accounting → Suspense Account' }
+        ],
+        tasks: [
+          { id: 't1', title: 'Review the glossary of Street accounting terms', type: 'read', desc: 'Ensure you understand: ledger, suspense, allocation, charge, statement, reconciliation.' },
+          { id: 't2', title: 'Locate a landlord account in the demo system', type: 'demo', desc: 'Navigate to a landlord contact and view their accounting ledger.' },
+          { id: 't3', title: 'Identify at least 3 different entry types on a landlord ledger', type: 'demo', desc: 'Note what each entry represents and whether it is a debit or credit.' },
+          { id: 't4', title: 'Check the suspense account for unallocated funds', type: 'demo', desc: 'Navigate to the suspense account and note any entries there.' }
+        ],
+        reflections: [
+          { id: 'r1', q: 'Explain the difference between a debit and credit entry on a landlord ledger in Street.' },
+          { id: 'r2', q: 'Why might money appear in the suspense account and how would you resolve it?' }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'M2',
+    title: 'Street Accounting Overview',
+    icon: '⚙️',
+    tag: 'setup',
+    tagLabel: 'Setup',
+    desc: 'Learn how Street Accounting is structured, what modules exist, and how they connect to produce compliant letting agency accounts.',
+    estimatedTime: '25 min',
+    scenarios: [
+      {
+        id: 'M2S1',
+        title: 'The Street Accounting Architecture',
+        helpArticle: {
+          title: 'How Street Accounting Works',
+          url: 'https://intercom.help/streetcouk/en/collections/3887357-accounting',
+          summary: 'Street Accounting operates on a trust accounting model. All client funds flow through ring-fenced bank accounts. Each landlord and tenancy has its own ledger. Rent allocation, fee processing, and payments flow through a defined sequence.'
+        },
+        concepts: ['Trust Accounting', 'Ring-Fenced Accounts', 'Landlord Ledger', 'Tenancy Ledger', 'Transaction Flow', 'Fee Processing'],
+        knowledgeCheck: [
+          {
+            q: 'In Street\'s accounting model, who does client money belong to?',
+            options: ['The letting agency', 'The landlords and tenants it was collected for', 'Shared equally between landlord and agency', 'The Street platform'],
+            correct: 1,
+            feedback: 'Client money always belongs to the landlords and tenants. The agency is merely a custodian. This is the foundation of trust accounting.'
+          },
+          {
+            q: 'What happens in Street when rent is received but NOT allocated?',
+            options: ['It is automatically assigned to the oldest tenancy', 'It sits in suspense until manually allocated', 'It is paid directly to the landlord', 'It is returned to the tenant'],
+            correct: 1,
+            feedback: 'Unallocated rent sits in the suspense account. Street requires manual allocation to match payments to the correct tenancy and landlord ledger.'
+          },
+          {
+            q: 'What is the correct order of operations when processing rent?',
+            options: [
+              'Pay landlord → Allocate rent → Take fee',
+              'Receive rent → Allocate to tenancy → Deduct fee → Schedule landlord payment',
+              'Take fee → Receive rent → Pay landlord',
+              'Reconcile → Pay landlord → Receive rent'
+            ],
+            correct: 1,
+            feedback: 'The correct flow is: receive rent → allocate to tenancy → deduct agency fee → schedule landlord payment. This ensures the ledger is correct before any payments go out.'
+          }
+        ],
+        scenario: {
+          title: 'Understanding the Full Accounting Flow',
+          context: 'Before setting up the demo account, you need to map out how a single rent transaction flows through Street Accounting from start to finish.',
+          details: 'Tenant **James Wilson** is paying £1,200/month rent for a property managed by **Thompson Properties**. The agency fee is 10% + VAT. Follow the money from tenant to landlord.'
+        },
+        workflow: [
+          { step: 'Rent arrives in client account', desc: 'Tenant pays £1,200 via bank transfer. It arrives in the client bank account.', path: 'Accounting → Bank Accounts → Client Account' },
+          { step: 'Payment appears in Street', desc: 'Street sees the incoming £1,200 and it initially sits as unallocated.', path: 'Accounting → Unallocated Receipts' },
+          { step: 'Allocate to tenancy', desc: 'The payment is matched to James Wilson\'s tenancy, crediting his rent account.', path: 'Accounting → Receipts → Allocate' },
+          { step: 'System deducts agency fee', desc: 'Street calculates 10% = £120 + VAT (£24) = £144 total fee, credited to the agency.', path: 'Accounting → Fees' },
+          { step: 'Net amount credited to landlord', desc: '£1,200 - £144 = £1,056 is credited to the landlord\'s ledger.', path: 'Landlord Account → Ledger' },
+          { step: 'Landlord payment scheduled', desc: 'Street schedules a £1,056 payment to the landlord on the agreed payment date.', path: 'Accounting → Payments → Landlord Payments' }
+        ],
+        tasks: [
+          { id: 't1', title: 'Map the full transaction flow from rent receipt to landlord payment', type: 'read', desc: 'Draw or write out the 6-step flow described above.' },
+          { id: 't2', title: 'Navigate to Accounting → Bank Accounts in the demo', type: 'demo', desc: 'Familiarise yourself with the bank accounts area.' },
+          { id: 't3', title: 'Find the Unallocated Receipts area in Street', type: 'demo', desc: 'This is where payments land before allocation.' },
+          { id: 't4', title: 'Identify where landlord payment schedules are managed', type: 'demo', desc: 'Navigate to the payments section of accounting.' },
+          { id: 't5', title: 'Confirm you can describe the 6-step flow verbally', type: 'confirm', desc: 'You should be able to describe this from memory.' }
+        ],
+        reflections: [
+          { id: 'r1', q: 'Describe in your own words the full journey of a rent payment in Street from tenant to landlord.' },
+          { id: 'r2', q: 'Why is allocation a required step? What would go wrong if rent was paid straight to the landlord without going through Street Accounting?' },
+          { id: 'r3', q: 'What is the agency\'s role in this process and where does their fee appear?' }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'M3',
+    title: 'Demo Account Setup & Readiness',
+    icon: '🛠️',
+    tag: 'setup',
+    tagLabel: 'Setup',
+    desc: 'CRITICAL: The demo account has NO accounting configured. Learn to identify what is missing and complete the essential setup before any workflows can be used.',
+    estimatedTime: '35 min',
+    isSetupModule: true,
+    scenarios: [
+      {
+        id: 'M3S1',
+        title: 'Accounting Readiness Audit',
+        helpArticle: {
+          title: 'Setting Up Street Accounting from Scratch',
+          url: 'https://intercom.help/streetcouk/en/collections/3887357-accounting',
+          summary: 'Before processing any transactions, the demo account requires: client money bank accounts, chart of accounts review, accounting periods, fee settings, and payment account configuration.'
+        },
+        concepts: ['Accounting Readiness', 'Initial Setup Checklist', 'Bank Account Configuration', 'Accounting Periods', 'Fee Configuration'],
+        knowledgeCheck: [
+          {
+            q: 'What is the most important first step when setting up accounting in a fresh Street account?',
+            options: [
+              'Process the first rent payment',
+              'Configure client money bank accounts',
+              'Create all landlord contacts',
+              'Set up the agency website'
+            ],
+            correct: 1,
+            feedback: 'Client money bank accounts must be configured first. Without them, there is nowhere for received funds to be posted, and Street cannot track the flow of client money.'
+          },
+          {
+            q: 'What happens if you try to process a rent payment before accounting is set up?',
+            options: [
+              'Street will set it up automatically',
+              'The payment cannot be properly allocated, creating compliance risks',
+              'It goes to a default account',
+              'Nothing — the payment still works fine'
+            ],
+            correct: 1,
+            feedback: 'Processing transactions without proper setup creates unallocated funds, incorrect ledger entries, and potential compliance breaches. Setup must come first.'
+          }
+        ],
+        scenario: {
+          title: 'Fresh Demo Account Audit',
+          context: '⚠️ IMPORTANT: The Street demo account starts with NO accounting configuration. You must complete this audit before attempting any accounting workflows.',
+          details: 'You are the practice manager at **Thompson Properties**. You have just opened a Street demo account and your team wants to start testing accounting workflows. Before anyone can do that, you must complete the accounting readiness audit and setup checklist.'
+        },
+        workflow: [
+          { step: 'Navigate to Settings → Accounting', desc: 'Find the accounting configuration area. Note which sections are empty or have default values only.', path: 'Settings → Accounting' },
+          { step: 'Review Accounting Settings', desc: 'Check: accounting start date, VAT registration, management fee defaults, payment frequency settings.', path: 'Settings → Accounting → General' },
+          { step: 'Configure Client Money Bank Accounts', desc: 'Add your client money bank account(s). These will be used to post all rent receipts, deposits and outgoing payments.', path: 'Settings → Accounting → Bank Accounts → Add Bank Account' },
+          { step: 'Set Accounting Period Start', desc: 'Set the date from which Street should start recording accounting data. This is typically your go-live date.', path: 'Settings → Accounting → Accounting Period' },
+          { step: 'Review Fee Configuration', desc: 'Confirm management fees are set up correctly. These will be applied automatically when processing rent.', path: 'Settings → Fees → Management Fees' },
+          { step: 'Check Chart of Accounts', desc: 'Review default nominal codes. These should reflect your agency\'s accounting structure.', path: 'Settings → Accounting → Chart of Accounts' },
+          { step: 'Validate Readiness', desc: 'After completing setup, navigate to Accounting. You should now see bank accounts, available ledgers, and the system ready for transactions.', path: 'Accounting → Overview' }
+        ],
+        tasks: [
+          { id: 't1', title: 'Navigate to Settings → Accounting in the demo account', type: 'demo', desc: 'Find the accounting settings area and open each section.' },
+          { id: 't2', title: 'Set up at least one client money bank account', type: 'demo', desc: 'Add a test bank account to receive client funds.' },
+          { id: 't3', title: 'Set the accounting period start date', type: 'demo', desc: 'Configure when accounting records should begin.' },
+          { id: 't4', title: 'Review and confirm management fee settings', type: 'demo', desc: 'Check that fee rates are set correctly for the demo.' },
+          { id: 't5', title: 'Review the chart of accounts', type: 'demo', desc: 'Understand the nominal codes available by default.' },
+          { id: 't6', title: 'Confirm the account is ready for accounting workflows', type: 'confirm', desc: 'You should now be able to process test transactions.' }
+        ],
+        reflections: [
+          { id: 'r1', q: 'List the 5 most important things that must be configured before a real client account can go live on Street Accounting.' },
+          { id: 'r2', q: 'What would go wrong if an agency tried to process rent payments without first setting up client money bank accounts in Street?' },
+          { id: 'r3', q: 'How did the demo account change after you completed the accounting setup? What was now available that wasn\'t before?' }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'M4',
+    title: 'Accounting Settings & Foundations',
+    icon: '📐',
+    tag: 'setup',
+    tagLabel: 'Setup',
+    desc: 'Deep dive into the accounting settings that control how Street processes fees, payments, VAT, and client money across all managed properties.',
+    estimatedTime: '30 min',
+    scenarios: [
+      {
+        id: 'M4S1',
+        title: 'Configuring Core Accounting Settings',
+        helpArticle: {
+          title: 'Accounting Settings in Street',
+          url: 'https://intercom.help/streetcouk/en/collections/3887357-accounting',
+          summary: 'Core accounting settings control how the agency\'s fee structure, VAT treatment, payment defaults, and client money handling are configured across the system.'
+        },
+        concepts: ['VAT Registration', 'Management Fee %', 'Payment Frequency', 'Default Nominal Codes', 'Client Account Rules'],
+        knowledgeCheck: [
+          {
+            q: 'If a letting agency is VAT registered, what happens to management fees in Street?',
+            options: [
+              'VAT is not applied to management fees',
+              'VAT is automatically added to all management fees',
+              'VAT is only applied to deposit fees',
+              'VAT must be manually calculated outside Street'
+            ],
+            correct: 1,
+            feedback: 'Once VAT registration is enabled in Street settings, VAT is automatically calculated and added to management fees, contractor charges, and other applicable transactions.'
+          },
+          {
+            q: 'What does the "payment frequency" setting control in Street Accounting?',
+            options: [
+              'How often tenants pay rent',
+              'The default schedule on which landlords receive their net payments',
+              'How often the agency is paid',
+              'The frequency of bank reconciliation'
+            ],
+            correct: 1,
+            feedback: 'Payment frequency determines how often Street schedules landlord payments — weekly, monthly, per-receipt etc. This can be set globally or overridden per landlord.'
+          }
+        ],
+        scenario: {
+          title: 'Setting Up Fees and Payment Rules',
+          context: 'Thompson Properties charges a 12% management fee to most landlords and 10% to a few premium clients. They are VAT registered. Landlords are paid monthly. Set up these rules in the demo account.',
+          details: 'The MD has asked you to configure the standard fee structure before the team starts onboarding properties next week. The go-live date is the first of next month.'
+        },
+        workflow: [
+          { step: 'Access Accounting Settings', desc: 'Navigate to Settings → Accounting. This is the control centre for all accounting configuration.', path: 'Settings → Accounting' },
+          { step: 'Enable VAT Registration', desc: 'Toggle VAT registration on and enter the agency\'s VAT number. Set the VAT rate (typically 20%).', path: 'Settings → Accounting → VAT' },
+          { step: 'Set Default Management Fee', desc: 'Set 12% as the default management fee. This will automatically apply to all new properties unless overridden.', path: 'Settings → Fees → Management Fee → Default %' },
+          { step: 'Configure Payment Schedule', desc: 'Set landlord payment frequency to Monthly. Specify the payment day (e.g. 25th of each month).', path: 'Settings → Accounting → Landlord Payments → Payment Schedule' },
+          { step: 'Review Nominal Code Defaults', desc: 'Confirm that management fee income, VAT control, and rent received nominal codes are correctly mapped.', path: 'Settings → Accounting → Nominal Codes' },
+          { step: 'Save and Verify', desc: 'Save all settings. Navigate to a test property and confirm the fee shows correctly on the accounting tab.', path: 'Properties → Test Property → Accounting' }
+        ],
+        tasks: [
+          { id: 't1', title: 'Enable VAT registration in settings', type: 'demo', desc: 'Navigate to Settings → Accounting and enable VAT.' },
+          { id: 't2', title: 'Set the default management fee to 12%', type: 'demo', desc: 'Configure the standard fee rate.' },
+          { id: 't3', title: 'Configure monthly landlord payment schedule', type: 'demo', desc: 'Set payment frequency and preferred day.' },
+          { id: 't4', title: 'Review nominal code mapping', type: 'demo', desc: 'Confirm key nominal codes are correctly set.' },
+          { id: 't5', title: 'Test fee display on a property record', type: 'confirm', desc: 'Verify the fee shows correctly after setup.' }
+        ],
+        reflections: [
+          { id: 'r1', q: 'What is the impact on landlord statements if the VAT registration setting is enabled partway through a month, with some fees already processed at the old rate?' },
+          { id: 'r2', q: 'If a landlord has a different fee rate to the standard (e.g. 10% instead of 12%), where in Street would you override this?' }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'M5',
+    title: 'Receiving & Allocating Rent',
+    icon: '💷',
+    tag: 'workflow',
+    tagLabel: 'Workflow',
+    desc: 'Learn the complete process of receiving tenant rent payments and correctly allocating them in Street to produce accurate landlord ledgers.',
+    estimatedTime: '35 min',
+    scenarios: [
+      {
+        id: 'M5S1',
+        title: 'Processing a Standard Rent Payment',
+        helpArticle: {
+          title: 'Recording Rent Receipts in Street',
+          url: 'https://intercom.help/streetcouk/en/collections/3887357-accounting',
+          summary: 'When rent is received, it must be recorded in Street against the correct tenancy. Street then automatically calculates fees and updates the landlord ledger.'
+        },
+        concepts: ['Rent Receipt', 'Payment Allocation', 'Tenancy Ledger', 'Fee Calculation', 'Landlord Credit'],
+        knowledgeCheck: [
+          {
+            q: 'Tenant pays rent 2 days early. Where does this payment initially sit in Street?',
+            options: ['On the landlord ledger immediately', 'In the suspense account as unallocated', 'In the agency\'s own account', 'It is automatically rejected'],
+            correct: 1,
+            feedback: 'All incoming payments sit in suspense (unallocated) until they are matched to a tenancy. Street doesn\'t auto-allocate to prevent errors.'
+          },
+          {
+            q: 'After allocating rent, what is automatically created in Street?',
+            options: [
+              'A new tenancy agreement',
+              'A management fee charge against the landlord',
+              'A deposit registration',
+              'A new bank account entry'
+            ],
+            correct: 1,
+            feedback: 'When rent is allocated, Street automatically calculates and posts the management fee charge based on the configured fee %, giving the agency their income and updating the net landlord balance.'
+          }
+        ],
+        scenario: {
+          title: 'Rent Day for Manchester Portfolio',
+          context: 'It\'s rent day. The client account has received three payments overnight. Each needs to be identified and allocated to the correct tenancy.',
+          details: `Three payments have arrived:\n\n• **£950** — John Miller, 14 Oak Street (due today)\n• **£1,100** — Sarah Barnes, 22 Maple Ave (due yesterday — 1 day late)\n• **£875** — Tom Chen, 8 Park Road (partial payment — expects remaining £125 next week)\n\nAll properties managed by Thompson Properties at 12% management fee + VAT.`
+        },
+        workflow: [
+          { step: 'Open Accounting → Receipts', desc: 'Navigate to the receipts area where all incoming bank payments are listed.', path: 'Accounting → Receipts' },
+          { step: 'Identify Unallocated Payments', desc: 'You will see the three incoming payments listed as unallocated. Each shows the amount and date received.', path: 'Accounting → Receipts → Unallocated' },
+          { step: 'Allocate Full Payment (£950)', desc: 'Select the £950 payment. Search for John Miller\'s tenancy. Match the full amount to the current rent period.', path: 'Accounting → Receipts → Allocate → Search Tenancy' },
+          { step: 'Street Calculates Fee', desc: 'Street automatically calculates: 12% of £950 = £114 + VAT (£22.80) = £136.80 fee. Landlord net = £813.20.', path: 'Accounting → Receipts → Allocation Summary' },
+          { step: 'Handle Partial Payment (£875)', desc: 'Select £875 payment. Allocate to Tom Chen\'s tenancy. Mark as partial. Note the shortfall of £125. Do NOT generate landlord payment yet.', path: 'Accounting → Receipts → Allocate → Partial Payment' },
+          { step: 'Review Landlord Ledger', desc: 'Check each landlord\'s ledger to confirm rent received, fees deducted, and current balance are all correct.', path: 'Landlord Account → Ledger → Current Balance' }
+        ],
+        tasks: [
+          { id: 't1', title: 'Navigate to Accounting → Receipts in the demo', type: 'demo', desc: 'Find where incoming payments are displayed.' },
+          { id: 't2', title: 'Allocate a full rent payment to a tenancy', type: 'demo', desc: 'Match an incoming payment to a test tenancy.' },
+          { id: 't3', title: 'Confirm the management fee has been automatically generated', type: 'demo', desc: 'Check that Street created the fee entry after allocation.' },
+          { id: 't4', title: 'Record a partial rent payment and note the shortfall', type: 'demo', desc: 'Allocate a partial amount and flag the balance outstanding.' },
+          { id: 't5', title: 'Review a landlord ledger to confirm the balance is correct', type: 'confirm', desc: 'The ledger should show rent received minus fees.' }
+        ],
+        reflections: [
+          { id: 'r1', q: 'What would happen to the landlord\'s statement if rent was allocated to the wrong tenancy? How would you fix this error in Street?' },
+          { id: 'r2', q: 'Tom Chen paid £875 of £1,000 due. The landlord is asking where their money is. How do you explain the position and what are your options in Street?' },
+          { id: 'r3', q: 'When should you hold back a landlord payment due to arrears, and when should you still pay the landlord on the available balance?' }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'M6',
+    title: 'Landlord Fees & Charges',
+    icon: '🧾',
+    tag: 'workflow',
+    tagLabel: 'Workflow',
+    desc: 'Understand how management fees, ad-hoc charges and invoices are created, applied and tracked against landlord accounts in Street.',
+    estimatedTime: '30 min',
+    scenarios: [
+      {
+        id: 'M6S1',
+        title: 'Processing Management Fees',
+        helpArticle: {
+          title: 'Landlord Fees and Charges in Street',
+          url: 'https://intercom.help/streetcouk/en/collections/3887357-accounting',
+          summary: 'Management fees are auto-calculated when rent is allocated. Additional charges such as renewal fees, inventory fees and one-off charges can be manually added to a landlord\'s account.'
+        },
+        concepts: ['Management Fee', 'Renewal Fee', 'Inventory Fee', 'Ad-hoc Charge', 'Invoice', 'Nominal Code'],
+        knowledgeCheck: [
+          {
+            q: 'A landlord is charged a tenancy renewal fee. Where in Street is this added?',
+            options: [
+              'Directly on the bank account',
+              'As a charge on the landlord\'s account or via the tenancy',
+              'In the agency\'s own nominal ledger only',
+              'On the tenant record, not the landlord'
+            ],
+            correct: 1,
+            feedback: 'Ad-hoc fees like renewal fees are added as charges on the landlord\'s account. They are deducted from the next payment run or can be invoiced separately.'
+          }
+        ],
+        scenario: {
+          title: 'End-of-Month Fee Reconciliation',
+          context: 'It is month end. You need to ensure all fees are correct before running landlord payments. Three landlords have additional charges to process this month.',
+          details: '• **Robert Chen** — £120 inventory fee (new tenancy started)\n• **Lisa Park** — £60 renewal fee (tenancy renewed for 12 months)\n• **David Mills** — £240 maintenance coordination fee (major works overseen by agency)\n\nAll subject to VAT at 20%.'
+        },
+        workflow: [
+          { step: 'Open Landlord Account', desc: 'Navigate to the landlord\'s contact record and open their accounting view.', path: 'Contacts → Landlords → Select → Accounting' },
+          { step: 'Add New Charge', desc: 'Click "Add Charge". Select the charge type: Inventory Fee. Enter £120. Street automatically calculates VAT.', path: 'Landlord Account → Charges → Add Charge' },
+          { step: 'Select Nominal Code', desc: 'Assign the correct nominal code for this type of charge (e.g. Management Income or Fees Income).', path: 'Add Charge → Nominal Code' },
+          { step: 'Confirm Charge on Ledger', desc: 'Save the charge. It now appears on the landlord\'s ledger, reducing their next payment.', path: 'Landlord Account → Ledger → Review' },
+          { step: 'Repeat for All Landlords', desc: 'Add the renewal fee to Lisa Park and the coordination fee to David Mills using the same process.', path: 'Contacts → Landlords' },
+          { step: 'Run Pre-Payment Review', desc: 'Before processing payments, run a ledger review to confirm all fees are correct and no errors exist.', path: 'Accounting → Landlord Payments → Pre-Payment Report' }
+        ],
+        tasks: [
+          { id: 't1', title: 'Add a test inventory fee charge to a landlord account', type: 'demo', desc: 'Navigate to a landlord and add a fee with the correct nominal code.' },
+          { id: 't2', title: 'Confirm VAT is correctly calculated on the charge', type: 'demo', desc: 'Check that Street has applied 20% VAT.' },
+          { id: 't3', title: 'View the landlord ledger to confirm the charge appears', type: 'demo', desc: 'Verify it shows as a deduction on the account.' },
+          { id: 't4', title: 'Check the pre-payment report before running payments', type: 'confirm', desc: 'Confirm all charges are correct before landlord payment batch.' }
+        ],
+        reflections: [
+          { id: 'r1', q: 'A landlord disputes an inventory fee charge. How would you trace when it was added, by whom, and what nominal code it was posted to?' },
+          { id: 'r2', q: 'What is the difference between a "charge" and an "invoice" in Street Accounting, and when would you use each?' }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'M7',
+    title: 'Contractor Charges',
+    icon: '🔧',
+    tag: 'workflow',
+    tagLabel: 'Workflow',
+    desc: 'Process contractor invoices, maintenance costs, and the disbursement of funds to contractors via landlord accounts.',
+    estimatedTime: '30 min',
+    scenarios: [
+      {
+        id: 'M7S1',
+        title: 'Posting a Contractor Invoice',
+        helpArticle: {
+          title: 'Contractor Payments and Invoices in Street',
+          url: 'https://intercom.help/streetcouk/en/collections/3887357-accounting',
+          summary: 'Contractor invoices are raised against individual properties. The cost is posted to the landlord\'s ledger and paid from the client account. Street tracks each contractor payment against the related work order.'
+        },
+        concepts: ['Contractor Invoice', 'Work Order', 'Landlord Debit', 'Client Account Payment', 'Disbursement'],
+        knowledgeCheck: [
+          {
+            q: 'A contractor completes boiler repair for £350. Where does this cost appear in Street?',
+            options: [
+              'On the agency\'s overhead account',
+              'As a debit on the landlord\'s accounting ledger',
+              'On the tenant\'s deposit account',
+              'It is not recorded in Street'
+            ],
+            correct: 1,
+            feedback: 'Contractor invoices are posted as debits to the landlord\'s account because the landlord owns the property and is responsible for maintenance costs.'
+          },
+          {
+            q: 'When a contractor is paid from the client account, what must Street ensure?',
+            options: [
+              'The landlord has sufficient balance to cover the payment',
+              'The agency account has enough money',
+              'The tenant approves the payment',
+              'VAT is never charged on maintenance'
+            ],
+            correct: 0,
+            feedback: 'Street should confirm the landlord has a sufficient ledger balance before releasing a contractor payment. If the balance is insufficient, the agency must decide how to handle the shortfall.'
+          }
+        ],
+        scenario: {
+          title: 'Emergency Boiler Repair — 14 Oak Street',
+          context: 'The boiler at 14 Oak Street (John Miller\'s tenancy) has broken down. Landlord David Thompson has approved an emergency repair by Gasworks Ltd.',
+          details: 'Invoice from Gasworks Ltd: £350 + VAT (£70) = £420 total. The repair is complete and the invoice needs to be recorded and the contractor paid.\n\nLandlord David Thompson has £850 available in his ledger from last month\'s net rent.'
+        },
+        workflow: [
+          { step: 'Locate the Property Work Order', desc: 'Navigate to the property record and find the maintenance work order linked to this repair.', path: 'Properties → 14 Oak Street → Maintenance' },
+          { step: 'Post Contractor Invoice', desc: 'From the work order, post the contractor invoice: £350 + VAT. Link to Gasworks Ltd as the supplier.', path: 'Maintenance → Work Order → Post Invoice' },
+          { step: 'Confirm Landlord Debit', desc: 'Street posts £420 as a debit to David Thompson\'s ledger. His balance reduces from £850 to £430.', path: 'Landlord Account → Ledger → Contractor Payment' },
+          { step: 'Generate Contractor Payment', desc: 'From the invoice, generate a payment to Gasworks Ltd for £420. This is released from the client bank account.', path: 'Accounting → Contractor Payments → Process Payment' },
+          { step: 'Verify Client Account Balance', desc: 'Confirm the client account balance has reduced by £420 and the transaction matches the bank statement entry.', path: 'Accounting → Bank Accounts → Client Account → Transactions' },
+          { step: 'Confirm on Landlord Statement', desc: 'The next landlord statement for David Thompson will now show the maintenance deduction clearly.', path: 'Landlord Account → Statements' }
+        ],
+        tasks: [
+          { id: 't1', title: 'Navigate to a property maintenance/work order area in the demo', type: 'demo', desc: 'Find where maintenance jobs and invoices are linked.' },
+          { id: 't2', title: 'Post a test contractor invoice with VAT', type: 'demo', desc: 'Create an invoice for a fictional contractor for £350 + VAT.' },
+          { id: 't3', title: 'Confirm the debit appears on the landlord\'s ledger', type: 'demo', desc: 'Check that the landlord balance has reduced accordingly.' },
+          { id: 't4', title: 'Process the contractor payment from the client account', type: 'demo', desc: 'Generate and approve the payment to the contractor.' },
+          { id: 't5', title: 'Verify the landlord statement shows the maintenance deduction', type: 'confirm', desc: 'Preview the statement and confirm the entry.' }
+        ],
+        reflections: [
+          { id: 'r1', q: 'A landlord has a £200 credit balance but a contractor invoice comes in for £350. What are your options in Street and what would you advise the landlord?' },
+          { id: 'r2', q: 'Why is it important to link contractor invoices to specific work orders rather than posting them as generic credits on a landlord\'s account?' }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'M8',
+    title: 'Landlord Payments',
+    icon: '💸',
+    tag: 'workflow',
+    tagLabel: 'Workflow',
+    desc: 'Run landlord payment batches, generate statements, handle payment holds, and manage net payment calculations in Street.',
+    estimatedTime: '35 min',
+    scenarios: [
+      {
+        id: 'M8S1',
+        title: 'Running the Monthly Landlord Payment Batch',
+        helpArticle: {
+          title: 'Processing Landlord Payments in Street',
+          url: 'https://intercom.help/streetcouk/en/collections/3887357-accounting',
+          summary: 'Street\'s payment batch tool calculates the net payment due to each landlord, deducting all fees and charges. Payments can be reviewed before being processed and sent via bank transfer.'
+        },
+        concepts: ['Payment Batch', 'Net Payment', 'Payment Run', 'BACS', 'Payment Hold', 'Statement Generation'],
+        knowledgeCheck: [
+          {
+            q: 'Before running a landlord payment batch, what should you always check?',
+            options: [
+              'Whether the agency bank account has enough money',
+              'That all rent has been allocated and fees are correct for the period',
+              'Whether the landlord has logged into Street recently',
+              'The weather forecast'
+            ],
+            correct: 1,
+            feedback: 'Always verify rent allocation and fee accuracy before running payments. An incorrect payment batch is very difficult to reverse and causes landlord complaints.'
+          },
+          {
+            q: 'A landlord asks you to hold their payment this month. What do you do in Street?',
+            options: [
+              'Delete their bank details',
+              'Place a payment hold on their account for this payment run',
+              'Cancel all their tenancies',
+              'Change their fee rate to 0%'
+            ],
+            correct: 1,
+            feedback: 'Street allows you to place a payment hold on specific landlord accounts. The balance remains in the client account until you release the hold in a future payment run.'
+          }
+        ],
+        scenario: {
+          title: 'Month-End Payment Run — Thompson Properties',
+          context: 'It is the 25th of the month — payment day for Thompson Properties. You need to run the monthly landlord payment batch for all 12 properties.',
+          details: `Month-end summary:\n• 11 landlords have correct balances ready for payment\n• 1 landlord (David Thompson) has requested a payment hold until next month\n• Total to be paid: £9,240 across 11 landlords\n• All management fees already deducted\n\nYou need to run the batch, hold David Thompson, and generate statements for all landlords.`
+        },
+        workflow: [
+          { step: 'Navigate to Landlord Payments', desc: 'Open the Payments section and select the landlord payment batch tool.', path: 'Accounting → Landlord Payments → New Batch' },
+          { step: 'Select Payment Period', desc: 'Select the current month. Street will calculate the net payment for every landlord who has rent allocated in this period.', path: 'Landlord Payments → Select Period' },
+          { step: 'Review Payment Summary', desc: 'Street shows each landlord with their gross rent received, fees deducted, and net payment due. Verify each one.', path: 'Landlord Payments → Review Summary' },
+          { step: 'Place Hold on David Thompson', desc: 'Find David Thompson in the list. Toggle "Hold Payment". His £820 remains in client account. Note reason.', path: 'Landlord Payments → David Thompson → Hold Payment' },
+          { step: 'Confirm and Process Batch', desc: 'Review final totals: £9,240 to 11 landlords. Confirm and process. Street generates BACS file or confirms bank transfers.', path: 'Landlord Payments → Confirm → Process' },
+          { step: 'Generate Landlord Statements', desc: 'After processing, generate statements for all 12 landlords (including David Thompson with zero payment and explanation of hold).', path: 'Landlord Payments → Generate Statements → All' },
+          { step: 'Verify Client Account Balance', desc: 'Confirm client account has reduced by £9,240 and the balance remaining equals all held and future funds.', path: 'Accounting → Bank Accounts → Client Account' }
+        ],
+        tasks: [
+          { id: 't1', title: 'Navigate to Landlord Payments in the demo', type: 'demo', desc: 'Find the payment batch tool in the Accounting module.' },
+          { id: 't2', title: 'Create a new payment batch for the current period', type: 'demo', desc: 'Select the current month and review the calculated payments.' },
+          { id: 't3', title: 'Place a payment hold on one landlord', type: 'demo', desc: 'Practice applying a hold to a specific landlord in the batch.' },
+          { id: 't4', title: 'Confirm and process the payment batch', type: 'demo', desc: 'Complete the batch (use test data, do not process real payments).' },
+          { id: 't5', title: 'Generate landlord statements after the batch', type: 'demo', desc: 'Confirm statements are generated for all landlords including held ones.' },
+          { id: 't6', title: 'Verify client account balance after payments', type: 'confirm', desc: 'Confirm the account balance reconciles correctly.' }
+        ],
+        reflections: [
+          { id: 'r1', q: 'You process a payment batch and realise after processing that one landlord\'s fee was set incorrectly. What steps would you take in Street to investigate and correct this?' },
+          { id: 'r2', q: 'Why is it important to generate statements for ALL landlords including those on a payment hold?' },
+          { id: 'r3', q: 'What is the relationship between the client account balance and the total of all landlord ledger balances? What should they equal?' }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'M9',
+    title: 'Reconciliation & Balancing',
+    icon: '⚖️',
+    tag: 'workflow',
+    tagLabel: 'Workflow',
+    desc: 'Master the reconciliation process in Street — matching bank transactions to system records to ensure the client account is always balanced and accurate.',
+    estimatedTime: '40 min',
+    scenarios: [
+      {
+        id: 'M9S1',
+        title: 'Monthly Bank Reconciliation',
+        helpArticle: {
+          title: 'Bank Reconciliation in Street',
+          url: 'https://intercom.help/streetcouk/en/collections/3887357-accounting',
+          summary: 'Bank reconciliation confirms that every transaction in Street matches the real bank statement. Street\'s reconciliation tool allows you to match transactions, flag differences and close the reconciliation period.'
+        },
+        concepts: ['Bank Reconciliation', 'Statement Import', 'Transaction Matching', 'Unmatched Entries', 'Reconciliation Report'],
+        knowledgeCheck: [
+          {
+            q: 'After completing reconciliation, the Street balance shows £12,400 but the bank statement shows £12,250. What does this £150 difference mean?',
+            options: [
+              'The bank has made an error',
+              'There are unmatched, outstanding or incorrectly recorded transactions in Street',
+              'The reconciliation is complete and the difference is normal',
+              'VAT needs to be adjusted'
+            ],
+            correct: 1,
+            feedback: 'Any difference after reconciliation indicates an error or timing difference. Common causes: unmatched payments, duplicate entries, bank charges not recorded in Street, or timing differences for in-transit items.'
+          }
+        ],
+        scenario: {
+          title: 'End-of-Month Reconciliation — Client Account',
+          context: 'It is the 31st. You must reconcile the client money bank account before closing the month. The bank statement shows different transactions to what Street currently records.',
+          details: 'Bank statement balance: £18,750\nStreet balance: £18,900\nDifference: £150\n\nYou need to find and resolve this £150 discrepancy before closing the period.'
+        },
+        workflow: [
+          { step: 'Open Bank Reconciliation', desc: 'Navigate to Accounting → Bank Accounts → Client Account → Reconcile.', path: 'Accounting → Bank Accounts → Reconcile' },
+          { step: 'Import/Enter Bank Statement', desc: 'Import the bank statement or manually enter the closing balance from the real bank statement.', path: 'Reconciliation → Import Statement' },
+          { step: 'Match Transactions', desc: 'Street shows a list of system transactions. Match each one to the corresponding bank statement entry. Tick matched items.', path: 'Reconciliation → Match Transactions' },
+          { step: 'Identify Unmatched Items', desc: 'Investigate any entries that don\'t match. Check for: timing differences, missing entries, duplicate posts, or bank charges.', path: 'Reconciliation → Unmatched Items' },
+          { step: 'Find the £150 Difference', desc: 'In this case, a £150 bank charge was not recorded in Street. Post it as a bank charge transaction.', path: 'Accounting → Transactions → Post Bank Charge' },
+          { step: 'Complete Reconciliation', desc: 'Once all items are matched and the difference is zero, close the reconciliation. Street generates a reconciliation report.', path: 'Reconciliation → Complete → Generate Report' }
+        ],
+        tasks: [
+          { id: 't1', title: 'Navigate to the Bank Reconciliation tool in the demo', type: 'demo', desc: 'Find Accounting → Bank Accounts → Reconcile.' },
+          { id: 't2', title: 'Review the list of unreconciled transactions', type: 'demo', desc: 'Identify which transactions haven\'t been matched yet.' },
+          { id: 't3', title: 'Match at least 3 transactions in the demo', type: 'demo', desc: 'Practice matching system records to bank entries.' },
+          { id: 't4', title: 'Identify any unmatched items and investigate', type: 'demo', desc: 'Find differences and understand their cause.' },
+          { id: 't5', title: 'Generate a reconciliation report', type: 'confirm', desc: 'Confirm the report shows a balanced position.' }
+        ],
+        reflections: [
+          { id: 'r1', q: 'You find that a rent payment was recorded twice in Street but only once on the bank statement. What steps do you take to resolve this?' },
+          { id: 'r2', q: 'Why is monthly reconciliation critical for a letting agency\'s compliance obligations? What would an ARLA or RICS audit look for?' },
+          { id: 'r3', q: 'What is the relationship between reconciliation and client money protection compliance?' }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'M10',
+    title: 'Handling Suspense Accounts',
+    icon: '🔍',
+    tag: 'workflow',
+    tagLabel: 'Workflow',
+    desc: 'Investigate and clear suspense account items — understanding why funds are held there and how to correctly allocate them.',
+    estimatedTime: '25 min',
+    scenarios: [
+      {
+        id: 'M10S1',
+        title: 'Clearing the Suspense Account',
+        helpArticle: {
+          title: 'Managing the Suspense Account in Street',
+          url: 'https://intercom.help/streetcouk/en/collections/3887357-accounting',
+          summary: 'The suspense account holds unallocated money temporarily. Regular review ensures no funds are lost, unidentified, or incorrectly held. Each entry should be investigated and cleared promptly.'
+        },
+        concepts: ['Suspense Account', 'Unallocated Funds', 'Payment Investigation', 'Allocation Error', 'Clearing Entry'],
+        knowledgeCheck: [
+          {
+            q: 'A payment of £1,050 sits in suspense. The expected rent was £1,000. What could explain the extra £50?',
+            options: [
+              'The tenant overpaid and the excess should be refunded or held as credit',
+              'The bank made an error',
+              'The management fee was not deducted',
+              'It is always VAT'
+            ],
+            correct: 0,
+            feedback: 'Tenants sometimes overpay, perhaps including a late payment penalty by mistake or rounding up. The £50 excess should be investigated. If an overpayment, it can be held as tenant credit or refunded.'
+          }
+        ],
+        scenario: {
+          title: 'Suspense Account Investigation',
+          context: 'Your suspense account has grown to £2,450 across 4 unallocated entries. The accounts need to be cleared before month end.',
+          details: `4 unallocated items:\n• £950 — matches John Miller's rent exactly\n• £500 — unknown reference "BANK REF 44721"\n• £1,050 — £50 more than expected rent for Sarah Barnes\n• Unknown timing: payment from last month sitting unallocated`
+        },
+        workflow: [
+          { step: 'Open Suspense Account', desc: 'Navigate to Accounting → Suspense Account. Review all outstanding items.', path: 'Accounting → Suspense Account' },
+          { step: 'Allocate Matched Payment', desc: '£950 clearly matches John Miller. Allocate immediately to his tenancy.', path: 'Suspense → Select £950 → Allocate to Tenancy' },
+          { step: 'Investigate Unknown Payment', desc: '£500 unknown. Contact bank, check reference, check if any landlord or tenant matches. Post to holding account until identified.', path: 'Suspense → £500 → Investigation Flag' },
+          { step: 'Handle Overpayment', desc: '£1,050 vs £1,000 expected. Allocate £1,000 to rent. Post £50 as tenant credit on their ledger.', path: 'Suspense → £1,050 → Allocate Rent + Post Credit' },
+          { step: 'Review Aged Suspense Items', desc: 'The old unallocated item from last month. Escalate for manager review — aged suspense is a compliance risk.', path: 'Suspense → Aged Items → Escalate' }
+        ],
+        tasks: [
+          { id: 't1', title: 'Locate the Suspense Account in Street Accounting', type: 'demo', desc: 'Navigate to Accounting → Suspense Account.' },
+          { id: 't2', title: 'Allocate a test unallocated payment to a tenancy', type: 'demo', desc: 'Practice clearing a suspense item.' },
+          { id: 't3', title: 'Post a tenant credit for an overpayment scenario', type: 'demo', desc: 'Record the £50 excess as tenant credit.' },
+          { id: 't4', title: 'Flag an unidentifiable payment for investigation', type: 'demo', desc: 'Mark the unknown entry for follow-up.' },
+          { id: 't5', title: 'Generate a suspense account report', type: 'confirm', desc: 'Confirm the report shows cleared and outstanding items.' }
+        ],
+        reflections: [
+          { id: 'r1', q: 'How long should money be allowed to sit in the suspense account before it becomes a compliance concern? What is best practice?' },
+          { id: 'r2', q: 'Describe the internal process you would follow if a payment arrived with no reference and you couldn\'t identify the payer.' }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'M11',
+    title: 'Deposits & Refunds',
+    icon: '🔒',
+    tag: 'workflow',
+    tagLabel: 'Workflow',
+    desc: 'Register tenant deposits, manage protected funds, process deductions, and refund deposits at end of tenancy through Street.',
+    estimatedTime: '35 min',
+    scenarios: [
+      {
+        id: 'M11S1',
+        title: 'Deposit Registration and Management',
+        helpArticle: {
+          title: 'Deposit Management in Street',
+          url: 'https://intercom.help/streetcouk/en/collections/3887357-accounting',
+          summary: 'Street tracks tenancy deposits from receipt through to refund. Deposits must be registered with a government-approved scheme within 30 days. Street records the scheme reference and tracks deposit funds separately from rent.'
+        },
+        concepts: ['Deposit Protection', 'Tenancy Deposit Scheme (TDS)', 'Deposit Receipt', 'Deductions', 'End of Tenancy Refund', 'Prescribed Information'],
+        knowledgeCheck: [
+          {
+            q: 'A tenant pays a £950 deposit on move-in day. Within how many days must it be protected with an approved scheme?',
+            options: ['7 days', '14 days', '30 days', '60 days'],
+            correct: 2,
+            feedback: 'UK law requires deposits to be protected within 30 days of receipt and prescribed information provided to the tenant. Street helps you track this deadline.'
+          },
+          {
+            q: 'At end of tenancy, the landlord wants to deduct £200 for cleaning. How is this processed in Street?',
+            options: [
+              'Reduce the deposit amount directly in bank settings',
+              'Post a deduction on the tenancy deposit record and refund the remainder',
+              'Issue a separate invoice to the tenant',
+              'The full deposit is always returned'
+            ],
+            correct: 1,
+            feedback: 'Deductions are posted against the tenancy deposit record in Street. The system calculates the net refund and releases it to the tenant. A full audit trail is maintained.'
+          }
+        ],
+        scenario: {
+          title: 'End of Tenancy — 22 Maple Avenue',
+          context: 'Sarah Barnes\'s tenancy at 22 Maple Avenue is ending. She has paid a £1,100 deposit. The landlord has agreed to deduct £200 for carpet cleaning. The remaining £900 should be refunded to Sarah.',
+          details: 'Timeline:\n• 28th: Tenancy ends and keys returned\n• 30th: Landlord confirms £200 deduction for cleaning\n• 31st: Refund of £900 to be processed\n\nDeposit was protected with TDS. Scheme ref: TDS-2024-4421'
+        },
+        workflow: [
+          { step: 'Open Tenancy Record', desc: 'Navigate to the tenancy for 22 Maple Avenue. Find the Deposit section.', path: 'Tenancies → 22 Maple Avenue → Deposit' },
+          { step: 'Confirm Deposit Details', desc: 'Verify deposit amount (£1,100), protection scheme (TDS), and reference number.', path: 'Tenancy → Deposit → Details' },
+          { step: 'Post Deduction', desc: 'Add a £200 deduction for cleaning. Select the deduction type and add notes for the audit trail.', path: 'Tenancy → Deposit → Add Deduction → Cleaning £200' },
+          { step: 'Calculate Refund Amount', desc: 'Street calculates: £1,100 - £200 = £900 to refund. Confirm this with the landlord.', path: 'Tenancy → Deposit → Refund Calculation' },
+          { step: 'Process Refund', desc: 'Initiate refund of £900 to Sarah Barnes\' bank account from the client deposit account.', path: 'Tenancy → Deposit → Process Refund → £900' },
+          { step: 'Notify Deposit Scheme', desc: 'Update the TDS with the release decision. Note this is done externally via the deposit scheme portal.', path: 'External: TDS Portal' },
+          { step: 'Close Tenancy', desc: 'With deposit resolved, mark the tenancy as ended in Street. All accounting should now balance.', path: 'Tenancy → Close Tenancy' }
+        ],
+        tasks: [
+          { id: 't1', title: 'Navigate to a tenancy deposit section in the demo', type: 'demo', desc: 'Find where deposits are recorded on a tenancy record.' },
+          { id: 't2', title: 'Review the deposit details and protection scheme reference', type: 'demo', desc: 'Confirm the deposit amount and scheme reference.' },
+          { id: 't3', title: 'Post a test deduction of £200', type: 'demo', desc: 'Add a deduction and confirm the refund amount updates.' },
+          { id: 't4', title: 'Initiate a test deposit refund', type: 'demo', desc: 'Process the net refund to the tenant.' },
+          { id: 't5', title: 'Confirm the client account balance after refund', type: 'confirm', desc: 'Verify the deposit account has reduced correctly.' }
+        ],
+        reflections: [
+          { id: 'r1', q: 'A tenant disputes the landlord\'s deduction. The landlord insists the cleaning cost was necessary. Explain the process in Street and legally for handling a disputed deposit.' },
+          { id: 'r2', q: 'What compliance risks does an agency face if deposits are not registered with a scheme within 30 days? How does Street help prevent this?' }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'M12',
+    title: 'Reporting & Statements',
+    icon: '📊',
+    tag: 'workflow',
+    tagLabel: 'Workflow',
+    desc: 'Generate, review, and send landlord statements, income reports, and client money reports in Street.',
+    estimatedTime: '25 min',
+    scenarios: [
+      {
+        id: 'M12S1',
+        title: 'Generating Landlord Statements',
+        helpArticle: {
+          title: 'Landlord Statements and Reports in Street',
+          url: 'https://intercom.help/streetcouk/en/collections/3887357-accounting',
+          summary: 'Street generates professional landlord statements showing all transactions for the period: rent received, fees deducted, charges, contractor payments and the net payment amount. Statements can be emailed directly to landlords from Street.'
+        },
+        concepts: ['Landlord Statement', 'Statement Period', 'Net Remittance', 'Email Dispatch', 'Statement Format', 'Annual Summary'],
+        knowledgeCheck: [
+          {
+            q: 'A landlord calls asking why their statement shows a different amount to what they expected. What is the first thing you check?',
+            options: [
+              'Their bank account',
+              'All charges and deductions posted in the period on their ledger',
+              'The reconciliation',
+              'The tenant\'s payment'
+            ],
+            correct: 1,
+            feedback: 'The first step is always to open the landlord\'s ledger and review every entry for the statement period. Unexpected deductions (charges, contractor payments, fee adjustments) are the most common cause of statement queries.'
+          }
+        ],
+        scenario: {
+          title: 'Month-End Statement Run',
+          context: 'After processing all payments, you need to generate and send statements to all 12 landlords. Three landlords have queried their statements in recent months, so extra care is needed.',
+          details: 'All statements should cover the current calendar month. Statements must be emailed by 5pm today. Three landlords (Robert Chen, Lisa Park, David Mills) have historically queried their statements — review these carefully before sending.'
+        },
+        workflow: [
+          { step: 'Navigate to Statement Generation', desc: 'Open Accounting → Statements → Landlord Statements.', path: 'Accounting → Statements → Landlord Statements' },
+          { step: 'Select Statement Period', desc: 'Set the period as the current calendar month. Street will pull all transactions within this date range.', path: 'Statements → Select Period' },
+          { step: 'Preview Statements for Query Landlords', desc: 'Open and review statements for Robert Chen, Lisa Park, and David Mills before batch sending.', path: 'Statements → Preview → Per Landlord' },
+          { step: 'Verify Figures Match Ledger', desc: 'Cross-reference statement totals with each landlord\'s ledger. Any discrepancy must be investigated before sending.', path: 'Landlord Account → Ledger → Compare with Statement' },
+          { step: 'Batch Send All Statements', desc: 'Once satisfied, run the batch statement email dispatch. Street sends PDFs to all registered landlord email addresses.', path: 'Statements → Send All → Confirm Dispatch' },
+          { step: 'Confirm Delivery Log', desc: 'Review the statement dispatch log to confirm all emails were sent successfully. Follow up any failures.', path: 'Statements → Dispatch Log' }
+        ],
+        tasks: [
+          { id: 't1', title: 'Navigate to Landlord Statements in the demo', type: 'demo', desc: 'Find the statement generation tool.' },
+          { id: 't2', title: 'Generate a preview statement for one landlord', type: 'demo', desc: 'Preview a statement and check all entries are correct.' },
+          { id: 't3', title: 'Verify the statement against the landlord ledger', type: 'demo', desc: 'Cross-check statement totals with the ledger.' },
+          { id: 't4', title: 'Practice the batch send process', type: 'demo', desc: 'Simulate sending statements to all landlords.' },
+          { id: 't5', title: 'Review the statement dispatch log', type: 'confirm', desc: 'Confirm all statements were sent and log reviewed.' }
+        ],
+        reflections: [
+          { id: 'r1', q: 'Describe the difference between a landlord statement and a landlord account ledger. When would you use each?' },
+          { id: 'r2', q: 'A landlord requests an annual statement for tax purposes. What information should this contain and how do you generate it in Street?' }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'M13',
+    title: 'End-of-Month Checks',
+    icon: '📅',
+    tag: 'workflow',
+    tagLabel: 'Workflow',
+    desc: 'Follow the complete end-of-month accounting checklist in Street to close the period cleanly and ensure all accounts balance.',
+    estimatedTime: '30 min',
+    scenarios: [
+      {
+        id: 'M13S1',
+        title: 'The Monthly Accounting Checklist',
+        helpArticle: {
+          title: 'End of Month Procedures in Street',
+          url: 'https://intercom.help/streetcouk/en/collections/3887357-accounting',
+          summary: 'Street\'s end-of-month process ensures all transactions are complete, accounts reconcile, landlords are paid and statements sent. A defined checklist prevents errors being carried forward.'
+        },
+        concepts: ['Month-End Checklist', 'Period Close', 'Arrears Review', 'Outstanding Items', 'Compliance Sign-Off'],
+        knowledgeCheck: [
+          {
+            q: 'Which of these should always be completed LAST in the month-end process?',
+            options: [
+              'Run bank reconciliation',
+              'Send landlord statements',
+              'Process landlord payment batch',
+              'Lock/close the accounting period'
+            ],
+            correct: 3,
+            feedback: 'The accounting period should be locked LAST — only after all other tasks are complete and verified. Locking prevents further changes, so everything must be correct first.'
+          }
+        ],
+        scenario: {
+          title: 'Complete Month-End Close for Thompson Properties',
+          context: 'You are closing the books for October. Work through the full month-end checklist, identifying and resolving any issues before locking the period.',
+          details: 'Known issues to resolve:\n• 2 tenants have outstanding arrears (needs arrears review)\n• Suspense account has one unresolved item (£450)\n• One contractor payment not yet posted\n• Bank reconciliation not yet run\n\nAll of these must be resolved before period close.'
+        },
+        workflow: [
+          { step: '1. Check All Rent is Allocated', desc: 'Run the unallocated receipts report. Confirm no rent is sitting in suspense. Allocate any outstanding items.', path: 'Accounting → Reports → Unallocated Receipts' },
+          { step: '2. Review Arrears', desc: 'Run the arrears report. Review tenants in arrears. Note action taken: payment plan, notice, or hold.', path: 'Accounting → Reports → Arrears' },
+          { step: '3. Clear Suspense Account', desc: 'Investigate and allocate or escalate the £450 suspense item.', path: 'Accounting → Suspense Account' },
+          { step: '4. Post Outstanding Contractor Payment', desc: 'Find and post the missing contractor invoice before running reconciliation.', path: 'Accounting → Contractor Payments' },
+          { step: '5. Run Bank Reconciliation', desc: 'Reconcile the client account against the bank statement. Resolve any differences.', path: 'Accounting → Reconciliation' },
+          { step: '6. Process Landlord Payments', desc: 'Run the payment batch. Review all amounts. Process and confirm payments.', path: 'Accounting → Landlord Payments' },
+          { step: '7. Generate & Send Statements', desc: 'Generate and email all landlord statements for the month.', path: 'Accounting → Statements' },
+          { step: '8. Lock Accounting Period', desc: 'Once all tasks are complete and verified, lock October. This prevents accidental changes.', path: 'Accounting → Period Management → Lock Period' }
+        ],
+        tasks: [
+          { id: 't1', title: 'Run the unallocated receipts report and confirm it is clear', type: 'demo', desc: 'Ensure no payments are sitting unallocated.' },
+          { id: 't2', title: 'Run the arrears report and review outstanding tenants', type: 'demo', desc: 'Identify tenants in arrears and note amounts.' },
+          { id: 't3', title: 'Clear the suspense account', type: 'demo', desc: 'Allocate or escalate the outstanding suspense item.' },
+          { id: 't4', title: 'Complete bank reconciliation', type: 'demo', desc: 'Reconcile and confirm zero difference.' },
+          { id: 't5', title: 'Process landlord payment batch', type: 'demo', desc: 'Run and confirm all payments.' },
+          { id: 't6', title: 'Generate and send all landlord statements', type: 'demo', desc: 'Dispatch statements to all landlords.' },
+          { id: 't7', title: 'Lock the accounting period', type: 'confirm', desc: 'Close October once all checks are complete.' }
+        ],
+        reflections: [
+          { id: 'r1', q: 'Why should the accounting period be locked after month-end? What would happen if staff could still post transactions to a closed period?' },
+          { id: 'r2', q: 'Design your own month-end checklist for a 20-property agency using Street. What would your checklist include and in what order?' }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'M14',
+    title: 'Troubleshooting Scenarios',
+    icon: '⚠️',
+    tag: 'advanced',
+    tagLabel: 'Advanced',
+    desc: 'Work through real-world accounting problems and errors in Street — finding root causes and correcting mistakes.',
+    estimatedTime: '40 min',
+    scenarios: [
+      {
+        id: 'M14S1',
+        title: 'Diagnosing Common Accounting Errors',
+        helpArticle: {
+          title: 'Troubleshooting Street Accounting',
+          url: 'https://intercom.help/streetcouk/en/collections/3887357-accounting',
+          summary: 'Common Street accounting issues include: incorrect fee rates, misallocated payments, double-posted transactions, unmatched reconciliation items, and incorrect landlord payment amounts. Each has a defined investigation and correction path.'
+        },
+        concepts: ['Error Investigation', 'Reversal Entry', 'Audit Trail', 'Correction Workflow', 'Double Entry'],
+        knowledgeCheck: [
+          {
+            q: 'You discover a rent payment was allocated to the wrong tenancy 3 weeks ago. How do you correct this in Street?',
+            options: [
+              'Delete the entry and re-enter it manually',
+              'Create a reversal entry to undo the original allocation, then reallocate correctly',
+              'Contact the bank to reverse the payment',
+              'Leave it as-is since it\'s in a closed period'
+            ],
+            correct: 1,
+            feedback: 'In Street, accounting errors should be corrected using reversal entries, not deletions. This maintains the audit trail. Reversal creates an equal and opposite entry, then you can reallocate correctly.'
+          }
+        ],
+        scenario: {
+          title: 'Error Investigation Day',
+          context: 'Three accounting issues have been flagged by the accounts team this morning. Each needs to be investigated and resolved.',
+          details: `**Issue 1:** Landlord Robert Chen called — his statement shows a £120 charge he doesn\'t recognise.\n\n**Issue 2:** Bank reconciliation is showing a £250 unmatched item from 3 weeks ago.\n\n**Issue 3:** Tenant overpayment from last month (£75) was never cleared from suspense — it\'s been sitting there for 6 weeks.`
+        },
+        workflow: [
+          { step: 'Issue 1: Trace the Unknown Charge', desc: 'Open Robert Chen\'s ledger. Find the £120 charge. Check: when posted, by whom, what nominal code, what description.', path: 'Landlord Account → Ledger → Filter by Date → Audit Trail' },
+          { step: 'Identify Charge Type', desc: 'Determine if it was an automated fee, manual charge or contractor invoice. If incorrect, create a reversal entry.', path: 'Charge Entry → View Details → Reversal' },
+          { step: 'Issue 2: Investigate Unmatched Bank Item', desc: 'Open Bank Reconciliation. Find the unmatched £250. Cross-reference against receipts, payments, and bank statement narrative.', path: 'Accounting → Reconciliation → Unmatched Items' },
+          { step: 'Resolve the Unmatched Item', desc: 'Determine if the £250 is a legitimate transaction not yet posted in Street, or a bank error. Post the missing transaction or raise with bank.', path: 'Accounting → Post Transaction → Match' },
+          { step: 'Issue 3: Clear Aged Suspense Item', desc: 'Open the suspense account. Find the £75 from 6 weeks ago. Investigate the original payment and allocate to the correct tenant account as a credit.', path: 'Accounting → Suspense Account → Aged Items → Allocate' }
+        ],
+        tasks: [
+          { id: 't1', title: 'Use the audit trail to investigate a charge on a landlord account', type: 'demo', desc: 'Practice tracing who posted a specific entry and when.' },
+          { id: 't2', title: 'Create a test reversal entry for an incorrect charge', type: 'demo', desc: 'Learn how to undo a posting without deleting it.' },
+          { id: 't3', title: 'Investigate an unmatched item in bank reconciliation', type: 'demo', desc: 'Find and resolve an unmatched entry.' },
+          { id: 't4', title: 'Clear an aged suspense account item', type: 'demo', desc: 'Resolve a long-standing unallocated payment.' },
+          { id: 't5', title: 'Confirm the audit trail shows all corrections clearly', type: 'confirm', desc: 'The trail should show original posting, reversal, and correction.' }
+        ],
+        reflections: [
+          { id: 'r1', q: 'Why should accounting corrections always be made via reversal entries rather than editing or deleting the original record?' },
+          { id: 'r2', q: 'Describe the internal process you would put in place to prevent accounting errors from going undetected for more than 24 hours.' }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'M15',
+    title: 'Final Capstone Assessment',
+    icon: '🏅',
+    tag: 'advanced',
+    tagLabel: 'Capstone',
+    desc: 'Complete a comprehensive end-to-end accounting workflow that tests everything you have learned — from setup awareness through to month-end close.',
+    estimatedTime: '60 min',
+    isCapstone: true,
+    scenarios: [
+      {
+        id: 'M15S1',
+        title: 'Full Month: Start to Finish',
+        helpArticle: {
+          title: 'Street Accounting: Complete Workflow Reference',
+          url: 'https://intercom.help/streetcouk/en/collections/3887357-accounting',
+          summary: 'The capstone assessment covers the full Street Accounting lifecycle: setup → receipt → allocation → fees → charges → payments → statements → reconciliation → period close.'
+        },
+        concepts: ['End-to-End Workflow', 'Setup Verification', 'Rent Processing', 'Fee Management', 'Payment Batch', 'Reconciliation', 'Period Close'],
+        knowledgeCheck: [
+          {
+            q: 'You join a new agency and are told "accounting is ready to use." What is the FIRST thing you check before processing any transactions?',
+            options: [
+              'Process the first rent payment to test the system',
+              'Verify that client money bank accounts, fee settings, and accounting periods are correctly configured',
+              'Send statements to all landlords',
+              'Run the bank reconciliation'
+            ],
+            correct: 1,
+            feedback: 'Always verify setup before processing. Even if told it\'s ready, you should confirm: bank accounts are configured, fees are correct, accounting periods are set, and the chart of accounts is appropriate.'
+          },
+          {
+            q: 'A tenant pays £1,200 rent. After allocation and fee deduction (10% + VAT), how much does the landlord receive?',
+            options: ['£1,056', '£1,080', '£1,200', '£1,032'],
+            correct: 0,
+            feedback: '10% fee = £120. VAT at 20% on fee = £24. Total deduction = £144. Net to landlord = £1,200 - £144 = £1,056.'
+          },
+          {
+            q: 'Which of these actions is correct at month end?',
+            options: [
+              'Lock the accounting period, then reconcile, then pay landlords',
+              'Reconcile → pay landlords → generate statements → lock period',
+              'Pay landlords → lock period → reconcile',
+              'Generate statements → lock period → reconcile → pay landlords'
+            ],
+            correct: 1,
+            feedback: 'Correct order: Reconcile → Allocate all rent → Process payments → Generate statements → Lock period. Locking always comes last.'
+          }
+        ],
+        scenario: {
+          title: '🏅 Capstone: Complete Month for Riverside Properties',
+          context: 'You are the accounts manager at Riverside Properties, managing 5 properties. You must complete the full month from setup verification through to period close.',
+          details: `**Setup Check:**\n• Verify accounting is correctly configured\n• Confirm bank accounts, fee settings\n\n**Income:**\n• £850 rent — Flat 1 (full payment, on time)\n• £1,100 rent — Flat 2 (full payment, 2 days early)\n• £950 rent — Flat 3 (partial — £900 paid, £50 outstanding)\n• £1,200 rent — Flat 4 (full payment)\n• Flat 5 — no payment (arrears from last month)\n\n**Charges:**\n• £280 boiler repair — Flat 1 (Quickfix Plumbing)\n• £90 renewal fee — Flat 4 landlord\n\n**Payments:**\n• Pay all landlords except Flat 3 (hold pending full payment)\n• Flat 5 — escalate arrears\n\n**Close:**\n• Reconcile bank account\n• Generate statements for all landlords\n• Lock the period`
+        },
+        workflow: [
+          { step: 'Phase 1: Setup Verification', desc: 'Verify: bank accounts configured, fee at 10%+VAT set, accounting period open, payment schedule confirmed.', path: 'Settings → Accounting → Verify All' },
+          { step: 'Phase 2: Post All Rent Receipts', desc: 'Allocate all 4 received payments. Post to correct tenancies. Note partial for Flat 3. Flag Flat 5 arrears.', path: 'Accounting → Receipts → Allocate' },
+          { step: 'Phase 3: Post Contractor Invoice', desc: 'Post £280 boiler repair for Flat 1. Debit to Flat 1 landlord. Schedule payment to Quickfix Plumbing.', path: 'Accounting → Contractor Payments' },
+          { step: 'Phase 4: Post Renewal Fee', desc: 'Add £90 renewal fee + VAT to Flat 4 landlord account.', path: 'Landlord Account → Charges → Renewal Fee' },
+          { step: 'Phase 5: Review All Ledgers', desc: 'Check each landlord ledger for accuracy before running payments.', path: 'Accounting → Landlord Accounts' },
+          { step: 'Phase 6: Run Payment Batch', desc: 'Process payments for Flats 1, 2, 4. Hold Flat 3 (awaiting full payment). Note Flat 5 arrears.', path: 'Accounting → Landlord Payments → Batch' },
+          { step: 'Phase 7: Escalate Arrears', desc: 'Raise arrears note for Flat 5. Record action taken in Street.', path: 'Tenancy → Flat 5 → Arrears → Note Action' },
+          { step: 'Phase 8: Bank Reconciliation', desc: 'Reconcile the client account. All postings must match bank statement.', path: 'Accounting → Reconciliation' },
+          { step: 'Phase 9: Generate Statements', desc: 'Generate and send statements to all 5 landlords including Flat 3 (with hold explanation) and Flat 5 (arrears noted).', path: 'Accounting → Statements → All' },
+          { step: 'Phase 10: Lock Period', desc: 'Confirm all checks passed. Lock the accounting period.', path: 'Accounting → Period Management → Lock' }
+        ],
+        tasks: [
+          { id: 't1', title: 'Complete Phase 1: Verify all accounting settings are correctly configured', type: 'demo', desc: 'Setup check — confirm before processing anything.' },
+          { id: 't2', title: 'Complete Phase 2: Allocate all 4 rent payments including partial', type: 'demo', desc: 'Post all receipts to correct tenancies.' },
+          { id: 't3', title: 'Complete Phase 3: Post the £280 contractor invoice', type: 'demo', desc: 'Post Quickfix invoice and schedule payment.' },
+          { id: 't4', title: 'Complete Phase 4: Post the £90 renewal fee', type: 'demo', desc: 'Add renewal fee to Flat 4 landlord.' },
+          { id: 't5', title: 'Complete Phase 5: Verify all landlord ledgers are accurate', type: 'demo', desc: 'Review each ledger before payment run.' },
+          { id: 't6', title: 'Complete Phase 6: Run the landlord payment batch (hold Flat 3)', type: 'demo', desc: 'Process payments, hold Flat 3.' },
+          { id: 't7', title: 'Complete Phase 7: Record arrears action for Flat 5', type: 'demo', desc: 'Document what action has been taken.' },
+          { id: 't8', title: 'Complete Phase 8: Run and complete bank reconciliation', type: 'demo', desc: 'Reconcile with zero difference.' },
+          { id: 't9', title: 'Complete Phase 9: Generate and send all 5 landlord statements', type: 'demo', desc: 'Dispatch statements with notes for held and arrears accounts.' },
+          { id: 't10', title: 'Complete Phase 10: Lock the accounting period', type: 'confirm', desc: 'Final close — only when all tasks confirmed.' }
+        ],
+        reflections: [
+          { id: 'r1', q: 'Reflect on the full month-end process you just completed. What was the most important step and why?' },
+          { id: 'r2', q: 'If you made an error in Phase 2 (allocated rent to the wrong tenancy) and only discovered it in Phase 8 during reconciliation, what steps would you take?' },
+          { id: 'r3', q: 'You are training a new team member who has never used Street before. Write a 5-point summary of what they must know before their first day processing accounts.' },
+          { id: 'r4', q: 'What improvements would you suggest to the agency\'s accounting workflow based on what you have learned in this simulator?' }
+        ]
+      }
+    ]
+  }
+];
+
+// ===== PROGRESS MANAGEMENT =====
+function initProgress() {
+  MODULES.forEach(m => {
+    if (!state.progress[m.id]) {
+      state.progress[m.id] = { scenarios: {}, moduleComplete: false };
+    }
+    m.scenarios.forEach(s => {
+      if (!state.progress[m.id].scenarios[s.id]) {
+        state.progress[m.id].scenarios[s.id] = {
+          helpRead: false,
+          kcScore: null,
+          kcAnswers: {},
+          tasks: {},
+          reflections: {},
+          stepsDone: { help: false, kc: false, scenario: false, workflow: false, tasks: false, reflect: false },
+          complete: false
+        };
+      }
+    });
+  });
+}
+
+function getScenarioProgress(mId, sId) {
+  return state.progress[mId]?.scenarios[sId] || {};
+}
+
+function setTaskDone(mId, sId, taskId, done) {
+  if (!state.progress[mId]) state.progress[mId] = { scenarios: {} };
+  if (!state.progress[mId].scenarios[sId]) state.progress[mId].scenarios[sId] = { tasks: {}, reflections: {}, stepsDone: {}, kcAnswers: {} };
+  state.progress[mId].scenarios[sId].tasks[taskId] = done;
+  checkScenarioComplete(mId, sId);
+  saveToSheets({ type: 'task', mId, sId, taskId, done });
+  updateSidebar();
+  updateProgressBar();
+}
+
+function setReflection(mId, sId, rId, text) {
+  if (!state.progress[mId]) state.progress[mId] = { scenarios: {} };
+  if (!state.progress[mId].scenarios[sId]) state.progress[mId].scenarios[sId] = { tasks: {}, reflections: {}, stepsDone: {}, kcAnswers: {} };
+  state.progress[mId].scenarios[sId].reflections[rId] = text;
+  saveToSheets({ type: 'reflection', mId, sId, rId, text });
+}
+
+function checkScenarioComplete(mId, sId) {
+  const m = MODULES.find(x => x.id === mId);
+  const s = m?.scenarios.find(x => x.id === sId);
+  if (!s) return;
+  const sp = getScenarioProgress(mId, sId);
+  const allTasks = s.tasks.every(t => sp.tasks?.[t.id]);
+  const allReflect = s.reflections.every(r => (sp.reflections?.[r.id] || '').trim().length > 20);
+  if (allTasks && allReflect) {
+    state.progress[mId].scenarios[sId].complete = true;
+    checkModuleComplete(mId);
+  }
+}
+
+function checkModuleComplete(mId) {
+  const m = MODULES.find(x => x.id === mId);
+  if (!m) return;
+  const allComplete = m.scenarios.every(s => state.progress[mId]?.scenarios[s.id]?.complete);
+  if (allComplete) {
+    state.progress[mId].moduleComplete = true;
+    showModuleComplete(mId);
+    updateSidebar();
+    updateProgressBar();
+  }
+}
+
+function getOverallProgress() {
+  let total = 0, done = 0;
+  MODULES.forEach(m => {
+    m.scenarios.forEach(s => {
+      total++;
+      if (state.progress[m.id]?.scenarios[s.id]?.complete) done++;
+    });
+  });
+  return total > 0 ? Math.round((done / total) * 100) : 0;
+}
+
+function isAllComplete() {
+  return MODULES.every(m => state.progress[m.id]?.moduleComplete);
+}
+
+// ===== LOCAL STORAGE PERSISTENCE =====
+function saveLocal() {
+  const saveData = { user: state.user, progress: state.progress, activity: state.activity };
+  localStorage.setItem('streetSim_v2', JSON.stringify(saveData));
+}
+
+function loadLocal() {
+  const raw = localStorage.getItem('streetSim_v2');
+  if (raw) {
+    try {
+      const d = JSON.parse(raw);
+      state.user = d.user || state.user;
+      state.progress = d.progress || {};
+      state.activity = d.activity || [];
+      return true;
+    } catch(e) { return false; }
+  }
+  return false;
+}
+
+// ===== GOOGLE SHEETS INTEGRATION =====
+async function saveToSheets(data) {
+  showSaving();
+  saveLocal();
+  const url = state.sheetsUrl || localStorage.getItem('sheetsUrl');
+  if (!url) return;
+  try {
+    const payload = {
+      userId: state.user.id,
+      email: state.user.email,
+      company: state.user.company,
+      name: state.user.name,
+      timestamp: new Date().toISOString(),
+      moduleId: data.mId,
+      scenarioId: data.sId,
+      type: data.type,
+      taskId: data.taskId || '',
+      taskDone: data.done !== undefined ? data.done : '',
+      reflectionId: data.rId || '',
+      reflectionText: data.text || '',
+      overallProgress: getOverallProgress()
+    };
+    await fetch(url, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    state.sheetsConnected = true;
+    updateSheetsStatus(true);
+  } catch(e) {
+    console.log('Sheets save:', e.message);
+  }
+  setTimeout(hideSaving, 800);
+}
+
+function showSaving() {
+  const el = document.getElementById('saving-indicator');
+  if (el) el.style.display = 'inline-flex';
+}
+
+function hideSaving() {
+  const el = document.getElementById('saving-indicator');
+  if (el) el.style.display = 'none';
+}
+
+async function testSheetsConnection() {
+  const url = document.getElementById('sheets-url')?.value?.trim();
+  if (!url) { alert('Please enter a Google Apps Script URL first.'); return; }
+  state.sheetsUrl = url;
+  localStorage.setItem('sheetsUrl', url);
+  await saveToSheets({ type: 'test', mId: 'test', sId: 'test' });
+  alert('Connection test sent! Check your Google Sheet for a new row.');
+}
+
+function updateSheetsStatus(connected) {
+  const dot = document.getElementById('sheets-dot');
+  const txt = document.getElementById('sheets-status-text');
+  if (dot) dot.className = `sheets-dot ${connected ? 'connected' : 'disconnected'}`;
+  if (txt) txt.textContent = connected ? 'Connected' : 'Not configured';
+}
+
+// ===== APP INITIALIZATION =====
+function startApp() {
+  const name = document.getElementById('login-name')?.value?.trim();
+  const email = document.getElementById('login-email')?.value?.trim();
+  const company = document.getElementById('login-company')?.value?.trim();
+  if (!name || !email) { alert('Please enter your name and email to continue.'); return; }
+  state.user = {
+    name, email, company,
+    id: 'U_' + btoa(email).replace(/=/g,'').slice(0, 12),
+    startedAt: new Date().toISOString()
+  };
+  initProgress();
+  loadLocal(); // load any saved progress
+  initProgress(); // ensure new modules have defaults
+  launchApp();
+}
+
+function loadExistingSession() {
+  if (loadLocal() && state.user.name) {
+    initProgress();
+    launchApp();
+  } else {
+    alert('No saved session found. Please enter your details to start.');
+  }
+}
+
+function launchApp() {
+  document.getElementById('screen-login').classList.remove('active');
+  document.getElementById('screen-app').classList.add('active');
+  document.getElementById('sidebar-name').textContent = state.user.name;
+  document.getElementById('sidebar-company').textContent = state.user.company || 'Street Learner';
+  const initials = state.user.name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+  document.getElementById('sidebar-avatar').textContent = initials;
+  buildSidebar();
+  updateProgressBar();
+  // Resume or start from beginning
+  const resumeModule = findResumePoint();
+  navigateToModule(resumeModule.mIdx, resumeModule.sIdx);
+  const sheetsInput = document.getElementById('sheets-url');
+  if (sheetsInput) sheetsInput.value = state.sheetsUrl;
+  updateSheetsStatus(true);
+  saveToSheets({ type: 'session_start', mId: 'system', sId: 'system' });
+}
+
+function findResumePoint() {
+  for (let mi = 0; mi < MODULES.length; mi++) {
+    const m = MODULES[mi];
+    if (state.progress[m.id]?.moduleComplete) continue;
+    for (let si = 0; si < m.scenarios.length; si++) {
+      if (!state.progress[m.id]?.scenarios[m.scenarios[si].id]?.complete) {
+        return { mIdx: mi, sIdx: si };
+      }
+    }
+  }
+  return { mIdx: 0, sIdx: 0 };
+}
+
+// ===== SIDEBAR BUILDING =====
+function buildSidebar() {
+  const nav = document.getElementById('module-nav');
+  nav.innerHTML = '';
+  // Nav group
+  const topGroup = document.createElement('div');
+  topGroup.className = 'sidebar-nav-section';
+  topGroup.innerHTML = '<div class="sidebar-nav-label">Learning Modules</div>';
+  MODULES.forEach((m, idx) => {
+    const progress = getModuleProgressPct(m);
+    const isActive = idx === state.currentModule;
+    const isDone = state.progress[m.id]?.moduleComplete;
+    const item = document.createElement('div');
+    item.className = `nav-item ${isActive ? 'active' : ''} ${isDone ? 'completed' : ''}`;
+    item.onclick = () => navigateToModule(idx, 0);
+    item.innerHTML = `
+      <div class="nav-item-icon">${m.icon}</div>
+      <div class="nav-item-info">
+        <div class="nav-item-title">${m.title}</div>
+      </div>
+      <div class="status-dot ${isDone ? 'done' : isActive ? 'active' : ''}"></div>
+    `;
+    topGroup.appendChild(item);
+  });
+  nav.appendChild(topGroup);
+  const bottomGroup = document.createElement('div');
+  bottomGroup.className = 'sidebar-nav-section';
+  bottomGroup.innerHTML = `
+    <div class="sidebar-nav-label" style="margin-top:8px">Tools</div>
+    <div class="nav-item" onclick="showView('dashboard')">
+      <div class="nav-item-icon">📊</div>
+      <div class="nav-item-info"><div class="nav-item-title">My Dashboard</div></div>
+    </div>
+    <div class="nav-item" onclick="showView('analytics')">
+      <div class="nav-item-icon">📈</div>
+      <div class="nav-item-info"><div class="nav-item-title">Trainer Analytics</div></div>
+    </div>
+    <div class="nav-item" onclick="showView('certificate')">
+      <div class="nav-item-icon">🏅</div>
+      <div class="nav-item-info"><div class="nav-item-title">My Certificate</div></div>
+    </div>
+  `;
+  nav.appendChild(bottomGroup);
+}
+
+function updateSidebar() {
+  buildSidebar();
+}
+
+function getModuleProgressPct(m) {
+  let total = m.scenarios.length, done = 0;
+  m.scenarios.forEach(s => {
+    if (state.progress[m.id]?.scenarios[s.id]?.complete) done++;
+  });
+  return total > 0 ? Math.round((done / total) * 100) : 0;
+}
+
+function updateProgressBar() {
+  const pct = getOverallProgress();
+  document.getElementById('sidebar-pct').textContent = pct + '%';
+  const fill = document.getElementById('sidebar-progress-fill');
+  if (fill) fill.style.width = pct + '%';
+}
+
+// ===== VIEW SWITCHING =====
+function showView(view) {
+  document.querySelectorAll('.view-container').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.view-tab').forEach(t => {
+    t.classList.toggle('active', t.dataset.view === view);
+  });
+  const container = document.getElementById(`view-${view}`);
+  if (container) container.classList.add('active');
+  if (view === 'dashboard') renderDashboard();
+  if (view === 'analytics') renderAnalytics();
+  if (view === 'certificate') renderCertificate();
+  if (view === 'learning') buildSidebar();
+}
+
+// ===== MODULE NAVIGATION =====
+function navigateToModule(mIdx, sIdx) {
+  if (mIdx < 0 || mIdx >= MODULES.length) return;
+  state.currentModule = mIdx;
+  state.currentScenario = sIdx;
+  state.currentStep = 0;
+  const m = MODULES[mIdx];
+  document.getElementById('tb-module').textContent = `Module ${mIdx + 1}`;
+  document.getElementById('tb-scenario').textContent = m.title;
+  buildSidebar();
+  renderScenario(mIdx, sIdx);
+}
+
+function renderScenario(mIdx, sIdx) {
+  showView('learning');
+  const m = MODULES[mIdx];
+  const s = m.scenarios[sIdx];
+  const sp = getScenarioProgress(m.id, s.id);
+  const content = document.getElementById('learning-content');
+  const tagColors = { setup: '#F59E0B', workflow: '#5B4BE7', advanced: '#EF4444' };
+  const tagBg = { setup: 'rgba(245,158,11,0.1)', workflow: 'rgba(91,75,231,0.1)', advanced: 'rgba(239,68,68,0.08)' };
+  content.innerHTML = `
+    ${m.isSetupModule ? `
+      <div class="setup-notice">
+        <div class="setup-notice-icon">⚠️</div>
+        <div class="setup-notice-body">
+          <div class="setup-notice-title">Demo Account — Accounting NOT Configured</div>
+          <div class="setup-notice-text">Remember: the Street demo account starts with no accounting setup. This module teaches you to configure it from scratch before any workflows can be used.</div>
+        </div>
+      </div>` : ''}
+    <div class="module-hero">
+      <div class="module-hero-badge">${m.icon} Module ${mIdx + 1}</div>
+      <div class="module-hero-title">${s.title}</div>
+      <div class="module-hero-desc">${m.desc}</div>
+      <div class="module-hero-meta">
+        <div class="hero-meta-item">⏱️ <strong>${m.estimatedTime}</strong></div>
+        <div class="hero-meta-item">
+          <span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:5px;font-size:11px;font-weight:600;background:${tagBg[m.tag]};color:${tagColors[m.tag]}">${m.tagLabel}</span>
+        </div>
+        <div class="hero-meta-item">📖 <strong>${s.tasks.length} Tasks</strong></div>
+        <div class="hero-meta-item">🎯 <strong>${s.reflections.length} Reflections</strong></div>
+        ${sp.complete ? '<div class="hero-meta-item" style="color:#22C55E">✅ <strong>Completed</strong></div>' : ''}
+      </div>
+      <div class="module-progress-track"><div class="progress-fill" style="width:${getScenarioCompletionPct(m.id, s.id, s)}%"></div></div>
+    </div>
+
+    <div class="step-nav" id="step-nav">
+      ${['📖 Help Article', '✅ Knowledge Check', '🎯 Scenario', '⚡ Workflow', '📋 Tasks', '💭 Reflect'].map((label, i) => `
+        <button class="step-tab ${getStepState(sp, i)}" onclick="setStep(${i})" id="steptab-${i}">
+          <div class="step-tab-num">${getStepState(sp, i) === 'done' ? '✓' : i + 1}</div>
+          <div class="step-tab-label">${label}</div>
+        </button>
+      `).join('')}
+    </div>
+
+    <div id="step-content"></div>
+    
+    ${mIdx < MODULES.length - 1 && sIdx < m.scenarios.length - 1 || mIdx < MODULES.length - 1 ? `
+    <div style="display:flex;justify-content:flex-end;margin-top:24px;gap:10px">
+      ${mIdx > 0 || sIdx > 0 ? `<button class="btn btn-ghost" onclick="prevScenario()">← Previous</button>` : ''}
+      <button class="btn btn-primary" onclick="nextScenario()" id="next-btn">
+        ${sp.complete ? 'Next Scenario →' : 'Continue →'}
+      </button>
+    </div>` : ''}
+  `;
+  renderStep(state.currentStep, mIdx, sIdx);
+}
+
+function getStepState(sp, step) {
+  const stepKeys = ['help', 'kc', 'scenario', 'workflow', 'tasks', 'reflect'];
+  if (sp.stepsDone?.[stepKeys[step]]) return 'done';
+  if (step === state.currentStep) return 'active';
+  return '';
+}
+
+function getScenarioCompletionPct(mId, sId, s) {
+  const sp = getScenarioProgress(mId, sId);
+  let done = 0;
+  if (sp.helpRead) done++;
+  if (sp.kcScore !== null) done++;
+  if (sp.stepsDone?.scenario) done++;
+  if (sp.stepsDone?.workflow) done++;
+  const tasksDone = s.tasks.filter(t => sp.tasks?.[t.id]).length;
+  if (tasksDone === s.tasks.length && s.tasks.length > 0) done++;
+  const reflDone = s.reflections.filter(r => (sp.reflections?.[r.id] || '').trim().length > 10).length;
+  if (reflDone === s.reflections.length && s.reflections.length > 0) done++;
+  return Math.round((done / 6) * 100);
+}
+
+function setStep(step) {
+  state.currentStep = step;
+  document.querySelectorAll('.step-tab').forEach((t, i) => {
+    t.className = `step-tab ${i === step ? 'active' : ''}`;
+    const sp = getScenarioProgress(MODULES[state.currentModule].id, MODULES[state.currentModule].scenarios[state.currentScenario].id);
+    const stepKeys = ['help', 'kc', 'scenario', 'workflow', 'tasks', 'reflect'];
+    if (sp.stepsDone?.[stepKeys[i]]) t.classList.add('done');
+  });
+  renderStep(step, state.currentModule, state.currentScenario);
+}
+
+function renderStep(step, mIdx, sIdx) {
+  const m = MODULES[mIdx];
+  const s = m.scenarios[sIdx];
+  const sp = getScenarioProgress(m.id, s.id);
+  const container = document.getElementById('step-content');
+  if (!container) return;
+  switch(step) {
+    case 0: container.innerHTML = renderHelpStep(m, s, sp); break;
+    case 1: container.innerHTML = renderKCStep(m, s, sp); break;
+    case 2: container.innerHTML = renderScenarioStep(m, s, sp); break;
+    case 3: container.innerHTML = renderWorkflowStep(m, s, sp); break;
+    case 4: container.innerHTML = renderTasksStep(m, s, sp); break;
+    case 5: container.innerHTML = renderReflectStep(m, s, sp); break;
+  }
+}
+
+function renderHelpStep(m, s, sp) {
+  return `
+    <div class="fade-up">
+      <div class="section-title mb-16">📖 Help Centre <span class="accent">Article</span></div>
+      <div class="help-article-card" onclick="window.open('${s.helpArticle.url}', '_blank')">
+        <div class="help-article-icon">📚</div>
+        <div class="help-article-info">
+          <div class="help-article-source">Street Help Centre · Accounting Collection</div>
+          <div class="help-article-title">${s.helpArticle.title}</div>
+          <div class="help-article-desc">${s.helpArticle.summary}</div>
+        </div>
+        <div class="help-article-arrow">↗</div>
+      </div>
+      <div class="card mb-16">
+        <div class="card-header"><div class="card-title"><div class="card-icon">💡</div>Key Concepts in This Module</div></div>
+        <div class="card-body">
+          <p class="text-sm text-muted mb-16">Before proceeding, make sure you understand these concepts from the Help Centre article:</p>
+          <div class="concept-grid">
+            ${s.concepts.map(c => `<div class="concept-pill"><div class="dot"></div>${c}</div>`).join('')}
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-body">
+          <div class="alert alert-purple" style="margin-bottom:16px">
+            <div class="alert-icon">📌</div>
+            <div>Read the Help Centre article linked above, then confirm you've read it before proceeding to the Knowledge Check.</div>
+          </div>
+          <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:14px;font-weight:500;color:var(--text)">
+            <input type="checkbox" id="help-read-cb" ${sp.helpRead ? 'checked' : ''} 
+              onchange="markHelpRead(this.checked)"
+              style="width:18px;height:18px;accent-color:var(--purple)">
+            I have read the Help Centre article for this module and understand the key concepts
+          </label>
+          ${sp.helpRead ? `<div class="alert alert-success" style="margin-top:16px"><div class="alert-icon">✅</div>Article confirmed as read. Proceed to the Knowledge Check.</div>` : ''}
+        </div>
+        <div class="card-footer">
+          <div class="text-sm text-muted">💡 <a href="${s.helpArticle.url}" target="_blank" style="color:var(--purple)">Open Help Centre Article →</a></div>
+          <button class="btn btn-primary btn-sm" onclick="setStep(1)" ${!sp.helpRead ? 'disabled style="opacity:0.4"' : ''}>
+            Proceed to Knowledge Check →
+          </button>
+        </div>
+      </div>
+    </div>`;
+}
+
+function markHelpRead(checked) {
+  const m = MODULES[state.currentModule];
+  const s = m.scenarios[state.currentScenario];
+  if (!state.progress[m.id]) state.progress[m.id] = { scenarios: {} };
+  if (!state.progress[m.id].scenarios[s.id]) state.progress[m.id].scenarios[s.id] = { tasks: {}, reflections: {}, stepsDone: {}, kcAnswers: {} };
+  state.progress[m.id].scenarios[s.id].helpRead = checked;
+  if (!state.progress[m.id].scenarios[s.id].stepsDone) state.progress[m.id].scenarios[s.id].stepsDone = {};
+  state.progress[m.id].scenarios[s.id].stepsDone.help = checked;
+  saveToSheets({ type: 'help_read', mId: m.id, sId: s.id, done: checked });
+  renderStep(0, state.currentModule, state.currentScenario);
+  updateStepTabs();
+}
+
+function renderKCStep(m, s, sp) {
+  const answered = sp.kcAnswers || {};
+  const scored = sp.kcScore !== null;
+  return `
+    <div class="fade-up">
+      <div class="section-title mb-16">✅ Knowledge <span class="accent">Check</span></div>
+      <div class="alert alert-info mb-16">
+        <div class="alert-icon">ℹ️</div>
+        <div>Answer these questions to demonstrate understanding of the Help Centre article. You must complete these before accessing the scenario.</div>
+      </div>
+      ${scored ? `<div class="kc-score">🎯 Score: ${sp.kcScore}/${s.knowledgeCheck.length} — ${sp.kcScore === s.knowledgeCheck.length ? 'Perfect!' : 'Good effort!'}</div>` : ''}
+      ${s.knowledgeCheck.map((q, qi) => {
+        const ans = answered[qi];
+        const isAnswered = ans !== undefined;
+        const isCorrect = ans === q.correct;
+        return `
+          <div class="kc-question">
+            <div class="kc-q-text">Q${qi + 1}: ${q.q}</div>
+            <div class="kc-options">
+              ${q.options.map((opt, oi) => {
+                let cls = '';
+                if (isAnswered && oi === q.correct) cls = 'correct';
+                else if (isAnswered && oi === ans && oi !== q.correct) cls = 'wrong';
+                else if (!isAnswered && oi === ans) cls = 'selected';
+                const letters = ['A','B','C','D'];
+                return `<div class="kc-option ${cls}" onclick="${!isAnswered ? `answerKC(${qi}, ${oi})` : ''}">
+                  <div class="kc-option-letter">${isAnswered && oi === q.correct ? '✓' : isAnswered && oi === ans && oi !== q.correct ? '✗' : letters[oi]}</div>
+                  ${opt}
+                </div>`;
+              }).join('')}
+            </div>
+            ${isAnswered ? `<div class="kc-feedback show ${isCorrect ? 'correct' : 'wrong'}">
+              ${isCorrect ? '✅' : '❌'} ${q.feedback}
+            </div>` : ''}
+          </div>`;
+      }).join('')}
+      ${scored ? `
+        <div class="card-footer" style="background:transparent;border:none;padding:0;margin-top:16px;justify-content:flex-end">
+          <button class="btn btn-primary" onclick="setStep(2)">Continue to Scenario →</button>
+        </div>` : ''}
+    </div>`;
+}
+
+function answerKC(qi, oi) {
+  const m = MODULES[state.currentModule];
+  const s = m.scenarios[state.currentScenario];
+  if (!state.progress[m.id]) state.progress[m.id] = { scenarios: {} };
+  if (!state.progress[m.id].scenarios[s.id]) state.progress[m.id].scenarios[s.id] = { tasks: {}, reflections: {}, stepsDone: {}, kcAnswers: {} };
+  state.progress[m.id].scenarios[s.id].kcAnswers[qi] = oi;
+  const allAnswered = s.knowledgeCheck.every((q, i) => state.progress[m.id].scenarios[s.id].kcAnswers[i] !== undefined);
+  if (allAnswered) {
+    const score = s.knowledgeCheck.filter((q, i) => state.progress[m.id].scenarios[s.id].kcAnswers[i] === q.correct).length;
+    state.progress[m.id].scenarios[s.id].kcScore = score;
+    state.progress[m.id].scenarios[s.id].stepsDone.kc = true;
+    saveToSheets({ type: 'kc', mId: m.id, sId: s.id, score });
+  }
+  renderStep(1, state.currentModule, state.currentScenario);
+  updateStepTabs();
+}
+
+function renderScenarioStep(m, s, sp) {
+  const sc = s.scenario;
+  if (!sp.stepsDone) sp.stepsDone = {};
+  if (!sp.stepsDone.scenario) {
+    sp.stepsDone.scenario = true;
+    if (!state.progress[m.id]) state.progress[m.id] = { scenarios: {} };
+    if (!state.progress[m.id].scenarios[s.id]) state.progress[m.id].scenarios[s.id] = {};
+    state.progress[m.id].scenarios[s.id].stepsDone = sp.stepsDone;
+    saveLocal();
+  }
+  return `
+    <div class="fade-up">
+      <div class="section-title mb-16">🎯 Your <span class="accent">Scenario</span></div>
+      <div class="scenario-card">
+        <div class="scenario-card-label">📋 Realistic Agency Scenario</div>
+        <div class="scenario-card-title">${sc.title}</div>
+        <div class="scenario-card-body">${sc.context.replace(/\n/g, '<br>')}</div>
+      </div>
+      <div class="card mb-16">
+        <div class="card-header"><div class="card-title"><div class="card-icon">📌</div>Scenario Details</div></div>
+        <div class="card-body">
+          <p style="font-size:14px;color:var(--text-muted);line-height:1.8">${(sc.details || '').replace(/\n/g, '<br>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')}</p>
+        </div>
+      </div>
+      ${m.isSetupModule ? `<div class="alert alert-warning mb-16"><div class="alert-icon">⚠️</div><div><strong>Setup Required:</strong> This scenario assumes you are working in a fresh demo account where accounting has NOT been configured. You must set it up as part of this exercise.</div></div>` : ''}
+      <div class="card">
+        <div class="card-body">
+          <div class="alert alert-purple"><div class="alert-icon">🎯</div><div>Read the scenario carefully. Then proceed to the Workflow steps, which will guide you through the exact Street process to complete it.</div></div>
+        </div>
+        <div class="card-footer">
+          <div class="text-sm text-muted">Next: Street workflow steps →</div>
+          <button class="btn btn-primary btn-sm" onclick="setStep(3)">View Workflow Steps →</button>
+        </div>
+      </div>
+    </div>`;
+}
+
+function renderWorkflowStep(m, s, sp) {
+  if (!sp.stepsDone) sp.stepsDone = {};
+  if (!sp.stepsDone.workflow) {
+    sp.stepsDone.workflow = true;
+    if (state.progress[m.id]?.scenarios[s.id]) state.progress[m.id].scenarios[s.id].stepsDone.workflow = true;
+    saveLocal();
+  }
+  return `
+    <div class="fade-up">
+      <div class="section-title mb-16">⚡ Street <span class="accent">Workflow</span></div>
+      <div class="alert alert-info mb-16">
+        <div class="alert-icon">📍</div>
+        <div>Follow these exact steps inside the Street demo account. Each step shows you the navigation path and what to expect in the system.</div>
+      </div>
+      <div class="card mb-16">
+        <div class="card-header"><div class="card-title"><div class="card-icon">🗺️</div>Step-by-Step Instructions</div></div>
+        <div class="card-body">
+          <div class="workflow-steps">
+            ${s.workflow.map((step, i) => `
+              <div class="workflow-step">
+                <div class="workflow-step-num">${i + 1}</div>
+                <div class="workflow-step-content">
+                  <div class="workflow-step-title">${step.step}</div>
+                  <div class="workflow-step-desc">${step.desc}</div>
+                  <div class="workflow-step-path">
+                    📍 ${step.path.split('→').map((p, pi) => `${pi > 0 ? '<span class="nav-arrow">›</span>' : ''}${p.trim()}`).join(' ')}
+                  </div>
+                </div>
+              </div>`).join('')}
+          </div>
+        </div>
+      </div>
+      <div class="alert alert-success">
+        <div class="alert-icon">✅</div>
+        <div>Once you've reviewed all steps, open the Street demo account and complete the workflow. Then proceed to the Tasks checklist to confirm what you've done.</div>
+      </div>
+      <div style="display:flex;justify-content:flex-end;margin-top:16px">
+        <button class="btn btn-primary" onclick="setStep(4)">I've Reviewed the Workflow → Tasks</button>
+      </div>
+    </div>`;
+}
+
+function renderTasksStep(m, s, sp) {
+  const allDone = s.tasks.every(t => sp.tasks?.[t.id]);
+  const doneCount = s.tasks.filter(t => sp.tasks?.[t.id]).length;
+  const typeLabels = { read: 'Read', demo: 'Demo Task', confirm: 'Confirm' };
+  return `
+    <div class="fade-up">
+      <div class="section-title mb-16">📋 Demo Account <span class="accent">Tasks</span></div>
+      <div class="alert alert-warning mb-16">
+        <div class="alert-icon">🖥️</div>
+        <div>Complete each task inside the Street demo account, then tick it off here. Only mark complete once you have actually done it.</div>
+      </div>
+      <div class="card mb-16">
+        <div class="card-header">
+          <div class="card-title"><div class="card-icon">✅</div>Task Checklist</div>
+          <div class="text-sm text-muted">${doneCount}/${s.tasks.length} complete</div>
+        </div>
+        <div class="card-body">
+          <div class="task-list">
+            ${s.tasks.map(t => `
+              <div class="task-item ${sp.tasks?.[t.id] ? 'done' : ''}" onclick="toggleTask('${m.id}','${s.id}','${t.id}')">
+                <div class="task-checkbox">
+                  <div class="task-check-icon">✓</div>
+                </div>
+                <div class="task-item-info">
+                  <div class="task-item-title">${t.title}</div>
+                  <div class="task-item-desc">${t.desc}</div>
+                </div>
+                <div class="task-badge badge-${t.type}">${typeLabels[t.type] || t.type}</div>
+              </div>`).join('')}
+          </div>
+        </div>
+        <div class="card-footer">
+          <div class="mini-progress" style="flex:1;max-width:200px">
+            <div class="mini-bar"><div class="mini-fill" style="width:${Math.round((doneCount/s.tasks.length)*100)}%"></div></div>
+            <div class="mini-label">${Math.round((doneCount/s.tasks.length)*100)}%</div>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="setStep(5)" ${doneCount === 0 ? 'disabled style="opacity:0.4"' : ''}>
+            Proceed to Reflection →
+          </button>
+        </div>
+      </div>
+    </div>`;
+}
+
+function toggleTask(mId, sId, taskId) {
+  const sp = getScenarioProgress(mId, sId);
+  const currentState = sp.tasks?.[taskId] || false;
+  setTaskDone(mId, sId, taskId, !currentState);
+  renderStep(4, state.currentModule, state.currentScenario);
+  // Add to activity
+  const m = MODULES.find(x => x.id === mId);
+  const s = m?.scenarios.find(x => x.id === sId);
+  const t = s?.tasks.find(x => x.id === taskId);
+  if (!currentState) {
+    state.activity.unshift({ type: 'task', text: `Completed: ${t?.title}`, time: new Date().toISOString() });
+    state.activity = state.activity.slice(0, 20);
+    saveLocal();
+  }
+}
+
+function renderReflectStep(m, s, sp) {
+  const allDone = s.reflections.every(r => (sp.reflections?.[r.id] || '').trim().length > 20);
+  return `
+    <div class="fade-up">
+      <div class="section-title mb-16">💭 <span class="accent">Reflection</span></div>
+      <div class="alert alert-purple mb-16">
+        <div class="alert-icon">✍️</div>
+        <div>Reflect on what you've done and learned. Written reflection is essential for deep learning. Answers are saved automatically. Minimum 20 characters per answer.</div>
+      </div>
+      <div class="card mb-16">
+        <div class="card-header"><div class="card-title"><div class="card-icon">💭</div>Reflection Questions</div></div>
+        <div class="card-body">
+          <div class="reflection-area">
+            ${s.reflections.map(r => {
+              const saved = sp.reflections?.[r.id] || '';
+              return `
+                <div class="reflection-item">
+                  <div class="reflection-q">
+                    <div class="reflection-q-num">${r.id.replace('r', '')}</div>
+                    ${r.q}
+                  </div>
+                  <textarea class="reflection-textarea ${saved.length > 20 ? 'saved' : ''}"
+                    id="ref-${r.id}"
+                    placeholder="Write your reflection here..."
+                    onblur="saveReflection('${m.id}','${s.id}','${r.id}', this.value)"
+                    onkeyup="autoSaveReflection('${m.id}','${s.id}','${r.id}', this.value)"
+                  >${saved}</textarea>
+                  ${saved.length > 20 ? '<div class="text-xs text-muted" style="margin-top:4px;color:var(--success)">✅ Saved</div>' : ''}
+                </div>`;
+            }).join('')}
+          </div>
+        </div>
+        <div class="card-footer">
+          <div class="text-sm text-muted">All answers are saved automatically</div>
+          <button class="btn btn-primary" onclick="completeScenario('${m.id}','${s.id}')" id="complete-btn">
+            ${allDone ? '🎉 Complete Scenario' : 'Complete (requires answers)'}
+          </button>
+        </div>
+      </div>
+    </div>`;
+}
+
+let reflectionTimer = null;
+function autoSaveReflection(mId, sId, rId, text) {
+  clearTimeout(reflectionTimer);
+  reflectionTimer = setTimeout(() => saveReflection(mId, sId, rId, text), 1500);
+}
+
+function saveReflection(mId, sId, rId, text) {
+  setReflection(mId, sId, rId, text);
+  checkScenarioComplete(mId, sId);
+  renderStep(5, state.currentModule, state.currentScenario);
+}
+
+function completeScenario(mId, sId) {
+  const m = MODULES.find(x => x.id === mId);
+  const s = m?.scenarios.find(x => x.id === sId);
+  if (!s) return;
+  const sp = getScenarioProgress(mId, sId);
+  const tasksOk = s.tasks.every(t => sp.tasks?.[t.id]);
+  const reflOk = s.reflections.every(r => (sp.reflections?.[r.id] || '').trim().length > 20);
+  if (!tasksOk) { alert('Please complete all tasks before marking the scenario complete.'); return; }
+  if (!reflOk) { alert('Please answer all reflection questions (minimum 20 characters each) before completing.'); return; }
+  state.progress[mId].scenarios[sId].complete = true;
+  state.activity.unshift({ type: 'scenario', text: `Completed scenario: ${s.title}`, time: new Date().toISOString() });
+  saveToSheets({ type: 'scenario_complete', mId, sId });
+  checkModuleComplete(mId);
+  renderScenario(state.currentModule, state.currentScenario);
+  launchConfetti();
+}
+
+function updateStepTabs() {
+  const m = MODULES[state.currentModule];
+  const s = m.scenarios[state.currentScenario];
+  const sp = getScenarioProgress(m.id, s.id);
+  const stepKeys = ['help', 'kc', 'scenario', 'workflow', 'tasks', 'reflect'];
+  stepKeys.forEach((key, i) => {
+    const tab = document.getElementById(`steptab-${i}`);
+    if (tab) {
+      const numEl = tab.querySelector('.step-tab-num');
+      if (sp.stepsDone?.[key]) {
+        tab.classList.add('done');
+        if (numEl) numEl.textContent = '✓';
+      }
+    }
+  });
+}
+
+function nextScenario() {
+  const m = MODULES[state.currentModule];
+  if (state.currentScenario < m.scenarios.length - 1) {
+    navigateToModule(state.currentModule, state.currentScenario + 1);
+  } else if (state.currentModule < MODULES.length - 1) {
+    navigateToModule(state.currentModule + 1, 0);
+  }
+}
+
+function prevScenario() {
+  if (state.currentScenario > 0) {
+    navigateToModule(state.currentModule, state.currentScenario - 1);
+  } else if (state.currentModule > 0) {
+    const prevM = MODULES[state.currentModule - 1];
+    navigateToModule(state.currentModule - 1, prevM.scenarios.length - 1);
+  }
+}
+
+function nextModule() {
+  closeModal();
+  if (state.currentModule < MODULES.length - 1) {
+    navigateToModule(state.currentModule + 1, 0);
+  }
+}
+
+// ===== MODULE COMPLETE MODAL =====
+function showModuleComplete(mId) {
+  const m = MODULES.find(x => x.id === mId);
+  const mIdx = MODULES.findIndex(x => x.id === mId);
+  document.getElementById('modal-emoji').textContent = m.isCapstone ? '🏅' : '🎉';
+  document.getElementById('modal-title').textContent = m.isCapstone ? 'Capstone Complete! 🏅' : 'Module Complete!';
+  document.getElementById('modal-sub').textContent = m.isCapstone ? 
+    `Congratulations! You have completed the Street Advanced Accounting Learning Simulator. You are now Street Accounting Certified!` :
+    `Well done! You've completed "${m.title}". Keep going — you're making great progress!`;
+  const stats = document.getElementById('modal-stats');
+  const pct = getOverallProgress();
+  stats.innerHTML = `
+    <div class="modal-stat"><div class="modal-stat-num">${mIdx + 1}/${MODULES.length}</div><div class="modal-stat-label">Modules Done</div></div>
+    <div class="modal-stat"><div class="modal-stat-num">${pct}%</div><div class="modal-stat-label">Overall Progress</div></div>
+    <div class="modal-stat"><div class="modal-stat-num">${m.scenarios.length}</div><div class="modal-stat-label">Scenarios</div></div>
+  `;
+  const nextBtn = document.getElementById('modal-next-btn');
+  if (mIdx >= MODULES.length - 1 || m.isCapstone) {
+    nextBtn.textContent = '🏅 View Certificate';
+    nextBtn.onclick = () => { closeModal(); showView('certificate'); };
+  } else {
+    nextBtn.textContent = 'Next Module →';
+    nextBtn.onclick = () => nextModule();
+  }
+  document.getElementById('completion-modal').classList.add('show');
+  launchConfetti();
+}
+
+function closeModal() {
+  document.getElementById('completion-modal').classList.remove('show');
+}
+
+// ===== CONFETTI =====
+function launchConfetti() {
+  const colors = ['#5B4BE7', '#a78bfa', '#22C55E', '#F59E0B', '#3B82F6', '#EC4899'];
+  for (let i = 0; i < 60; i++) {
+    setTimeout(() => {
+      const el = document.createElement('div');
+      el.className = 'confetti-piece';
+      el.style.cssText = `left:${Math.random()*100}vw;background:${colors[Math.floor(Math.random()*colors.length)]};animation-duration:${2+Math.random()*2}s;animation-delay:${Math.random()*0.5}s;width:${6+Math.random()*8}px;height:${8+Math.random()*10}px`;
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), 4000);
+    }, i * 30);
+  }
+}
+
+// ===== DASHBOARD RENDERING =====
+function renderDashboard() {
+  const pct = getOverallProgress();
+  const modDone = MODULES.filter(m => state.progress[m.id]?.moduleComplete).length;
+  const tasksDone = Object.values(state.progress).reduce((acc, mp) => {
+    return acc + Object.values(mp.scenarios || {}).reduce((a2, sp) => a2 + Object.values(sp.tasks || {}).filter(Boolean).length, 0);
+  }, 0);
+  const reflDone = Object.values(state.progress).reduce((acc, mp) => {
+    return acc + Object.values(mp.scenarios || {}).reduce((a2, sp) => a2 + Object.values(sp.reflections || {}).filter(r => r.trim().length > 20).length, 0);
+  }, 0);
+  document.getElementById('dashboard-stats').innerHTML = `
+    <div class="stat-card">
+      <div class="stat-card-icon" style="background:rgba(91,75,231,0.1)">📚</div>
+      <div class="stat-card-num">${modDone}/${MODULES.length}</div>
+      <div class="stat-card-label">Modules Completed</div>
+      <div class="stat-card-change change-neutral">${pct}% overall</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card-icon" style="background:rgba(34,197,94,0.1)">✅</div>
+      <div class="stat-card-num">${tasksDone}</div>
+      <div class="stat-card-label">Tasks Completed</div>
+      <div class="stat-card-change change-up">↑ Demo account tasks</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card-icon" style="background:rgba(59,130,246,0.1)">💭</div>
+      <div class="stat-card-num">${reflDone}</div>
+      <div class="stat-card-label">Reflections Written</div>
+      <div class="stat-card-change change-up">↑ Deep learning</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card-icon" style="background:rgba(245,158,11,0.1)">🎯</div>
+      <div class="stat-card-num">${pct}%</div>
+      <div class="stat-card-label">Overall Progress</div>
+      <div class="stat-card-change ${pct === 100 ? 'change-up' : 'change-neutral'}">${pct === 100 ? '🏅 Certified!' : `${MODULES.length - modDone} modules left`}</div>
+    </div>
+  `;
+  const table = document.getElementById('module-progress-table');
+  table.innerHTML = `
+    <tr><th>Module</th><th>Status</th><th>Progress</th><th>Scenarios</th></tr>
+    ${MODULES.map((m, i) => {
+      const isDone = state.progress[m.id]?.moduleComplete;
+      const scenDone = m.scenarios.filter(s => state.progress[m.id]?.scenarios[s.id]?.complete).length;
+      const pctM = Math.round((scenDone / m.scenarios.length) * 100);
+      const isActive = i === state.currentModule;
+      return `<tr onclick="navigateToModule(${i},0);showView('learning')" style="cursor:pointer">
+        <td><strong>${m.icon} ${m.title}</strong></td>
+        <td><div class="status-badge ${isDone ? 'completed' : isActive ? 'in-progress' : 'not-started'}">${isDone ? '✅ Done' : isActive ? '▶ In Progress' : '— Not Started'}</div></td>
+        <td><div class="mini-progress"><div class="mini-bar"><div class="mini-fill" style="width:${pctM}%"></div></div><div class="mini-label">${pctM}%</div></div></td>
+        <td>${scenDone}/${m.scenarios.length}</td>
+      </tr>`;
+    }).join('')}
+  `;
+  const categories = [
+    { label: 'Foundations', tag: 'setup', icon: '🏗️' },
+    { label: 'Setup Modules', tag: 'setup', icon: '⚙️' },
+    { label: 'Workflow Modules', tag: 'workflow', icon: '⚡' },
+    { label: 'Advanced', tag: 'advanced', icon: '🎓' }
+  ];
+  const cat = [
+    { label: 'Foundations (M1-M2)', modules: MODULES.slice(0,2) },
+    { label: 'Setup (M3-M4)', modules: MODULES.slice(2,4) },
+    { label: 'Workflows (M5-M13)', modules: MODULES.slice(4,13) },
+    { label: 'Advanced (M14-M15)', modules: MODULES.slice(13) }
+  ];
+  document.getElementById('category-chart').innerHTML = cat.map(c => {
+    const total = c.modules.reduce((a, m) => a + m.scenarios.length, 0);
+    const done = c.modules.reduce((a, m) => a + m.scenarios.filter(s => state.progress[m.id]?.scenarios[s.id]?.complete).length, 0);
+    const pct = total > 0 ? Math.round((done/total)*100) : 0;
+    return `<div class="chart-bar-item">
+      <div class="chart-bar-label">${c.label}</div>
+      <div class="chart-bar-track"><div class="chart-bar-fill" style="width:${pct}%"></div></div>
+      <div class="chart-bar-val">${pct}%</div>
+    </div>`;
+  }).join('');
+  const actList = document.getElementById('recent-activity-list');
+  if (state.activity.length === 0) {
+    actList.innerHTML = '<p class="text-sm text-muted">No activity yet — start completing tasks and reflections.</p>';
+  } else {
+    actList.innerHTML = state.activity.slice(0, 8).map(a => `
+      <div class="flex-center gap-12" style="padding:10px 0;border-bottom:1px solid var(--border)">
+        <div style="width:32px;height:32px;background:${a.type === 'task' ? 'rgba(34,197,94,0.1)' : 'rgba(91,75,231,0.1)'};border-radius:8px;display:flex;align-items:center;justify-content:center">
+          ${a.type === 'task' ? '✅' : '🎯'}
+        </div>
+        <div class="flex-1">
+          <div class="text-sm font-bold">${a.text}</div>
+          <div class="text-xs text-muted">${new Date(a.time).toLocaleString('en-GB', {dateStyle:'short',timeStyle:'short'})}</div>
+        </div>
+      </div>`).join('');
+  }
+}
+
+// ===== ANALYTICS RENDERING =====
+function renderAnalytics() {
+  const pct = getOverallProgress();
+  const modDone = MODULES.filter(m => state.progress[m.id]?.moduleComplete).length;
+  document.getElementById('analytics-stats').innerHTML = `
+    <div class="stat-card">
+      <div class="stat-card-icon" style="background:rgba(91,75,231,0.1)">👥</div>
+      <div class="stat-card-num">1</div>
+      <div class="stat-card-label">Active Learners</div>
+      <div class="stat-card-change change-neutral">Current session</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card-icon" style="background:rgba(34,197,94,0.1)">📚</div>
+      <div class="stat-card-num">${modDone}</div>
+      <div class="stat-card-label">Modules Completed</div>
+      <div class="stat-card-change change-up">↑ This session</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card-icon" style="background:rgba(245,158,11,0.1)">⏱️</div>
+      <div class="stat-card-num">~${modDone * 28}m</div>
+      <div class="stat-card-label">Est. Learning Time</div>
+      <div class="stat-card-change change-neutral">Estimated</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card-icon" style="background:rgba(239,68,68,0.08)">🏅</div>
+      <div class="stat-card-num">${isAllComplete() ? '1' : '0'}</div>
+      <div class="stat-card-label">Certifications Earned</div>
+      <div class="stat-card-change ${isAllComplete() ? 'change-up' : 'change-neutral'}">${isAllComplete() ? '🎉 Certified!' : 'In progress'}</div>
+    </div>
+  `;
+  document.getElementById('leaderboard-list').innerHTML = `
+    <div class="leaderboard-item">
+      <div class="leaderboard-rank gold">1</div>
+      <div class="leaderboard-avatar">${state.user.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase()}</div>
+      <div class="leaderboard-info">
+        <div class="leaderboard-name">${state.user.name}</div>
+        <div class="leaderboard-co">${state.user.company || 'Street Learner'}</div>
+      </div>
+      <div class="leaderboard-score">${pct}%</div>
+    </div>
+    <div class="leaderboard-item" style="opacity:0.5">
+      <div class="leaderboard-rank silver">2</div>
+      <div class="leaderboard-avatar" style="background:#94a3b8">JD</div>
+      <div class="leaderboard-info"><div class="leaderboard-name">James Davies</div><div class="leaderboard-co">Example Agency</div></div>
+      <div class="leaderboard-score">78%</div>
+    </div>
+    <div class="leaderboard-item" style="opacity:0.5">
+      <div class="leaderboard-rank bronze">3</div>
+      <div class="leaderboard-avatar" style="background:#94a3b8">SP</div>
+      <div class="leaderboard-info"><div class="leaderboard-name">Sophie Patel</div><div class="leaderboard-co">Example Agency</div></div>
+      <div class="leaderboard-score">65%</div>
+    </div>
+    <p class="text-xs text-muted" style="margin-top:12px">Connect Google Sheets to track multiple learners across your team.</p>
+  `;
+  document.getElementById('dropoff-chart').innerHTML = `
+    <div class="chart-bar-group">
+      ${MODULES.map((m, i) => {
+        const scenDone = m.scenarios.filter(s => state.progress[m.id]?.scenarios[s.id]?.complete).length;
+        const pct2 = Math.round((scenDone / m.scenarios.length) * 100);
+        return `<div class="chart-bar-item">
+          <div class="chart-bar-label">${m.icon} M${i+1}: ${m.title.split(' ').slice(0,3).join(' ')}</div>
+          <div class="chart-bar-track"><div class="chart-bar-fill" style="width:${pct2}%"></div></div>
+          <div class="chart-bar-val">${pct2}%</div>
+        </div>`;
+      }).join('')}
+    </div>`;
+  document.getElementById('learners-table').innerHTML = `
+    <tr><th>Learner</th><th>Company</th><th>Progress</th><th>Modules</th><th>Last Active</th><th>Status</th></tr>
+    <tr>
+      <td><strong>${state.user.name}</strong><br><span style="font-size:11px;color:var(--text-muted)">${state.user.email}</span></td>
+      <td>${state.user.company || '—'}</td>
+      <td><div class="mini-progress"><div class="mini-bar"><div class="mini-fill" style="width:${pct}%"></div></div><div class="mini-label">${pct}%</div></div></td>
+      <td>${modDone}/${MODULES.length}</td>
+      <td>${new Date().toLocaleDateString('en-GB')}</td>
+      <td><div class="status-badge ${isAllComplete() ? 'completed' : pct > 0 ? 'in-progress' : 'not-started'}">${isAllComplete() ? '🏅 Certified' : pct > 0 ? '▶ In Progress' : '— Not Started'}</div></td>
+    </tr>
+    <tr style="opacity:0.4"><td colspan="6" style="text-align:center;padding:20px;font-size:13px;color:var(--text-muted)">Connect Google Sheets to view all team members</td></tr>
+  `;
+}
+
+function refreshAnalytics() {
+  renderAnalytics();
+}
+
+function exportAnalytics() {
+  const rows = [
+    ['Learner', 'Email', 'Company', 'Progress', 'Modules Done', 'Last Active', 'Status'],
+    [state.user.name, state.user.email, state.user.company, getOverallProgress()+'%', MODULES.filter(m=>state.progress[m.id]?.moduleComplete).length+'/'+MODULES.length, new Date().toLocaleDateString('en-GB'), isAllComplete() ? 'Certified' : 'In Progress']
+  ];
+  const csv = rows.map(r => r.join(',')).join('\n');
+  const a = document.createElement('a');
+  a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+  a.download = 'street-accounting-analytics.csv';
+  a.click();
+}
+
+// ===== CERTIFICATE RENDERING =====
+function renderCertificate() {
+  const complete = isAllComplete();
+  const certArea = document.getElementById('cert-area');
+  const certActions = document.getElementById('cert-actions');
+  if (!complete) {
+    certArea.innerHTML = `
+      <div class="cert-preview">
+        <div class="cert-locked-overlay">
+          <div class="cert-locked-icon">🔒</div>
+          <div class="cert-locked-title">Certificate Locked</div>
+          <p class="cert-locked-sub">Complete all 15 modules and the Capstone Assessment to unlock your Street Advanced Accounting Certificate.</p>
+          <div style="margin-top:24px">
+            <div class="mini-progress" style="max-width:300px;margin:0 auto 16px">
+              <div class="mini-bar" style="height:8px"><div class="mini-fill" style="width:${getOverallProgress()}%"></div></div>
+              <div class="mini-label">${getOverallProgress()}%</div>
+            </div>
+            <p style="font-size:13px;color:var(--text-muted)">${MODULES.filter(m=>state.progress[m.id]?.moduleComplete).length}/${MODULES.length} modules complete</p>
+            <button class="btn btn-primary" style="margin-top:16px" onclick="showView('learning')">Continue Learning →</button>
+          </div>
+        </div>
+      </div>`;
+    certActions.style.display = 'none';
+  } else {
+    const certId = 'STREET-' + state.user.id.toUpperCase() + '-' + new Date().getFullYear();
+    const dateStr = new Date().toLocaleDateString('en-GB', {day:'numeric', month:'long', year:'numeric'});
+    certArea.innerHTML = `
+      <div class="cert-preview" id="cert-printable">
+        <div class="cert-border-top"></div>
+        <div class="cert-inner">
+          <div class="cert-logo">🏠</div>
+          <div class="cert-issuer">Street · Advanced Accounting Learning Simulator</div>
+          <div class="cert-declare">This is to certify that</div>
+          <div class="cert-name-display">${state.user.name}</div>
+          <div class="cert-course">has successfully completed the</div>
+          <div style="font-size:22px;font-weight:800;color:white;margin-bottom:8px;position:relative;letter-spacing:-0.5px">Street Advanced Accounting Certification</div>
+          <div style="font-size:14px;color:rgba(255,255,255,0.5);margin-bottom:32px;position:relative">${state.user.company ? `${state.user.company} · ` : ''}${dateStr}</div>
+          <div class="cert-badge-row">
+            <div class="cert-badge-item">
+              <div class="cert-badge-icon">📚</div>
+              <div class="cert-badge-label">15 Modules</div>
+            </div>
+            <div class="cert-badge-item">
+              <div class="cert-badge-icon">✅</div>
+              <div class="cert-badge-label">All Tasks</div>
+            </div>
+            <div class="cert-badge-item">
+              <div class="cert-badge-icon">💭</div>
+              <div class="cert-badge-label">Reflections</div>
+            </div>
+            <div class="cert-badge-item">
+              <div class="cert-badge-icon">🏆</div>
+              <div class="cert-badge-label">Capstone</div>
+            </div>
+          </div>
+          <div class="cert-sig-row">
+            <div class="cert-sig">
+              <div class="cert-sig-line"></div>
+              <div class="cert-sig-name">Street Training</div>
+              <div class="cert-sig-role">Certification Authority</div>
+            </div>
+            <div class="cert-sig">
+              <div class="cert-sig-line"></div>
+              <div class="cert-sig-name">${state.user.company || 'Street Learner'}</div>
+              <div class="cert-sig-role">Training Company</div>
+            </div>
+          </div>
+          <div class="cert-id">Certificate ID: ${certId}</div>
+        </div>
+      </div>`;
+    certActions.style.display = 'flex';
+  }
+}
+
+function downloadCert() {
+  const certEl = document.getElementById('cert-printable');
+  if (!certEl) return;
+  window.print();
+}
+
+function printCert() {
+  window.print();
+}
+
+function shareCert() {
+  if (navigator.share) {
+    navigator.share({ title: 'Street Accounting Certificate', text: `${state.user.name} has earned the Street Advanced Accounting Certification!`, url: window.location.href });
+  } else {
+    alert('Share your certification by copying this page URL!');
+  }
+}
+
+// ===== SHEETS GUIDE =====
+function showSheetsSetupGuide() {
+  const guide = `
+    <div class="alert alert-info mb-16">
+      <div class="alert-icon">📋</div>
+      <div>Follow these steps to connect the simulator to Google Sheets for automatic progress saving.</div>
+    </div>
+    <div class="workflow-steps">
+      <div class="workflow-step">
+        <div class="workflow-step-num">1</div>
+        <div class="workflow-step-content">
+          <div class="workflow-step-title">Create a Google Sheet</div>
+          <div class="workflow-step-desc">Create a new Google Sheet with these column headers: User ID, Email, Company, Name, Timestamp, Module ID, Scenario ID, Type, Task ID, Task Done, Reflection ID, Reflection Text, Overall Progress</div>
+        </div>
+      </div>
+      <div class="workflow-step">
+        <div class="workflow-step-num">2</div>
+        <div class="workflow-step-content">
+          <div class="workflow-step-title">Create a Google Apps Script</div>
+          <div class="workflow-step-desc">In Google Sheets, go to Extensions → Apps Script. Paste this code:</div>
+          <pre style="background:var(--bg);padding:12px;border-radius:6px;font-size:12px;margin-top:8px;overflow:auto">function doPost(e) {
+  const sheet = SpreadsheetApp.getActiveSheet();
+  const data = JSON.parse(e.postData.contents);
+  sheet.appendRow([
+    data.userId, data.email, data.company,
+    data.name, data.timestamp, data.moduleId,
+    data.scenarioId, data.type, data.taskId,
+    data.taskDone, data.reflectionId,
+    data.reflectionText, data.overallProgress
+  ]);
+  return ContentService.createTextOutput(
+    JSON.stringify({success:true})
+  ).setMimeType(ContentService.MimeType.JSON);
+}</pre>
+        </div>
+      </div>
+      <div class="workflow-step">
+        <div class="workflow-step-num">3</div>
+        <div class="workflow-step-content">
+          <div class="workflow-step-title">Deploy as Web App</div>
+          <div class="workflow-step-desc">Click Deploy → New Deployment → Web App. Set "Execute as" to yourself. Set "Who has access" to Anyone. Click Deploy and copy the URL.</div>
+        </div>
+      </div>
+      <div class="workflow-step">
+        <div class="workflow-step-num">4</div>
+        <div class="workflow-step-content">
+          <div class="workflow-step-title">Paste URL in Simulator</div>
+          <div class="workflow-step-desc">Paste the deployment URL into the "Apps Script Web App URL" field in the Dashboard and click Test Connection.</div>
+        </div>
+      </div>
+    </div>`;
+  document.getElementById('sheets-guide-modal-content').innerHTML = guide;
+  document.getElementById('sheets-modal').classList.add('show');
+}
+
+// ===== KEYBOARD SHORTCUTS =====
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' && e.altKey) nextScenario();
+  if (e.key === 'ArrowLeft' && e.altKey) prevScenario();
+  if (e.key === 'Escape') { closeModal(); document.getElementById('sheets-modal').classList.remove('show'); }
+});
+</script>
+</body>
+</html>
