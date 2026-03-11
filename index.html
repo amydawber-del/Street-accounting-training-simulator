@@ -4455,6 +4455,19 @@ function renderDashboard() {
         </div>
       </div>`).join('');
   }
+  // Inject confidence widget after stats
+  const existingConf = document.getElementById('confidence-container');
+  if (!existingConf) {
+    const dashStats = document.getElementById('dashboard-stats');
+    if (dashStats) {
+      const confContainer = document.createElement('div');
+      confContainer.id = 'confidence-container';
+      dashStats.after(confContainer);
+      renderConfidenceWidget(confContainer);
+    }
+  } else {
+    renderConfidenceWidget(existingConf);
+  }
 }
 
 // ===== ANALYTICS RENDERING =====
@@ -6174,23 +6187,7 @@ function renderCertificate() {
 }
 
 // ===== ENHANCED DASHBOARD WITH CONFIDENCE SCORE =====
-const _originalRenderDashboard = renderDashboard;
-function renderDashboard() {
-  _originalRenderDashboard();
-  // Inject confidence widget after stats
-  const existingConf = document.getElementById('confidence-container');
-  if (!existingConf) {
-    const dashStats = document.getElementById('dashboard-stats');
-    if (dashStats) {
-      const confContainer = document.createElement('div');
-      confContainer.id = 'confidence-container';
-      dashStats.after(confContainer);
-      renderConfidenceWidget(confContainer);
-    }
-  } else {
-    renderConfidenceWidget(existingConf);
-  }
-}
+// confidence widget is now injected directly inside renderDashboard()
 
 // ===== SHOW FABS ON APP LAUNCH =====
 function showFabs() {
