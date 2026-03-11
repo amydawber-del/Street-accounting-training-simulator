@@ -1179,6 +1179,461 @@ body {
   .main-content { margin-left: 0; }
   .cert-inner { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 }
+
+/* ===== GLOSSARY PANEL ===== */
+.glossary-overlay {
+  position: fixed; inset: 0;
+  background: rgba(18,21,42,0.6);
+  backdrop-filter: blur(4px);
+  z-index: 900; display: none;
+  justify-content: flex-end;
+}
+.glossary-overlay.show { display: flex; }
+.glossary-panel {
+  width: 380px; max-width: 95vw;
+  background: var(--white);
+  height: 100%;
+  display: flex; flex-direction: column;
+  animation: slideInRight 0.3s cubic-bezier(0.4,0,0.2,1);
+}
+@keyframes slideInRight {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+.glossary-header {
+  padding: 24px;
+  background: var(--navy);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.glossary-title { font-size: 18px; font-weight: 700; color: white; }
+.glossary-search {
+  padding: 16px;
+  border-bottom: 1px solid var(--border);
+}
+.glossary-search input {
+  width: 100%; padding: 10px 14px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-family: inherit; font-size: 13px;
+  outline: none; transition: var(--transition);
+}
+.glossary-search input:focus { border-color: var(--purple); }
+.glossary-list { flex: 1; overflow-y: auto; padding: 8px 0; }
+.glossary-item {
+  padding: 12px 20px;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  transition: var(--transition);
+}
+.glossary-item:hover { background: var(--bg); }
+.glossary-item.open { background: var(--purple-glow); }
+.glossary-term {
+  font-size: 14px; font-weight: 700; color: var(--text);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.glossary-category {
+  font-size: 10px; font-weight: 600; text-transform: uppercase;
+  letter-spacing: 0.8px; color: var(--purple);
+  background: var(--purple-glow);
+  padding: 2px 7px; border-radius: 4px;
+}
+.glossary-def {
+  font-size: 13px; color: var(--text-muted);
+  line-height: 1.6; margin-top: 8px;
+  display: none;
+}
+.glossary-item.open .glossary-def { display: block; }
+.glossary-example {
+  font-size: 12px; color: var(--text-muted);
+  background: var(--bg);
+  border-left: 3px solid var(--purple);
+  padding: 6px 10px; border-radius: 0 4px 4px 0;
+  margin-top: 8px; line-height: 1.5;
+}
+
+/* ===== BEHIND THE SCENES PANEL ===== */
+.bts-panel {
+  background: linear-gradient(135deg, #12152A, #1a1f3a);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  margin-bottom: 16px;
+  border: 1px solid rgba(91,75,231,0.2);
+}
+.bts-header {
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 14px;
+}
+.bts-icon {
+  width: 34px; height: 34px;
+  background: rgba(91,75,231,0.3);
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px;
+}
+.bts-title { font-size: 14px; font-weight: 700; color: white; }
+.bts-subtitle { font-size: 11px; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 0.8px; }
+.bts-steps { display: flex; flex-direction: column; gap: 6px; }
+.bts-step {
+  display: flex; align-items: flex-start; gap: 10px;
+  font-size: 13px; color: rgba(255,255,255,0.65);
+  line-height: 1.5;
+}
+.bts-step-bullet {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: var(--purple-light);
+  flex-shrink: 0; margin-top: 7px;
+}
+
+/* ===== COMMON MISTAKES PANEL ===== */
+.mistakes-panel {
+  background: rgba(239,68,68,0.04);
+  border: 1.5px solid rgba(239,68,68,0.2);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  margin-bottom: 16px;
+}
+.mistakes-header {
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 14px;
+}
+.mistakes-title { font-size: 14px; font-weight: 700; color: #dc2626; }
+.mistake-item {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(239,68,68,0.1);
+  font-size: 13px;
+}
+.mistake-item:last-child { border-bottom: none; }
+.mistake-icon { font-size: 14px; flex-shrink: 0; margin-top: 1px; }
+.mistake-text { color: var(--text); line-height: 1.5; flex: 1; }
+.mistake-impact {
+  font-size: 11px; color: #dc2626;
+  background: rgba(239,68,68,0.08);
+  padding: 2px 7px; border-radius: 4px;
+  font-weight: 600; flex-shrink: 0;
+}
+
+/* ===== WHAT IF WRONG PANEL ===== */
+.wrong-panel {
+  background: rgba(245,158,11,0.04);
+  border: 1.5px solid rgba(245,158,11,0.25);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  margin-top: 16px;
+}
+.wrong-header {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 14px; font-weight: 700; color: #92400e;
+  margin-bottom: 12px;
+}
+.wrong-outcomes { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; }
+.wrong-outcome {
+  display: flex; align-items: flex-start; gap: 8px;
+  font-size: 13px; color: var(--text); line-height: 1.5;
+}
+.wrong-outcome-bullet { color: var(--warning); flex-shrink: 0; margin-top: 2px; }
+.wrong-fix-label {
+  font-size: 12px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.8px; color: var(--success); margin-bottom: 6px;
+}
+.wrong-fix { font-size: 13px; color: #15803d; background: rgba(34,197,94,0.08); padding: 10px 12px; border-radius: var(--radius-sm); line-height: 1.6; }
+
+/* ===== CONFIDENCE SCORE ===== */
+.confidence-widget {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  margin-bottom: 20px;
+  box-shadow: var(--shadow);
+}
+.confidence-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 16px;
+}
+.confidence-title { font-size: 15px; font-weight: 700; color: var(--text); }
+.confidence-score-big {
+  font-size: 42px; font-weight: 800;
+  color: var(--purple); letter-spacing: -2px;
+  line-height: 1;
+}
+.confidence-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.8px; }
+.confidence-bars { display: flex; flex-direction: column; gap: 10px; margin-top: 16px; }
+.conf-bar-item { display: flex; align-items: center; gap: 10px; }
+.conf-bar-label { font-size: 12px; font-weight: 500; color: var(--text-muted); min-width: 130px; }
+.conf-bar-track { flex: 1; height: 6px; background: var(--bg); border-radius: 999px; overflow: hidden; }
+.conf-bar-fill { height: 100%; border-radius: 999px; transition: width 0.8s cubic-bezier(0.4,0,0.2,1); }
+.conf-bar-val { font-size: 12px; font-weight: 700; color: var(--text); min-width: 32px; text-align: right; }
+.confidence-strengths { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
+.conf-strength-box { padding: 12px; border-radius: var(--radius-sm); }
+.conf-strength-box.strong { background: rgba(34,197,94,0.06); border: 1px solid rgba(34,197,94,0.2); }
+.conf-strength-box.weak { background: rgba(245,158,11,0.06); border: 1px solid rgba(245,158,11,0.2); }
+.conf-strength-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 6px; }
+.conf-strength-box.strong .conf-strength-label { color: var(--success); }
+.conf-strength-box.weak .conf-strength-label { color: var(--warning); }
+.conf-strength-items { display: flex; flex-direction: column; gap: 3px; }
+.conf-strength-item { font-size: 12px; color: var(--text); }
+
+/* ===== CERTIFICATION TIERS ===== */
+.cert-tiers {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 12px; margin-bottom: 24px;
+}
+.cert-tier-card {
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  text-align: center;
+  transition: var(--transition);
+  position: relative;
+  overflow: hidden;
+}
+.cert-tier-card.earned {
+  border-color: var(--purple);
+  box-shadow: 0 0 20px rgba(91,75,231,0.15);
+}
+.cert-tier-card.locked { opacity: 0.55; }
+.cert-tier-medal { font-size: 36px; margin-bottom: 8px; }
+.cert-tier-name { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+.cert-tier-req { font-size: 12px; color: var(--text-muted); line-height: 1.4; margin-bottom: 12px; }
+.cert-tier-badge {
+  font-size: 11px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.5px; padding: 4px 12px; border-radius: 20px;
+  display: inline-block;
+}
+.cert-tier-card.earned .cert-tier-badge { background: var(--purple); color: white; }
+.cert-tier-card.locked .cert-tier-badge { background: var(--bg); color: var(--text-muted); }
+.cert-tier-shine {
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, transparent 40%, rgba(255,255,255,0.08) 50%, transparent 60%);
+  pointer-events: none;
+}
+
+/* ===== RECONCILIATION GAME ===== */
+.recon-game-overlay {
+  position: fixed; inset: 0;
+  background: rgba(18,21,42,0.75);
+  backdrop-filter: blur(6px);
+  z-index: 1100;
+  display: none; align-items: center; justify-content: center;
+}
+.recon-game-overlay.show { display: flex; }
+.recon-game-modal {
+  background: var(--white);
+  border-radius: 20px;
+  width: 860px; max-width: 96vw;
+  max-height: 92vh;
+  overflow-y: auto;
+  animation: scaleIn 0.3s cubic-bezier(0.34,1.56,0.64,1);
+}
+.recon-game-header {
+  background: var(--navy);
+  padding: 24px 28px;
+  display: flex; align-items: center; justify-content: space-between;
+  border-radius: 20px 20px 0 0;
+}
+.recon-game-title { font-size: 20px; font-weight: 800; color: white; }
+.recon-game-sub { font-size: 13px; color: rgba(255,255,255,0.45); margin-top: 2px; }
+.recon-game-body { padding: 28px; }
+.recon-columns { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.recon-col-title {
+  font-size: 12px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.8px; color: var(--text-muted);
+  padding: 10px 14px; background: var(--bg);
+  border-radius: var(--radius-sm); margin-bottom: 10px;
+  display: flex; align-items: center; gap: 6px;
+}
+.recon-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 11px 14px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  margin-bottom: 8px;
+  cursor: grab;
+  transition: var(--transition);
+  background: var(--white);
+  user-select: none;
+}
+.recon-item:hover { border-color: var(--purple); background: var(--purple-glow); }
+.recon-item.matched { border-color: var(--success); background: rgba(34,197,94,0.06); cursor: default; opacity: 0.7; }
+.recon-item.selected { border-color: var(--purple); background: var(--purple-glow); box-shadow: 0 0 0 3px rgba(91,75,231,0.2); }
+.recon-item.wrong { border-color: var(--danger); background: rgba(239,68,68,0.06); animation: shake 0.3s ease; }
+.recon-amount { font-size: 15px; font-weight: 800; color: var(--text); min-width: 70px; }
+.recon-desc { flex: 1; font-size: 13px; color: var(--text-muted); line-height: 1.4; }
+.recon-type {
+  font-size: 11px; font-weight: 600; padding: 3px 8px;
+  border-radius: 4px; flex-shrink: 0;
+}
+.recon-type.rent { background: rgba(34,197,94,0.1); color: var(--success); }
+.recon-type.contractor { background: rgba(59,130,246,0.1); color: var(--info); }
+.recon-type.landlord { background: var(--purple-glow); color: var(--purple); }
+.recon-type.deposit { background: rgba(245,158,11,0.1); color: #92400e; }
+.recon-score-bar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 28px;
+  border-top: 1px solid var(--border);
+  background: var(--bg);
+  border-radius: 0 0 20px 20px;
+}
+.recon-score-item { text-align: center; }
+.recon-score-num { font-size: 24px; font-weight: 800; color: var(--purple); }
+.recon-score-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-6px); }
+  75% { transform: translateX(6px); }
+}
+
+/* ===== AGENCY SIMULATION DAY ===== */
+.agency-sim-overlay {
+  position: fixed; inset: 0;
+  background: rgba(18,21,42,0.8);
+  backdrop-filter: blur(8px);
+  z-index: 1100;
+  display: none; align-items: center; justify-content: center;
+}
+.agency-sim-overlay.show { display: flex; }
+.agency-sim-modal {
+  background: var(--white);
+  border-radius: 20px;
+  width: 900px; max-width: 96vw;
+  max-height: 92vh;
+  overflow-y: auto;
+  animation: scaleIn 0.3s cubic-bezier(0.34,1.56,0.64,1);
+}
+.agency-sim-header {
+  background: linear-gradient(135deg, #12152A, #232845);
+  padding: 28px 32px;
+  border-radius: 20px 20px 0 0;
+}
+.agency-sim-title { font-size: 24px; font-weight: 800; color: white; letter-spacing: -0.5px; margin-bottom: 6px; }
+.agency-sim-sub { font-size: 14px; color: rgba(255,255,255,0.45); }
+.agency-sim-body { padding: 28px 32px; }
+.sim-inbox {
+  display: flex; flex-direction: column; gap: 12px;
+  margin-bottom: 24px;
+}
+.sim-inbox-item {
+  display: flex; align-items: flex-start; gap: 14px;
+  padding: 16px 18px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--white);
+  cursor: pointer; transition: var(--transition);
+  position: relative;
+}
+.sim-inbox-item:hover { border-color: var(--purple); box-shadow: 0 2px 12px rgba(91,75,231,0.1); }
+.sim-inbox-item.done { border-color: rgba(34,197,94,0.3); background: rgba(34,197,94,0.03); }
+.sim-inbox-item.active { border-color: var(--purple); background: var(--purple-glow); }
+.sim-inbox-icon {
+  width: 42px; height: 42px;
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; flex-shrink: 0;
+}
+.sim-inbox-info { flex: 1; }
+.sim-inbox-from { font-size: 12px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px; }
+.sim-inbox-subject { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 3px; }
+.sim-inbox-preview { font-size: 13px; color: var(--text-muted); line-height: 1.4; }
+.sim-inbox-meta { display: flex; align-items: center; gap: 8px; flex-shrink: 0; flex-direction: column; align-items: flex-end; }
+.sim-priority {
+  font-size: 10px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.5px; padding: 3px 8px; border-radius: 4px;
+}
+.sim-priority.urgent { background: rgba(239,68,68,0.1); color: #dc2626; }
+.sim-priority.normal { background: var(--bg); color: var(--text-muted); }
+.sim-priority.done { background: rgba(34,197,94,0.1); color: var(--success); }
+.sim-task-panel {
+  background: var(--bg);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  margin-bottom: 20px;
+  border: 1px solid var(--border);
+}
+.sim-task-panel-title {
+  font-size: 14px; font-weight: 700; color: var(--text);
+  margin-bottom: 12px; display: flex; align-items: center; gap: 8px;
+}
+.sim-steps { display: flex; flex-direction: column; gap: 8px; }
+.sim-step {
+  display: flex; align-items: flex-start; gap: 10px;
+  font-size: 13px;
+}
+.sim-step-cb {
+  width: 18px; height: 18px;
+  border: 2px solid var(--border); border-radius: 4px;
+  flex-shrink: 0; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  margin-top: 2px; transition: var(--transition);
+  background: white;
+}
+.sim-step-cb.done { background: var(--success); border-color: var(--success); color: white; font-size: 10px; }
+.sim-step-text { flex: 1; line-height: 1.5; color: var(--text); }
+.sim-progress-bar {
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 20px;
+}
+.sim-progress-label { font-size: 13px; font-weight: 600; color: var(--text-muted); white-space: nowrap; }
+
+/* ===== SIDEBAR GLOSSARY BTN ===== */
+.glossary-btn {
+  position: fixed;
+  bottom: 80px; right: 20px;
+  z-index: 200;
+  width: 48px; height: 48px;
+  background: var(--purple);
+  border-radius: 50%;
+  border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px;
+  box-shadow: 0 4px 20px rgba(91,75,231,0.4);
+  transition: var(--transition);
+  color: white;
+  font-family: inherit;
+}
+.glossary-btn:hover { transform: scale(1.1); background: var(--purple-light); }
+.glossary-btn-label {
+  position: absolute;
+  right: calc(100% + 10px);
+  background: var(--navy);
+  color: white; font-size: 11px; font-weight: 600;
+  padding: 5px 10px; border-radius: 6px;
+  white-space: nowrap; opacity: 0;
+  transition: opacity 0.2s; pointer-events: none;
+}
+.glossary-btn:hover .glossary-btn-label { opacity: 1; }
+
+/* ===== RECON GAME FAB ===== */
+.sim-fab {
+  position: fixed;
+  bottom: 20px; right: 20px;
+  z-index: 200;
+  background: var(--navy);
+  border: none; cursor: pointer;
+  border-radius: 12px;
+  padding: 10px 18px;
+  display: flex; align-items: center; gap: 8px;
+  font-family: inherit; font-size: 13px; font-weight: 600;
+  color: white;
+  box-shadow: 0 4px 20px rgba(18,21,42,0.3);
+  transition: var(--transition);
+}
+.sim-fab:hover { background: var(--navy-light); transform: translateY(-2px); }
+
+/* ===== ENHANCED CERT TIERS ON CERT PAGE ===== */
+.cert-unlock-steps {
+  display: flex; flex-direction: column; gap: 8px;
+  margin-bottom: 16px;
+}
+.cert-unlock-step {
+  display: flex; align-items: center; gap: 10px;
+  font-size: 13px; padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+}
+.cert-unlock-step.done { background: rgba(34,197,94,0.06); color: #15803d; }
+.cert-unlock-step .step-icon { font-size: 16px; }
 </style>
 </head>
 <body>
@@ -1205,7 +1660,7 @@ body {
     </div>
     <div class="form-group">
       <label class="form-label">Agency / Company Name</label>
-      <input type="text" class="form-input" id="login-company" placeholder="e.g. Thompson Properties" value="">
+      <input type="text" class="form-input" id="login-company" placeholder="e.g. Your Agency Name" value="">
     </div>
     <button class="btn btn-primary" onclick="startApp()">
       <span>Start Learning Journey</span>
@@ -1253,8 +1708,8 @@ body {
       </div>
       <div class="sidebar-footer">
         <button class="sidebar-footer-btn" onclick="showView('dashboard')">📊 Dashboard</button>
-        <button class="sidebar-footer-btn" onclick="showView('analytics')">📈 Analytics</button>
         <button class="sidebar-footer-btn" onclick="showView('certificate')">🏅 Cert</button>
+        <button class="sidebar-footer-btn" onclick="openGlossaryPanel()" title="Alt+G">📖</button>
       </div>
     </nav>
 
@@ -1273,10 +1728,11 @@ body {
             <div class="saving-dot"></div>
             <span>Saving...</span>
           </div>
+          <button class="btn btn-ghost btn-sm" id="recon-topbar-btn" onclick="openReconGame()" style="display:none" title="Alt+R">⚖️ Recon Trainer</button>
+          <button class="btn btn-ghost btn-sm" id="agency-topbar-btn" onclick="openAgencySim()" style="display:none" title="Agency Simulation">🏢 Agency Sim</button>
           <div class="topbar-view-switcher">
             <button class="view-tab active" onclick="showView('learning')" data-view="learning">📚 Learn</button>
             <button class="view-tab" onclick="showView('dashboard')" data-view="dashboard">📊 Dashboard</button>
-            <button class="view-tab" onclick="showView('analytics')" data-view="analytics">📈 Analytics</button>
             <button class="view-tab" onclick="showView('certificate')" data-view="certificate">🏅 Certificate</button>
           </div>
         </div>
@@ -1331,37 +1787,6 @@ body {
         </div>
 
         <!-- ANALYTICS VIEW -->
-        <div id="view-analytics" class="view-container">
-          <div class="flex-center justify-between mb-24">
-            <div class="section-title">📈 Trainer <span class="accent">Analytics</span></div>
-            <button class="btn btn-outline btn-sm" onclick="exportAnalytics()">⬇️ Export CSV</button>
-          </div>
-          <div class="dashboard-grid" id="analytics-stats"></div>
-          <div class="analytics-grid mb-24">
-            <div class="card">
-              <div class="card-header"><div class="card-title"><div class="card-icon">🏆</div>Leaderboard</div></div>
-              <div class="card-body" id="leaderboard-list"></div>
-            </div>
-            <div class="card">
-              <div class="card-header"><div class="card-title"><div class="card-icon">📊</div>Module Drop-off Analysis</div></div>
-              <div class="card-body" id="dropoff-chart"></div>
-            </div>
-          </div>
-          <div class="card mb-24">
-            <div class="card-header">
-              <div class="card-title"><div class="card-icon">👥</div>All Learners</div>
-              <button class="btn btn-ghost btn-sm" onclick="refreshAnalytics()">↻ Refresh</button>
-            </div>
-            <div style="overflow:auto">
-              <table class="module-progress-table" id="learners-table"></table>
-            </div>
-          </div>
-          <div class="card" id="sheets-guide-card" style="display:none">
-            <div class="card-header"><div class="card-title"><div class="card-icon">📋</div>Google Sheets Setup Guide</div></div>
-            <div class="card-body" id="sheets-guide-content"></div>
-          </div>
-        </div>
-
         <!-- CERTIFICATE VIEW -->
         <div id="view-certificate" class="view-container">
           <div class="cert-container">
@@ -1404,6 +1829,86 @@ body {
   </div>
 </div>
 
+<!-- GLOSSARY PANEL -->
+<div class="glossary-overlay" id="glossary-overlay" onclick="closeGlossary(event)">
+  <div class="glossary-panel" onclick="event.stopPropagation()">
+    <div class="glossary-header">
+      <div>
+        <div class="glossary-title">📖 Accounting Glossary</div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.4);margin-top:2px">Street terminology explained</div>
+      </div>
+      <button class="btn btn-ghost btn-icon" style="color:white;border-color:rgba(255,255,255,0.15)" onclick="closeGlossaryPanel()">✕</button>
+    </div>
+    <div class="glossary-search">
+      <input type="text" id="glossary-search-input" placeholder="Search terms..." oninput="filterGlossary(this.value)">
+    </div>
+    <div class="glossary-list" id="glossary-list"></div>
+  </div>
+</div>
+
+<!-- RECONCILIATION GAME MODAL -->
+<div class="recon-game-overlay" id="recon-game-overlay">
+  <div class="recon-game-modal">
+    <div class="recon-game-header">
+      <div>
+        <div class="recon-game-title">⚖️ Bank Reconciliation Trainer</div>
+        <div class="recon-game-sub">Match each bank transaction to the correct entry type. Click a bank item, then click its match.</div>
+      </div>
+      <button class="btn btn-ghost btn-icon" style="color:rgba(255,255,255,0.5);border-color:rgba(255,255,255,0.1)" onclick="closeReconGame()">✕</button>
+    </div>
+    <div class="recon-game-body" id="recon-game-body"></div>
+    <div class="recon-score-bar">
+      <div class="recon-score-item">
+        <div class="recon-score-num" id="recon-matched">0</div>
+        <div class="recon-score-label">Matched</div>
+      </div>
+      <div class="recon-score-item">
+        <div class="recon-score-num" id="recon-remaining">8</div>
+        <div class="recon-score-label">Remaining</div>
+      </div>
+      <div class="recon-score-item">
+        <div class="recon-score-num" id="recon-errors">0</div>
+        <div class="recon-score-label">Errors</div>
+      </div>
+      <div>
+        <button class="btn btn-primary btn-sm" onclick="newReconRound()">↺ New Round</button>
+        <button class="btn btn-ghost btn-sm" style="margin-left:8px" onclick="closeReconGame()">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- AGENCY SIMULATION MODAL -->
+<div class="agency-sim-overlay" id="agency-sim-overlay">
+  <div class="agency-sim-modal">
+    <div class="agency-sim-header">
+      <div style="display:flex;align-items:center;gap:14px">
+        <div style="font-size:32px">🏢</div>
+        <div>
+          <div class="agency-sim-title">Agency Accounting Day Simulator</div>
+          <div class="agency-sim-sub" id="agency-sim-sub">Monday 9:00am · Your Agency · You are the accounts manager</div>
+        </div>
+      </div>
+      <button class="btn btn-ghost btn-icon" style="color:rgba(255,255,255,0.5);border-color:rgba(255,255,255,0.1)" onclick="closeAgencySim()">✕</button>
+    </div>
+    <div class="agency-sim-body" id="agency-sim-body"></div>
+  </div>
+</div>
+
+<!-- FLOATING ACTION BUTTONS -->
+<button class="glossary-btn" id="glossary-fab" onclick="openGlossaryPanel()" title="Accounting Glossary" style="display:none">
+  <span>📖</span>
+  <span class="glossary-btn-label">Glossary</span>
+</button>
+<div style="position:fixed;bottom:20px;right:20px;z-index:200;display:flex;gap:8px;align-items:center" id="fab-row" style="display:none">
+  <button class="sim-fab" id="agency-sim-fab" onclick="openAgencySim()" title="Agency Simulation Day" style="display:none">
+    🏢 Agency Sim
+  </button>
+  <button class="sim-fab" id="recon-fab" onclick="openReconGame()" style="display:none">
+    ⚖️ Recon Trainer
+  </button>
+</div>
+
 <script>
 // ========================================
 // STREET ADVANCED ACCOUNTING LEARNING SIMULATOR
@@ -1421,6 +1926,20 @@ let state = {
   sheetsUrl: localStorage.getItem('sheetsUrl') || 'https://script.google.com/macros/s/AKfycbw74bw0afMulQM57qK8Idv-Rjuk8EFm1cpcDbyi-8jis7wJhzAR_3_8MCI8wbHmEMg/exec',
   sheetsConnected: false
 };
+
+// ===== AGENCY NAME HELPERS =====
+// ag()  → returns the learner's company, falls back to 'Your Agency'
+// tpl() → resolves {AGENCY} tokens in any string at render time so all
+//         scenario text, workflow steps, titles etc. show the real agency name.
+function ag() {
+  return (state.user && state.user.company && state.user.company.trim())
+    ? state.user.company.trim()
+    : 'Your Agency';
+}
+function tpl(s) {
+  if (!s) return s;
+  return s.replace(/\{AGENCY\}/g, ag());
+}
 
 // ===== MODULE DATA =====
 const MODULES = [
@@ -1465,7 +1984,7 @@ const MODULES = [
         scenario: {
           title: 'Demo Account Orientation',
           context: 'You have just been given access to a fresh Street demo account. No accounting has been configured yet. Your first task is to understand the accounting structure and identify what needs to be set up before any transactions can be processed.',
-          details: 'The agency is **Thompson Properties**, a letting agent managing 12 properties in Manchester. They are new to Street and need to set up accounting before going live.'
+          details: 'The agency is **{AGENCY}**, a letting agent managing 12 properties in Manchester. They are new to Street and need to set up accounting before going live.'
         },
         workflow: [
           { step: 'Navigate to Accounting', desc: 'From the main menu, click on Accounting. Note that the area may appear largely empty or with limited data in a fresh account.', path: 'Main Menu → Accounting' },
@@ -1513,7 +2032,7 @@ const MODULES = [
         scenario: {
           title: 'Terminology in Practice',
           context: 'You are reviewing a landlord account in Street. The landlord says their statement looks wrong. To investigate, you need to understand what each term on the statement means.',
-          details: 'Landlord **Robert Chen** has called to say his most recent statement shows a balance he doesn\'t recognise. You need to trace back through the ledger entries to explain the balance to him.'
+          details: 'Landlord **Prof. Scarlett Cooper** has called to say his most recent statement shows a balance he doesn\'t recognise. You need to trace back through the ledger entries to explain the balance to him.'
         },
         workflow: [
           { step: 'Navigate to Landlord Account', desc: 'Find the landlord record in Street and open their accounting view.', path: 'Contacts → Landlords → Select Landlord → Accounting' },
@@ -1580,7 +2099,7 @@ const MODULES = [
         scenario: {
           title: 'Understanding the Full Accounting Flow',
           context: 'Before setting up the demo account, you need to map out how a single rent transaction flows through Street Accounting from start to finish.',
-          details: 'Tenant **James Wilson** is paying £1,200/month rent for a property managed by **Thompson Properties**. The agency fee is 10% + VAT. Follow the money from tenant to landlord.'
+          details: 'Tenant **James Wilson** is paying £1,200/month rent for a property managed by **{AGENCY}**. The agency fee is 10% + VAT. Follow the money from tenant to landlord.'
         },
         workflow: [
           { step: 'Rent arrives in client account', desc: 'Tenant pays £1,200 via bank transfer. It arrives in the client bank account.', path: 'Accounting → Bank Accounts → Client Account' },
@@ -1651,7 +2170,7 @@ const MODULES = [
         scenario: {
           title: 'Fresh Demo Account Audit',
           context: '⚠️ IMPORTANT: The Street demo account starts with NO accounting configuration. You must complete this audit before attempting any accounting workflows.',
-          details: 'You are the practice manager at **Thompson Properties**. You have just opened a Street demo account and your team wants to start testing accounting workflows. Before anyone can do that, you must complete the accounting readiness audit and setup checklist.'
+          details: 'You are the practice manager at **{AGENCY}**. You have just opened a Street demo account and your team wants to start testing accounting workflows. Before anyone can do that, you must complete the accounting readiness audit and setup checklist.'
         },
         workflow: [
           { step: 'Navigate to Settings → Accounting', desc: 'Find the accounting configuration area. Note which sections are empty or have default values only.', path: 'Settings → Accounting' },
@@ -1722,7 +2241,7 @@ const MODULES = [
         ],
         scenario: {
           title: 'Setting Up Fees and Payment Rules',
-          context: 'Thompson Properties charges a 12% management fee to most landlords and 10% to a few premium clients. They are VAT registered. Landlords are paid monthly. Set up these rules in the demo account.',
+          context: '{AGENCY} charges a 12% management fee to most landlords and 10% to a few premium clients. They are VAT registered. Landlords are paid monthly. Set up these rules in the demo account.',
           details: 'The MD has asked you to configure the standard fee structure before the team starts onboarding properties next week. The go-live date is the first of next month.'
         },
         workflow: [
@@ -1785,28 +2304,28 @@ const MODULES = [
           }
         ],
         scenario: {
-          title: 'Rent Day for Manchester Portfolio',
-          context: 'It\'s rent day. The client account has received three payments overnight. Each needs to be identified and allocated to the correct tenancy.',
-          details: `Three payments have arrived:\n\n• **£950** — John Miller, 14 Oak Street (due today)\n• **£1,100** — Sarah Barnes, 22 Maple Ave (due yesterday — 1 day late)\n• **£875** — Tom Chen, 8 Park Road (partial payment — expects remaining £125 next week)\n\nAll properties managed by Thompson Properties at 12% management fee + VAT.`
+          title: 'Rent Day — {AGENCY} Portfolio',
+          context: 'It\'s rent day. The {AGENCY} client account has received three payments overnight. Each needs to be identified and allocated to the correct tenancy.',
+          details: `Three payments have arrived:\n\n• **£1,400** — Prof. Aaron Bailey, 268 Greenleach Lane, Worsley M28 1UZ (due today) — Landlord: Prof. Scarlett Cooper\n• **£1,800** — Mr. Dan Anderson, 20 Vicars Street, Eccles M30 0DG (due yesterday — 1 day late) — Landlord: Prof. Fred Watson\n• **£1,100** — Mr. Jason Walker, 142 Ladymere Drive, Worsley M28 7UX (partial — £100 shortfall, expects balance next week) — Landlord: Miss Tiffany Ward\n\nAll properties managed by {AGENCY} at 12% management fee + VAT.`
         },
         workflow: [
           { step: 'Open Accounting → Receipts', desc: 'Navigate to the receipts area where all incoming bank payments are listed.', path: 'Accounting → Receipts' },
           { step: 'Identify Unallocated Payments', desc: 'You will see the three incoming payments listed as unallocated. Each shows the amount and date received.', path: 'Accounting → Receipts → Unallocated' },
-          { step: 'Allocate Full Payment (£950)', desc: 'Select the £950 payment. Search for John Miller\'s tenancy. Match the full amount to the current rent period.', path: 'Accounting → Receipts → Allocate → Search Tenancy' },
-          { step: 'Street Calculates Fee', desc: 'Street automatically calculates: 12% of £950 = £114 + VAT (£22.80) = £136.80 fee. Landlord net = £813.20.', path: 'Accounting → Receipts → Allocation Summary' },
-          { step: 'Handle Partial Payment (£875)', desc: 'Select £875 payment. Allocate to Tom Chen\'s tenancy. Mark as partial. Note the shortfall of £125. Do NOT generate landlord payment yet.', path: 'Accounting → Receipts → Allocate → Partial Payment' },
-          { step: 'Review Landlord Ledger', desc: 'Check each landlord\'s ledger to confirm rent received, fees deducted, and current balance are all correct.', path: 'Landlord Account → Ledger → Current Balance' }
+          { step: 'Allocate Full Payment (£1,400)', desc: 'Select the £1,400 payment. Search for Prof. Aaron Bailey\'s tenancy at 268 Greenleach Lane. Match the full amount to the current rent period.', path: 'Accounting → Receipts → Allocate → Search Tenancy' },
+          { step: 'Street Calculates Fee', desc: 'Street automatically calculates: 12% of £1,400 = £168 + VAT (£33.60) = £201.60 fee. Landlord Prof. Scarlett Cooper net = £1,198.40.', path: 'Accounting → Receipts → Allocation Summary' },
+          { step: 'Handle Partial Payment (£1,100)', desc: 'Select £1,100 payment. Allocate to Mr. Jason Walker\'s tenancy at 142 Ladymere Drive. Mark as partial. Note the £100 shortfall. Do NOT generate Miss Tiffany Ward\'s landlord payment yet.', path: 'Accounting → Receipts → Allocate → Partial Payment' },
+          { step: 'Review Landlord Ledger', desc: 'Check Prof. Scarlett Cooper and Prof. Fred Watson\'s ledgers to confirm rent received, 12% fees deducted, and current net balance are all correct.', path: 'Landlord Account → Ledger → Current Balance' }
         ],
         tasks: [
           { id: 't1', title: 'Navigate to Accounting → Receipts in the demo', type: 'demo', desc: 'Find where incoming payments are displayed.' },
-          { id: 't2', title: 'Allocate a full rent payment to a tenancy', type: 'demo', desc: 'Match an incoming payment to a test tenancy.' },
-          { id: 't3', title: 'Confirm the management fee has been automatically generated', type: 'demo', desc: 'Check that Street created the fee entry after allocation.' },
-          { id: 't4', title: 'Record a partial rent payment and note the shortfall', type: 'demo', desc: 'Allocate a partial amount and flag the balance outstanding.' },
-          { id: 't5', title: 'Review a landlord ledger to confirm the balance is correct', type: 'confirm', desc: 'The ledger should show rent received minus fees.' }
+          { id: 't2', title: 'Allocate the £1,400 payment to Prof. Aaron Bailey\'s tenancy at 268 Greenleach Lane', type: 'demo', desc: 'Match the incoming payment to the correct tenancy.' },
+          { id: 't3', title: 'Confirm the 12% management fee (£201.60 inc VAT) has been automatically generated', type: 'demo', desc: 'Check that Street created the fee entry after allocation.' },
+          { id: 't4', title: 'Record the £1,100 partial payment for 142 Ladymere Drive and note the £100 shortfall', type: 'demo', desc: 'Allocate a partial amount and flag the balance outstanding.' },
+          { id: 't5', title: 'Review Prof. Scarlett Cooper\'s landlord ledger to confirm the £1,198.40 net balance', type: 'confirm', desc: 'The ledger should show £1,400 rent received minus £201.60 fees.' }
         ],
         reflections: [
-          { id: 'r1', q: 'What would happen to the landlord\'s statement if rent was allocated to the wrong tenancy? How would you fix this error in Street?' },
-          { id: 'r2', q: 'Tom Chen paid £875 of £1,000 due. The landlord is asking where their money is. How do you explain the position and what are your options in Street?' },
+          { id: 'r1', q: 'What would happen to Prof. Scarlett Cooper\'s statement if rent from 268 Greenleach Lane was allocated to the wrong tenancy? How would you fix this error in Street?' },
+          { id: 'r2', q: 'Mr. Jason Walker at 142 Ladymere Drive paid £1,100 of £1,200 due. Landlord Miss Tiffany Ward is asking where her money is. How do you explain the position and what are your options in Street?' },
           { id: 'r3', q: 'When should you hold back a landlord payment due to arrears, and when should you still pay the landlord on the available balance?' }
         ]
       }
@@ -1846,25 +2365,27 @@ const MODULES = [
         scenario: {
           title: 'End-of-Month Fee Reconciliation',
           context: 'It is month end. You need to ensure all fees are correct before running landlord payments. Three landlords have additional charges to process this month.',
-          details: '• **Robert Chen** — £120 inventory fee (new tenancy started)\n• **Lisa Park** — £60 renewal fee (tenancy renewed for 12 months)\n• **David Mills** — £240 maintenance coordination fee (major works overseen by agency)\n\nAll subject to VAT at 20%.'
+          details: '• **Prof. Scarlett Cooper** (268 Greenleach Lane, M28 1UZ) — £120 inventory fee (new tenancy started with Prof. Aaron Bailey)\n• **Miss Tiffany Ward** (142 Ladymere Drive, M28 7UX) — £60 renewal fee (tenancy renewed for a further 12 months)\n• **Dr. Eleanor Rogers** (285 Chatsworth Road, Eccles M30 9LS) — £240 maintenance coordination fee (major boiler works overseen by agency)\n\nAll subject to VAT at 20%.'
         },
         workflow: [
-          { step: 'Open Landlord Account', desc: 'Navigate to the landlord\'s contact record and open their accounting view.', path: 'Contacts → Landlords → Select → Accounting' },
-          { step: 'Add New Charge', desc: 'Click "Add Charge". Select the charge type: Inventory Fee. Enter £120. Street automatically calculates VAT.', path: 'Landlord Account → Charges → Add Charge' },
-          { step: 'Select Nominal Code', desc: 'Assign the correct nominal code for this type of charge (e.g. Management Income or Fees Income).', path: 'Add Charge → Nominal Code' },
-          { step: 'Confirm Charge on Ledger', desc: 'Save the charge. It now appears on the landlord\'s ledger, reducing their next payment.', path: 'Landlord Account → Ledger → Review' },
-          { step: 'Repeat for All Landlords', desc: 'Add the renewal fee to Lisa Park and the coordination fee to David Mills using the same process.', path: 'Contacts → Landlords' },
-          { step: 'Run Pre-Payment Review', desc: 'Before processing payments, run a ledger review to confirm all fees are correct and no errors exist.', path: 'Accounting → Landlord Payments → Pre-Payment Report' }
+          { step: 'Open Landlord Account — Prof. Scarlett Cooper', desc: 'Navigate to Prof. Scarlett Cooper\'s contact record (268 Greenleach Lane) and open her accounting view.', path: 'Contacts → Landlords → Prof. Scarlett Cooper → Accounting' },
+          { step: 'Add New Charge — Inventory Fee', desc: 'Click "Add Charge". Select charge type: Inventory Fee. Enter £120. Street automatically calculates VAT (£24.00). Total: £144.00.', path: 'Landlord Account → Charges → Add Charge' },
+          { step: 'Select Nominal Code', desc: 'Assign the correct nominal code for this charge type (e.g. Fees Income or Management Income). Add a description: "Inventory fee — new tenancy Prof. Aaron Bailey".', path: 'Add Charge → Nominal Code' },
+          { step: 'Confirm Charge on Ledger', desc: 'Save the charge. It now appears on Prof. Scarlett Cooper\'s ledger, reducing her next payment by £144.00.', path: 'Landlord Account → Ledger → Review' },
+          { step: 'Add Renewal Fee — Miss Tiffany Ward', desc: 'Open Miss Tiffany Ward\'s account (142 Ladymere Drive). Add £60 renewal fee + £12 VAT = £72 total. Description: "Tenancy renewal — Mr. Jason Walker".', path: 'Contacts → Landlords → Miss Tiffany Ward' },
+          { step: 'Add Coordination Fee — Dr. Eleanor Rogers', desc: 'Open Dr. Eleanor Rogers\'s account (285 Chatsworth Road). Add £240 coordination fee + £48 VAT = £288 total. Description: "Maintenance coordination — boiler works".', path: 'Contacts → Landlords → Dr. Eleanor Rogers' },
+          { step: 'Run Pre-Payment Review', desc: 'Before processing payments, run a ledger review to confirm all three charges are correct and no errors exist.', path: 'Accounting → Landlord Payments → Pre-Payment Report' }
         ],
         tasks: [
-          { id: 't1', title: 'Add a test inventory fee charge to a landlord account', type: 'demo', desc: 'Navigate to a landlord and add a fee with the correct nominal code.' },
-          { id: 't2', title: 'Confirm VAT is correctly calculated on the charge', type: 'demo', desc: 'Check that Street has applied 20% VAT.' },
-          { id: 't3', title: 'View the landlord ledger to confirm the charge appears', type: 'demo', desc: 'Verify it shows as a deduction on the account.' },
-          { id: 't4', title: 'Check the pre-payment report before running payments', type: 'confirm', desc: 'Confirm all charges are correct before landlord payment batch.' }
+          { id: 't1', title: 'Add the £120 inventory fee charge to Prof. Scarlett Cooper\'s account (268 Greenleach Lane)', type: 'demo', desc: 'Navigate to her landlord account and add the fee with the correct nominal code.' },
+          { id: 't2', title: 'Confirm VAT (£24.00) is correctly calculated on the inventory fee', type: 'demo', desc: 'Check that Street has applied 20% VAT — total should show £144.00.' },
+          { id: 't3', title: 'View Prof. Scarlett Cooper\'s landlord ledger to confirm the charge appears', type: 'demo', desc: 'Verify it shows as a deduction on the account.' },
+          { id: 't4', title: 'Add the renewal fee to Miss Tiffany Ward and coordination fee to Dr. Eleanor Rogers', type: 'demo', desc: 'Repeat the process for both remaining landlords.' },
+          { id: 't5', title: 'Check the pre-payment report before running payments', type: 'confirm', desc: 'Confirm all three charges are correct before landlord payment batch.' }
         ],
         reflections: [
-          { id: 'r1', q: 'A landlord disputes an inventory fee charge. How would you trace when it was added, by whom, and what nominal code it was posted to?' },
-          { id: 'r2', q: 'What is the difference between a "charge" and an "invoice" in Street Accounting, and when would you use each?' }
+          { id: 'r1', q: 'Prof. Scarlett Cooper disputes the £120 inventory fee charge. How would you trace when it was added, by whom, and what nominal code it was posted to in Street?' },
+          { id: 'r2', q: 'What is the difference between a "charge" and an "invoice" in Street Accounting, and when would you use each for {AGENCY} landlords?' }
         ]
       }
     ]
@@ -1912,17 +2433,17 @@ const MODULES = [
           }
         ],
         scenario: {
-          title: 'Emergency Boiler Repair — 14 Oak Street',
-          context: 'The boiler at 14 Oak Street (John Miller\'s tenancy) has broken down. Landlord David Thompson has approved an emergency repair by Gasworks Ltd.',
-          details: 'Invoice from Gasworks Ltd: £350 + VAT (£70) = £420 total. The repair is complete and the invoice needs to be recorded and the contractor paid.\n\nLandlord David Thompson has £850 available in his ledger from last month\'s net rent.'
+          title: 'Emergency Boiler Repair — 268 Greenleach Lane',
+          context: 'The boiler at 268 Greenleach Lane, Worsley M28 1UZ (Prof. Aaron Bailey\'s tenancy, Ref: TvLE84DkIQ) has broken down. Landlord Prof. Scarlett Cooper has approved an emergency repair by Manchester Heating Solutions.',
+          details: 'Invoice from Manchester Heating Solutions: £350 + VAT (£70) = £420 total. The repair is complete and the invoice needs to be recorded and the contractor paid.\n\nLandlord Prof. Scarlett Cooper has £1,100 available in her ledger from last month\'s net rent (£1,198.40 received, £98.40 already used for a previous charge).'
         },
         workflow: [
-          { step: 'Locate the Property Work Order', desc: 'Navigate to the property record and find the maintenance work order linked to this repair.', path: 'Properties → 14 Oak Street → Maintenance' },
-          { step: 'Post Contractor Invoice', desc: 'From the work order, post the contractor invoice: £350 + VAT. Link to Gasworks Ltd as the supplier.', path: 'Maintenance → Work Order → Post Invoice' },
-          { step: 'Confirm Landlord Debit', desc: 'Street posts £420 as a debit to David Thompson\'s ledger. His balance reduces from £850 to £430.', path: 'Landlord Account → Ledger → Contractor Payment' },
-          { step: 'Generate Contractor Payment', desc: 'From the invoice, generate a payment to Gasworks Ltd for £420. This is released from the client bank account.', path: 'Accounting → Contractor Payments → Process Payment' },
-          { step: 'Verify Client Account Balance', desc: 'Confirm the client account balance has reduced by £420 and the transaction matches the bank statement entry.', path: 'Accounting → Bank Accounts → Client Account → Transactions' },
-          { step: 'Confirm on Landlord Statement', desc: 'The next landlord statement for David Thompson will now show the maintenance deduction clearly.', path: 'Landlord Account → Statements' }
+          { step: 'Locate the Property Work Order', desc: 'Navigate to 268 Greenleach Lane and find the maintenance work order linked to this boiler repair.', path: 'Properties → 268 Greenleach Lane → Maintenance' },
+          { step: 'Post Contractor Invoice', desc: 'From the work order, post the contractor invoice: £350 + VAT (£70) = £420. Link to Manchester Heating Solutions as the supplier.', path: 'Maintenance → Work Order → Post Invoice' },
+          { step: 'Confirm Landlord Debit', desc: 'Street posts £420 as a debit to Prof. Scarlett Cooper\'s ledger. Her balance reduces from £1,100 to £680.', path: 'Landlord Account → Ledger → Contractor Payment' },
+          { step: 'Generate Contractor Payment', desc: 'From the invoice, generate a payment to Manchester Heating Solutions for £420. This is released from the client bank account.', path: 'Accounting → Contractor Payments → Process Payment' },
+          { step: 'Verify Client Account Balance', desc: 'Confirm the client account balance has reduced by £420 and the transaction matches the bank statement entry for Manchester Heating Solutions.', path: 'Accounting → Bank Accounts → Client Account → Transactions' },
+          { step: 'Confirm on Landlord Statement', desc: 'The next landlord statement for Prof. Scarlett Cooper will now show the £420 maintenance deduction against 268 Greenleach Lane.', path: 'Landlord Account → Statements' }
         ],
         tasks: [
           { id: 't1', title: 'Navigate to a property maintenance/work order area in the demo', type: 'demo', desc: 'Find where maintenance jobs and invoices are linked.' },
@@ -1981,30 +2502,30 @@ const MODULES = [
           }
         ],
         scenario: {
-          title: 'Month-End Payment Run — Thompson Properties',
-          context: 'It is the 25th of the month — payment day for Thompson Properties. You need to run the monthly landlord payment batch for all 12 properties.',
-          details: `Month-end summary:\n• 11 landlords have correct balances ready for payment\n• 1 landlord (David Thompson) has requested a payment hold until next month\n• Total to be paid: £9,240 across 11 landlords\n• All management fees already deducted\n\nYou need to run the batch, hold David Thompson, and generate statements for all landlords.`
+          title: 'Month-End Payment Run — {AGENCY} (25th)',
+          context: 'It is the 25th — payment day for {AGENCY}. You need to run the monthly landlord payment batch for all 12 properties across the Worsley and Eccles portfolio.',
+          details: `Month-end summary for {AGENCY}:\n• 11 landlords have correct balances ready for payment\n• 1 landlord (Dr. Dave Bennett — 6 Woodside Avenue M28 3HR) has requested a payment hold until next month\n• Total to be paid: £18,489.60 across 11 landlords (net of 12% fees + VAT)\n• Dr. Dave Bennett's £2,482.40 remains held in client account\n\nYou need to run the batch, hold Dr. Dave Bennett, and generate statements for all 12 landlords.`
         },
         workflow: [
           { step: 'Navigate to Landlord Payments', desc: 'Open the Payments section and select the landlord payment batch tool.', path: 'Accounting → Landlord Payments → New Batch' },
           { step: 'Select Payment Period', desc: 'Select the current month. Street will calculate the net payment for every landlord who has rent allocated in this period.', path: 'Landlord Payments → Select Period' },
-          { step: 'Review Payment Summary', desc: 'Street shows each landlord with their gross rent received, fees deducted, and net payment due. Verify each one.', path: 'Landlord Payments → Review Summary' },
-          { step: 'Place Hold on David Thompson', desc: 'Find David Thompson in the list. Toggle "Hold Payment". His £820 remains in client account. Note reason.', path: 'Landlord Payments → David Thompson → Hold Payment' },
-          { step: 'Confirm and Process Batch', desc: 'Review final totals: £9,240 to 11 landlords. Confirm and process. Street generates BACS file or confirms bank transfers.', path: 'Landlord Payments → Confirm → Process' },
-          { step: 'Generate Landlord Statements', desc: 'After processing, generate statements for all 12 landlords (including David Thompson with zero payment and explanation of hold).', path: 'Landlord Payments → Generate Statements → All' },
-          { step: 'Verify Client Account Balance', desc: 'Confirm client account has reduced by £9,240 and the balance remaining equals all held and future funds.', path: 'Accounting → Bank Accounts → Client Account' }
+          { step: 'Review Payment Summary', desc: 'Street shows each landlord: Prof. Scarlett Cooper £1,198.40 · Mrs. Alexandra Scott £2,225.60 · Prof. Fred Watson £1,540.80 · Miss Tiffany Ward £1,027.20 · Dr. Eleanor Rogers £2,396.80 etc.', path: 'Landlord Payments → Review Summary' },
+          { step: 'Place Hold on Dr. Dave Bennett', desc: 'Find Dr. Dave Bennett (6 Woodside Avenue) in the list. Toggle "Hold Payment". His £2,482.40 remains in client account. Add note: "Landlord requested hold — Nov".', path: 'Landlord Payments → Dr. Dave Bennett → Hold Payment' },
+          { step: 'Confirm and Process Batch', desc: 'Review final totals: £18,489.60 to 11 landlords. Confirm and process. Street generates payment instructions for each.', path: 'Landlord Payments → Confirm → Process' },
+          { step: 'Generate Landlord Statements', desc: 'After processing, generate statements for all 12 landlords including Dr. Dave Bennett (zero payment, hold noted) and any expiring tenancy landlords.', path: 'Landlord Payments → Generate Statements → All' },
+          { step: 'Verify Client Account Balance', desc: 'Confirm client account has reduced by £18,489.60. The remaining balance should equal Dr. Dave Bennett\'s held amount plus any deposits held.', path: 'Accounting → Bank Accounts → Client Account' }
         ],
         tasks: [
           { id: 't1', title: 'Navigate to Landlord Payments in the demo', type: 'demo', desc: 'Find the payment batch tool in the Accounting module.' },
-          { id: 't2', title: 'Create a new payment batch for the current period', type: 'demo', desc: 'Select the current month and review the calculated payments.' },
-          { id: 't3', title: 'Place a payment hold on one landlord', type: 'demo', desc: 'Practice applying a hold to a specific landlord in the batch.' },
-          { id: 't4', title: 'Confirm and process the payment batch', type: 'demo', desc: 'Complete the batch (use test data, do not process real payments).' },
-          { id: 't5', title: 'Generate landlord statements after the batch', type: 'demo', desc: 'Confirm statements are generated for all landlords including held ones.' },
-          { id: 't6', title: 'Verify client account balance after payments', type: 'confirm', desc: 'Confirm the account balance reconciles correctly.' }
+          { id: 't2', title: 'Create a new payment batch for the current period', type: 'demo', desc: 'Select the current month and review the calculated payments for all 12 {AGENCY} landlords.' },
+          { id: 't3', title: 'Place a payment hold on Dr. Dave Bennett (6 Woodside Avenue)', type: 'demo', desc: 'Apply the hold and add a note: Landlord requested hold.' },
+          { id: 't4', title: 'Confirm and process the payment batch for the 11 remaining landlords', type: 'demo', desc: 'Complete the batch (use test data, do not process real payments).' },
+          { id: 't5', title: 'Generate statements for all 12 landlords including Dr. Dave Bennett', type: 'demo', desc: 'Confirm statements are generated for all landlords including the held one.' },
+          { id: 't6', title: 'Verify client account balance after the £18,489.60 batch payment', type: 'confirm', desc: 'Confirm the account balance reconciles correctly.' }
         ],
         reflections: [
-          { id: 'r1', q: 'You process a payment batch and realise after processing that one landlord\'s fee was set incorrectly. What steps would you take in Street to investigate and correct this?' },
-          { id: 'r2', q: 'Why is it important to generate statements for ALL landlords including those on a payment hold?' },
+          { id: 'r1', q: 'You process the {AGENCY} payment batch and realise after processing that Prof. Fred Watson\'s fee was set incorrectly at 10% instead of 12%. What steps would you take in Street to investigate and correct this?' },
+          { id: 'r2', q: 'Why is it important to generate statements for ALL 12 {AGENCY} landlords including Dr. Dave Bennett who is on a payment hold?' },
           { id: 'r3', q: 'What is the relationship between the client account balance and the total of all landlord ledger balances? What should they equal?' }
         ]
       }
@@ -2103,11 +2624,11 @@ const MODULES = [
         scenario: {
           title: 'Suspense Account Investigation',
           context: 'Your suspense account has grown to £2,450 across 4 unallocated entries. The accounts need to be cleared before month end.',
-          details: `4 unallocated items:\n• £950 — matches John Miller's rent exactly\n• £500 — unknown reference "BANK REF 44721"\n• £1,050 — £50 more than expected rent for Sarah Barnes\n• Unknown timing: payment from last month sitting unallocated`
+          details: `4 unallocated items in the {AGENCY} client account:\n• £1,400 — matches Prof. Aaron Bailey\'s rent for 268 Greenleach Lane exactly (Ref: TvLE84DkIQ)\n• £500 — unknown reference "BANK REF 44721" — no matching tenancy\n• £2,350 — £50 more than expected rent for Mrs. Sasha Stevens at 210 Cliftonville Drive (rent is £2,300)\n• Old unallocated: £1,200 from 6 weeks ago — still sitting unresolved in suspense`
         },
         workflow: [
           { step: 'Open Suspense Account', desc: 'Navigate to Accounting → Suspense Account. Review all outstanding items.', path: 'Accounting → Suspense Account' },
-          { step: 'Allocate Matched Payment', desc: '£950 clearly matches John Miller. Allocate immediately to his tenancy.', path: 'Suspense → Select £950 → Allocate to Tenancy' },
+          { step: 'Allocate Matched Payment', desc: '£1,400 clearly matches Prof. Aaron Bailey\'s tenancy at 268 Greenleach Lane (Ref: TvLE84DkIQ). Allocate immediately.', path: 'Suspense → Select £1,400 → Allocate to Tenancy' },
           { step: 'Investigate Unknown Payment', desc: '£500 unknown. Contact bank, check reference, check if any landlord or tenant matches. Post to holding account until identified.', path: 'Suspense → £500 → Investigation Flag' },
           { step: 'Handle Overpayment', desc: '£1,050 vs £1,000 expected. Allocate £1,000 to rent. Post £50 as tenant credit on their ledger.', path: 'Suspense → £1,050 → Allocate Rent + Post Credit' },
           { step: 'Review Aged Suspense Items', desc: 'The old unallocated item from last month. Escalate for manager review — aged suspense is a compliance risk.', path: 'Suspense → Aged Items → Escalate' }
@@ -2164,16 +2685,16 @@ const MODULES = [
           }
         ],
         scenario: {
-          title: 'End of Tenancy — 22 Maple Avenue',
-          context: 'Sarah Barnes\'s tenancy at 22 Maple Avenue is ending. She has paid a £1,100 deposit. The landlord has agreed to deduct £200 for carpet cleaning. The remaining £900 should be refunded to Sarah.',
+          title: 'End of Tenancy — 38 Partington Street, Worsley M28 2SY',
+          context: 'Prof. Mandy Price\'s tenancy at 38 Partington Street (Ref: CcdsQeY0en) is expiring on 8th April. She paid a £2,200 deposit at the start of the tenancy. Landlord Prof. Natasha Jones has agreed to deduct £200 for carpet cleaning and £80 for professional cleaning. The remaining £1,920 should be refunded to Prof. Mandy Price.',
           details: 'Timeline:\n• 28th: Tenancy ends and keys returned\n• 30th: Landlord confirms £200 deduction for cleaning\n• 31st: Refund of £900 to be processed\n\nDeposit was protected with TDS. Scheme ref: TDS-2024-4421'
         },
         workflow: [
-          { step: 'Open Tenancy Record', desc: 'Navigate to the tenancy for 22 Maple Avenue. Find the Deposit section.', path: 'Tenancies → 22 Maple Avenue → Deposit' },
+          { step: 'Open Tenancy Record', desc: 'Navigate to the tenancy for Prof. Mandy Price at 38 Partington Street (Ref: CcdsQeY0en). Find the Deposit section.', path: 'Tenancies → 38 Partington Street → Deposit' },
           { step: 'Confirm Deposit Details', desc: 'Verify deposit amount (£1,100), protection scheme (TDS), and reference number.', path: 'Tenancy → Deposit → Details' },
           { step: 'Post Deduction', desc: 'Add a £200 deduction for cleaning. Select the deduction type and add notes for the audit trail.', path: 'Tenancy → Deposit → Add Deduction → Cleaning £200' },
           { step: 'Calculate Refund Amount', desc: 'Street calculates: £1,100 - £200 = £900 to refund. Confirm this with the landlord.', path: 'Tenancy → Deposit → Refund Calculation' },
-          { step: 'Process Refund', desc: 'Initiate refund of £900 to Sarah Barnes\' bank account from the client deposit account.', path: 'Tenancy → Deposit → Process Refund → £900' },
+          { step: 'Process Refund', desc: 'Initiate refund of £1,920 to Prof. Mandy Price\'s bank account from the client deposit account. Deductions: £200 carpet + £80 cleaning = £280 total.', path: 'Tenancy → Deposit → Process Refund → £1,920' },
           { step: 'Notify Deposit Scheme', desc: 'Update the TDS with the release decision. Note this is done externally via the deposit scheme portal.', path: 'External: TDS Portal' },
           { step: 'Close Tenancy', desc: 'With deposit resolved, mark the tenancy as ended in Street. All accounting should now balance.', path: 'Tenancy → Close Tenancy' }
         ],
@@ -2225,12 +2746,12 @@ const MODULES = [
         scenario: {
           title: 'Month-End Statement Run',
           context: 'After processing all payments, you need to generate and send statements to all 12 landlords. Three landlords have queried their statements in recent months, so extra care is needed.',
-          details: 'All statements should cover the current calendar month. Statements must be emailed by 5pm today. Three landlords (Robert Chen, Lisa Park, David Mills) have historically queried their statements — review these carefully before sending.'
+          details: 'All statements should cover the current calendar month for the full {AGENCY} portfolio. Statements must be emailed by 5pm today. Three landlords (Prof. Scarlett Cooper at 268 Greenleach Lane, Mrs. Sarah Price at 210 Cliftonville Drive, and Dr. Eleanor Rogers at 285 Chatsworth Road) have historically queried their statements — review these carefully before sending.'
         },
         workflow: [
           { step: 'Navigate to Statement Generation', desc: 'Open Accounting → Statements → Landlord Statements.', path: 'Accounting → Statements → Landlord Statements' },
           { step: 'Select Statement Period', desc: 'Set the period as the current calendar month. Street will pull all transactions within this date range.', path: 'Statements → Select Period' },
-          { step: 'Preview Statements for Query Landlords', desc: 'Open and review statements for Robert Chen, Lisa Park, and David Mills before batch sending.', path: 'Statements → Preview → Per Landlord' },
+          { step: 'Preview Statements for Query Landlords', desc: 'Open and review statements for Prof. Scarlett Cooper (268 Greenleach Lane), Mrs. Sarah Price (210 Cliftonville Drive), and Dr. Eleanor Rogers (285 Chatsworth Road) before batch sending.', path: 'Statements → Preview → Per Landlord' },
           { step: 'Verify Figures Match Ledger', desc: 'Cross-reference statement totals with each landlord\'s ledger. Any discrepancy must be investigated before sending.', path: 'Landlord Account → Ledger → Compare with Statement' },
           { step: 'Batch Send All Statements', desc: 'Once satisfied, run the batch statement email dispatch. Street sends PDFs to all registered landlord email addresses.', path: 'Statements → Send All → Confirm Dispatch' },
           { step: 'Confirm Delivery Log', desc: 'Review the statement dispatch log to confirm all emails were sent successfully. Follow up any failures.', path: 'Statements → Dispatch Log' }
@@ -2281,7 +2802,7 @@ const MODULES = [
           }
         ],
         scenario: {
-          title: 'Complete Month-End Close for Thompson Properties',
+          title: 'Complete Month-End Close — {AGENCY} November',
           context: 'You are closing the books for October. Work through the full month-end checklist, identifying and resolving any issues before locking the period.',
           details: 'Known issues to resolve:\n• 2 tenants have outstanding arrears (needs arrears review)\n• Suspense account has one unresolved item (£450)\n• One contractor payment not yet posted\n• Bank reconciliation not yet run\n\nAll of these must be resolved before period close.'
         },
@@ -2345,10 +2866,10 @@ const MODULES = [
         scenario: {
           title: 'Error Investigation Day',
           context: 'Three accounting issues have been flagged by the accounts team this morning. Each needs to be investigated and resolved.',
-          details: `**Issue 1:** Landlord Robert Chen called — his statement shows a £120 charge he doesn\'t recognise.\n\n**Issue 2:** Bank reconciliation is showing a £250 unmatched item from 3 weeks ago.\n\n**Issue 3:** Tenant overpayment from last month (£75) was never cleared from suspense — it\'s been sitting there for 6 weeks.`
+          details: `**Issue 1:** Landlord Prof. Scarlett Cooper (268 Greenleach Lane, M28 1UZ) called — her statement shows a £120 charge she doesn\'t recognise.\n\n**Issue 2:** Bank reconciliation is showing a £250 unmatched item from 3 weeks ago — no reference or tenancy match found.\n\n**Issue 3:** Tenant overpayment from last month (£75 from Dr. Dylan Butler, 285 Chatsworth Road) was never cleared from suspense — it\'s been sitting there for 6 weeks.`
         },
         workflow: [
-          { step: 'Issue 1: Trace the Unknown Charge', desc: 'Open Robert Chen\'s ledger. Find the £120 charge. Check: when posted, by whom, what nominal code, what description.', path: 'Landlord Account → Ledger → Filter by Date → Audit Trail' },
+          { step: 'Issue 1: Trace the Unknown Charge', desc: 'Open Prof. Scarlett Cooper\'s ledger (268 Greenleach Lane). Find the £120 charge. Check: when posted, by whom, what nominal code, what description. Use the audit trail.', path: 'Landlord Account → Ledger → Filter by Date → Audit Trail' },
           { step: 'Identify Charge Type', desc: 'Determine if it was an automated fee, manual charge or contractor invoice. If incorrect, create a reversal entry.', path: 'Charge Entry → View Details → Reversal' },
           { step: 'Issue 2: Investigate Unmatched Bank Item', desc: 'Open Bank Reconciliation. Find the unmatched £250. Cross-reference against receipts, payments, and bank statement narrative.', path: 'Accounting → Reconciliation → Unmatched Items' },
           { step: 'Resolve the Unmatched Item', desc: 'Determine if the £250 is a legitimate transaction not yet posted in Street, or a bank error. Post the missing transaction or raise with bank.', path: 'Accounting → Post Transaction → Match' },
@@ -2418,30 +2939,30 @@ const MODULES = [
           }
         ],
         scenario: {
-          title: '🏅 Capstone: Complete Month for Riverside Properties',
-          context: 'You are the accounts manager at Riverside Properties, managing 5 properties. You must complete the full month from setup verification through to period close.',
-          details: `**Setup Check:**\n• Verify accounting is correctly configured\n• Confirm bank accounts, fee settings\n\n**Income:**\n• £850 rent — Flat 1 (full payment, on time)\n• £1,100 rent — Flat 2 (full payment, 2 days early)\n• £950 rent — Flat 3 (partial — £900 paid, £50 outstanding)\n• £1,200 rent — Flat 4 (full payment)\n• Flat 5 — no payment (arrears from last month)\n\n**Charges:**\n• £280 boiler repair — Flat 1 (Quickfix Plumbing)\n• £90 renewal fee — Flat 4 landlord\n\n**Payments:**\n• Pay all landlords except Flat 3 (hold pending full payment)\n• Flat 5 — escalate arrears\n\n**Close:**\n• Reconcile bank account\n• Generate statements for all landlords\n• Lock the period`
+          title: '🏅 Capstone: Complete Month for {AGENCY}',
+          context: 'You are the accounts manager at {AGENCY}, managing 5 properties. You must complete the full month from setup verification through to period close.',
+          details: `**Setup Check:**\n• Verify accounting is correctly configured\n• Confirm bank accounts, fee settings\n\n**Income:**\n• £850 rent — 268 Greenleach Lane (full payment, on time)\n• £1,100 rent — 6 Woodside Avenue (full payment, 2 days early)\n• £950 rent — 142 Ladymere Drive (partial — £900 paid, £50 outstanding)\n• £1,200 rent — 20 Vicars Street (full payment)\n• Flat 5 — no payment (arrears from last month)\n\n**Charges:**\n• £280 boiler repair — 268 Greenleach Lane (Worsley Electrical Ltd)\n• £90 renewal fee — Dr. Eleanor Rogers\n\n**Payments:**\n• Pay all landlords except 142 Ladymere Drive (hold pending full payment)\n• 285 Chatsworth Road — escalate arrears\n\n**Close:**\n• Reconcile bank account\n• Generate statements for all landlords\n• Lock the period`
         },
         workflow: [
           { step: 'Phase 1: Setup Verification', desc: 'Verify: bank accounts configured, fee at 10%+VAT set, accounting period open, payment schedule confirmed.', path: 'Settings → Accounting → Verify All' },
-          { step: 'Phase 2: Post All Rent Receipts', desc: 'Allocate all 4 received payments. Post to correct tenancies. Note partial for Flat 3. Flag Flat 5 arrears.', path: 'Accounting → Receipts → Allocate' },
-          { step: 'Phase 3: Post Contractor Invoice', desc: 'Post £280 boiler repair for Flat 1. Debit to Flat 1 landlord. Schedule payment to Quickfix Plumbing.', path: 'Accounting → Contractor Payments' },
-          { step: 'Phase 4: Post Renewal Fee', desc: 'Add £90 renewal fee + VAT to Flat 4 landlord account.', path: 'Landlord Account → Charges → Renewal Fee' },
+          { step: 'Phase 2: Post All Rent Receipts', desc: 'Allocate all 4 received payments. Post to correct tenancies. Note partial at 142 Ladymere Drive. Flag 285 Chatsworth Road arrears (Dr. Dylan Butler).', path: 'Accounting → Receipts → Allocate' },
+          { step: 'Phase 3: Post Contractor Invoice', desc: 'Post £280 boiler repair at 268 Greenleach Lane. Debit to Prof. Scarlett Cooper. Schedule payment to Worsley Electrical Ltd.', path: 'Accounting → Contractor Payments' },
+          { step: 'Phase 4: Post Renewal Fee', desc: 'Add £90 renewal fee + VAT to Dr. Eleanor Rogers account.', path: 'Landlord Account → Charges → Renewal Fee' },
           { step: 'Phase 5: Review All Ledgers', desc: 'Check each landlord ledger for accuracy before running payments.', path: 'Accounting → Landlord Accounts' },
-          { step: 'Phase 6: Run Payment Batch', desc: 'Process payments for Flats 1, 2, 4. Hold Flat 3 (awaiting full payment). Note Flat 5 arrears.', path: 'Accounting → Landlord Payments → Batch' },
-          { step: 'Phase 7: Escalate Arrears', desc: 'Raise arrears note for Flat 5. Record action taken in Street.', path: 'Tenancy → Flat 5 → Arrears → Note Action' },
+          { step: 'Phase 6: Run Payment Batch', desc: 'Process payments for 268 Greenleach Lane, 6 Woodside Avenue & 20 Vicars Street. Hold 142 Ladymere Drive (awaiting full payment). Note 285 Chatsworth Road arrears (Dr. Dylan Butler).', path: 'Accounting → Landlord Payments → Batch' },
+          { step: 'Phase 7: Escalate Arrears', desc: 'Raise arrears note at 285 Chatsworth Road. Record action taken in Street.', path: 'Tenancy → Flat 5 → Arrears → Note Action' },
           { step: 'Phase 8: Bank Reconciliation', desc: 'Reconcile the client account. All postings must match bank statement.', path: 'Accounting → Reconciliation' },
-          { step: 'Phase 9: Generate Statements', desc: 'Generate and send statements to all 5 landlords including Flat 3 (with hold explanation) and Flat 5 (arrears noted).', path: 'Accounting → Statements → All' },
+          { step: 'Phase 9: Generate Statements', desc: 'Generate and send statements to all 5 landlords including 142 Ladymere Drive (with hold explanation) and 285 Chatsworth Road (arrears noted).', path: 'Accounting → Statements → All' },
           { step: 'Phase 10: Lock Period', desc: 'Confirm all checks passed. Lock the accounting period.', path: 'Accounting → Period Management → Lock' }
         ],
         tasks: [
           { id: 't1', title: 'Complete Phase 1: Verify all accounting settings are correctly configured', type: 'demo', desc: 'Setup check — confirm before processing anything.' },
           { id: 't2', title: 'Complete Phase 2: Allocate all 4 rent payments including partial', type: 'demo', desc: 'Post all receipts to correct tenancies.' },
-          { id: 't3', title: 'Complete Phase 3: Post the £280 contractor invoice', type: 'demo', desc: 'Post Quickfix invoice and schedule payment.' },
-          { id: 't4', title: 'Complete Phase 4: Post the £90 renewal fee', type: 'demo', desc: 'Add renewal fee to Flat 4 landlord.' },
+          { id: 't3', title: 'Complete Phase 3: Post the £280 contractor invoice', type: 'demo', desc: 'Post Worsley Electrical Ltd invoice and schedule payment.' },
+          { id: 't4', title: 'Complete Phase 4: Post the £90 renewal fee', type: 'demo', desc: 'Add renewal fee to Dr. Eleanor Rogers.' },
           { id: 't5', title: 'Complete Phase 5: Verify all landlord ledgers are accurate', type: 'demo', desc: 'Review each ledger before payment run.' },
-          { id: 't6', title: 'Complete Phase 6: Run the landlord payment batch (hold Flat 3)', type: 'demo', desc: 'Process payments, hold Flat 3.' },
-          { id: 't7', title: 'Complete Phase 7: Record arrears action for Flat 5', type: 'demo', desc: 'Document what action has been taken.' },
+          { id: 't6', title: 'Complete Phase 6: Run the landlord payment batch (hold Miss Tiffany Ward (142 Ladymere Drive))', type: 'demo', desc: 'Process payments, hold Miss Tiffany Ward (142 Ladymere Drive).' },
+          { id: 't7', title: 'Complete Phase 7: Record arrears action at 285 Chatsworth Road', type: 'demo', desc: 'Document what action has been taken.' },
           { id: 't8', title: 'Complete Phase 8: Run and complete bank reconciliation', type: 'demo', desc: 'Reconcile with zero difference.' },
           { id: 't9', title: 'Complete Phase 9: Generate and send all 5 landlord statements', type: 'demo', desc: 'Dispatch statements with notes for held and arrears accounts.' },
           { id: 't10', title: 'Complete Phase 10: Lock the accounting period', type: 'confirm', desc: 'Final close — only when all tasks confirmed.' }
@@ -2565,23 +3086,59 @@ async function saveToSheets(data) {
   showSaving();
   saveLocal();
   const url = state.sheetsUrl || localStorage.getItem('sheetsUrl');
-  if (!url) return;
+  if (!url) { setTimeout(hideSaving, 400); return; }
+
+  // Resolve module and scenario titles for human-readable logging
+  const mod = MODULES.find(m => m.id === data.mId);
+  const scen = mod?.scenarios?.find(s => s.id === data.sId);
+
+  // Count completed tasks + reflections for this scenario
+  const scenProg = state.progress[data.mId]?.scenarios[data.sId] || {};
+  const tasksTotal   = scen ? scen.tasks?.length || 0 : 0;
+  const tasksDone    = scen ? Object.values(scenProg.tasks || {}).filter(Boolean).length : 0;
+  const reflTotal    = scen ? scen.reflections?.length || 0 : 0;
+  const reflDone     = scen ? Object.values(scenProg.reflections || {}).filter(t => t?.length > 0).length : 0;
+  const modsDone     = MODULES.filter(m => state.progress[m.id]?.moduleComplete).length;
+  const confidScore  = typeof computeConfidenceScore === 'function' ? computeConfidenceScore().overall : '';
+
+  const payload = {
+    // Learner identity
+    userId:           state.user.id,
+    learnerName:      state.user.name,
+    learnerEmail:     state.user.email,
+    learnerCompany:   state.user.company || ag(),
+    sessionDate:      new Date().toLocaleDateString('en-GB'),
+    timestamp:        new Date().toISOString(),
+
+    // Event details
+    eventType:        data.type,                          // session_start | help_read | kc | task | reflection | scenario_complete
+    moduleId:         data.mId,
+    moduleTitle:      mod?.title || '',
+    scenarioId:       data.sId,
+    scenarioTitle:    scen?.title || '',
+
+    // Task / reflection specifics
+    taskId:           data.taskId || '',
+    taskDone:         data.done !== undefined ? String(data.done) : '',
+    reflectionId:     data.rId || '',
+    reflectionText:   data.text || '',
+
+    // Scores
+    kcScore:          data.score !== undefined ? data.score : (scenProg.kcScore ?? ''),
+    tasksDone:        tasksDone,
+    tasksTotal:       tasksTotal,
+    reflectionsDone:  reflDone,
+    reflectionsTotal: reflTotal,
+
+    // Overall progress snapshot
+    overallProgressPct:  getOverallProgress(),
+    modulesCompleted:    modsDone,
+    modulesTotal:        MODULES.length,
+    confidenceScore:     confidScore,
+    scenarioComplete:    scenProg.complete ? 'true' : 'false'
+  };
+
   try {
-    const payload = {
-      userId: state.user.id,
-      email: state.user.email,
-      company: state.user.company,
-      name: state.user.name,
-      timestamp: new Date().toISOString(),
-      moduleId: data.mId,
-      scenarioId: data.sId,
-      type: data.type,
-      taskId: data.taskId || '',
-      taskDone: data.done !== undefined ? data.done : '',
-      reflectionId: data.rId || '',
-      reflectionText: data.text || '',
-      overallProgress: getOverallProgress()
-    };
     await fetch(url, {
       method: 'POST',
       mode: 'no-cors',
@@ -2591,7 +3148,7 @@ async function saveToSheets(data) {
     state.sheetsConnected = true;
     updateSheetsStatus(true);
   } catch(e) {
-    console.log('Sheets save:', e.message);
+    console.warn('Sheets save failed:', e.message);
   }
   setTimeout(hideSaving, 800);
 }
@@ -2664,6 +3221,7 @@ function launchApp() {
   if (sheetsInput) sheetsInput.value = state.sheetsUrl;
   updateSheetsStatus(true);
   saveToSheets({ type: 'session_start', mId: 'system', sId: 'system' });
+  showFabs();
 }
 
 function findResumePoint() {
@@ -2712,10 +3270,6 @@ function buildSidebar() {
       <div class="nav-item-icon">📊</div>
       <div class="nav-item-info"><div class="nav-item-title">My Dashboard</div></div>
     </div>
-    <div class="nav-item" onclick="showView('analytics')">
-      <div class="nav-item-icon">📈</div>
-      <div class="nav-item-info"><div class="nav-item-title">Trainer Analytics</div></div>
-    </div>
     <div class="nav-item" onclick="showView('certificate')">
       <div class="nav-item-icon">🏅</div>
       <div class="nav-item-info"><div class="nav-item-title">My Certificate</div></div>
@@ -2752,7 +3306,6 @@ function showView(view) {
   const container = document.getElementById(`view-${view}`);
   if (container) container.classList.add('active');
   if (view === 'dashboard') renderDashboard();
-  if (view === 'analytics') renderAnalytics();
   if (view === 'certificate') renderCertificate();
   if (view === 'learning') buildSidebar();
 }
@@ -2863,13 +3416,15 @@ function renderStep(step, mIdx, sIdx) {
   const sp = getScenarioProgress(m.id, s.id);
   const container = document.getElementById('step-content');
   if (!container) return;
+  // tpl() resolves {AGENCY} → real agency name in all rendered output
+  const render = html => tpl(html);
   switch(step) {
-    case 0: container.innerHTML = renderHelpStep(m, s, sp); break;
-    case 1: container.innerHTML = renderKCStep(m, s, sp); break;
-    case 2: container.innerHTML = renderScenarioStep(m, s, sp); break;
-    case 3: container.innerHTML = renderWorkflowStep(m, s, sp); break;
-    case 4: container.innerHTML = renderTasksStep(m, s, sp); break;
-    case 5: container.innerHTML = renderReflectStep(m, s, sp); break;
+    case 0: container.innerHTML = render(renderHelpStep(m, s, sp)); break;
+    case 1: container.innerHTML = render(renderKCStep(m, s, sp)); break;
+    case 2: container.innerHTML = render(renderScenarioStep(m, s, sp)); break;
+    case 3: container.innerHTML = render(renderWorkflowStep(m, s, sp)); break;
+    case 4: container.innerHTML = render(renderTasksStep(m, s, sp)); break;
+    case 5: container.innerHTML = render(renderReflectStep(m, s, sp)); break;
   }
 }
 
@@ -3075,6 +3630,8 @@ function renderTasksStep(m, s, sp) {
   const allDone = s.tasks.every(t => sp.tasks?.[t.id]);
   const doneCount = s.tasks.filter(t => sp.tasks?.[t.id]).length;
   const typeLabels = { read: 'Read', demo: 'Demo Task', confirm: 'Confirm' };
+  const bankStatementMap = { 'M9S1': 'module9', 'M13S1': 'module13', 'M15S1': 'capstone' };
+  const bankStmtId = bankStatementMap[s.id];
   return `
     <div class="fade-up">
       <div class="section-title mb-16">📋 Demo Account <span class="accent">Tasks</span></div>
@@ -3082,6 +3639,7 @@ function renderTasksStep(m, s, sp) {
         <div class="alert-icon">🖥️</div>
         <div>Complete each task inside the Street demo account, then tick it off here. Only mark complete once you have actually done it.</div>
       </div>
+      ${bankStmtId ? bankStatementCard(bankStmtId) : ''}
       <div class="card mb-16">
         <div class="card-header">
           <div class="card-title"><div class="card-icon">✅</div>Task Checklist</div>
@@ -3590,18 +4148,158 @@ function showSheetsSetupGuide() {
           <div class="workflow-step-title">Create a Google Apps Script</div>
           <div class="workflow-step-desc">In Google Sheets, go to Extensions → Apps Script. Paste this code:</div>
           <pre style="background:var(--bg);padding:12px;border-radius:6px;font-size:12px;margin-top:8px;overflow:auto">function doPost(e) {
-  const sheet = SpreadsheetApp.getActiveSheet();
-  const data = JSON.parse(e.postData.contents);
-  sheet.appendRow([
-    data.userId, data.email, data.company,
-    data.name, data.timestamp, data.moduleId,
-    data.scenarioId, data.type, data.taskId,
-    data.taskDone, data.reflectionId,
-    data.reflectionText, data.overallProgress
-  ]);
-  return ContentService.createTextOutput(
-    JSON.stringify({success:true})
-  ).setMimeType(ContentService.MimeType.JSON);
+// Paste this entire script into Extensions → Apps Script in your Google Sheet
+// It automatically creates 3 sheets: Raw Events, Learner Summary, Module Progress
+
+const HEADERS_RAW = [
+  'Timestamp','Date','Learner Name','Email','Company','User ID',
+  'Event Type','Module ID','Module Title','Scenario ID','Scenario Title',
+  'Task ID','Task Done','Reflection ID','Reflection Text',
+  'KC Score','Tasks Done','Tasks Total','Reflections Done','Reflections Total',
+  'Overall Progress %','Modules Completed','Modules Total','Confidence Score','Scenario Complete'
+];
+
+const HEADERS_SUMMARY = [
+  'User ID','Learner Name','Email','Company',
+  'First Seen','Last Active','Overall Progress %',
+  'Modules Completed','Modules Total','Confidence Score','Status'
+];
+
+const HEADERS_MODULES = [
+  'User ID','Learner Name','Email','Module ID','Module Title',
+  'Scenario Complete','KC Score','Tasks Done','Tasks Total',
+  'Reflections Done','Reflections Total','Last Updated'
+];
+
+function getOrCreateSheet(ss, name, headers) {
+  let sheet = ss.getSheetByName(name);
+  if (!sheet) {
+    sheet = ss.insertSheet(name);
+    sheet.appendRow(headers);
+    sheet.getRange(1, 1, 1, headers.length)
+      .setBackground('#12152A').setFontColor('#ffffff')
+      .setFontWeight('bold').setFontSize(11);
+    sheet.setFrozenRows(1);
+  }
+  return sheet;
+}
+
+function doPost(e) {
+  try {
+    const ss   = SpreadsheetApp.getActiveSpreadsheet();
+    const data = JSON.parse(e.postData.contents);
+    const now  = new Date();
+    const dateStr = Utilities.formatDate(now, Session.getScriptTimeZone(), 'dd/MM/yyyy HH:mm:ss');
+
+    // ── Sheet 1: Raw Events (every ping) ──────────────────────────────
+    const rawSheet = getOrCreateSheet(ss, 'Raw Events', HEADERS_RAW);
+    rawSheet.appendRow([
+      data.timestamp || now.toISOString(),
+      dateStr,
+      data.learnerName    || data.name    || '',
+      data.learnerEmail   || data.email   || '',
+      data.learnerCompany || data.company || '',
+      data.userId         || '',
+      data.eventType      || data.type    || '',
+      data.moduleId       || '',
+      data.moduleTitle    || '',
+      data.scenarioId     || '',
+      data.scenarioTitle  || '',
+      data.taskId         || '',
+      data.taskDone       || '',
+      data.reflectionId   || '',
+      data.reflectionText || '',
+      data.kcScore        || '',
+      data.tasksDone      || '',
+      data.tasksTotal     || '',
+      data.reflectionsDone    || '',
+      data.reflectionsTotal   || '',
+      data.overallProgressPct || data.overallProgress || '',
+      data.modulesCompleted   || '',
+      data.modulesTotal       || '',
+      data.confidenceScore    || '',
+      data.scenarioComplete   || ''
+    ]);
+
+    // ── Sheet 2: Learner Summary (one row per learner, upserted) ──────
+    const sumSheet = getOrCreateSheet(ss, 'Learner Summary', HEADERS_SUMMARY);
+    const userId   = data.userId || data.email || 'unknown';
+    const sumData  = sumSheet.getDataRange().getValues();
+    let sumRow = -1;
+    for (let i = 1; i < sumData.length; i++) {
+      if (sumData[i][0] === userId) { sumRow = i + 1; break; }
+    }
+    const progress = data.overallProgressPct || data.overallProgress || 0;
+    const status   = progress >= 100 ? '🏅 Certified'
+                   : progress > 0    ? '▶ In Progress'
+                   : '— Not Started';
+    const summaryValues = [
+      userId,
+      data.learnerName    || data.name    || '',
+      data.learnerEmail   || data.email   || '',
+      data.learnerCompany || data.company || '',
+      sumRow > 0 ? sumData[sumRow-1][4] : dateStr,  // First Seen (keep original)
+      dateStr,                                        // Last Active (always update)
+      progress,
+      data.modulesCompleted || '',
+      data.modulesTotal     || '',
+      data.confidenceScore  || '',
+      status
+    ];
+    if (sumRow > 0) {
+      sumSheet.getRange(sumRow, 1, 1, summaryValues.length).setValues([summaryValues]);
+    } else {
+      sumSheet.appendRow(summaryValues);
+    }
+
+    // ── Sheet 3: Module Progress (one row per learner+module, upserted) ─
+    if (data.moduleId && data.moduleId !== 'test' && data.moduleId !== 'system') {
+      const modSheet  = getOrCreateSheet(ss, 'Module Progress', HEADERS_MODULES);
+      const modData   = modSheet.getDataRange().getValues();
+      const rowKey    = userId + '|' + data.moduleId;
+      let modRow      = -1;
+      for (let i = 1; i < modData.length; i++) {
+        if ((modData[i][0] + '|' + modData[i][3]) === rowKey) { modRow = i + 1; break; }
+      }
+      const modValues = [
+        userId,
+        data.learnerName   || data.name  || '',
+        data.learnerEmail  || data.email || '',
+        data.moduleId,
+        data.moduleTitle   || '',
+        data.scenarioComplete || '',
+        data.kcScore          || (modRow > 0 ? modData[modRow-1][6] : ''),
+        data.tasksDone        || (modRow > 0 ? modData[modRow-1][7] : ''),
+        data.tasksTotal       || (modRow > 0 ? modData[modRow-1][8] : ''),
+        data.reflectionsDone  || (modRow > 0 ? modData[modRow-1][9] : ''),
+        data.reflectionsTotal || (modRow > 0 ? modData[modRow-1][10]: ''),
+        dateStr
+      ];
+      if (modRow > 0) {
+        modSheet.getRange(modRow, 1, 1, modValues.length).setValues([modValues]);
+      } else {
+        modSheet.appendRow(modValues);
+      }
+    }
+
+    return ContentService
+      .createTextOutput(JSON.stringify({ success: true }))
+      .setMimeType(ContentService.MimeType.JSON);
+
+  } catch(err) {
+    return ContentService
+      .createTextOutput(JSON.stringify({ success: false, error: err.message }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+// Optional: run this once to pre-create all three sheets with headers
+function setup() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  getOrCreateSheet(ss, 'Raw Events',      HEADERS_RAW);
+  getOrCreateSheet(ss, 'Learner Summary', HEADERS_SUMMARY);
+  getOrCreateSheet(ss, 'Module Progress', HEADERS_MODULES);
+  SpreadsheetApp.getUi().alert('✅ Sheets created. Now deploy as Web App.');
 }</pre>
         </div>
       </div>
@@ -3609,14 +4307,14 @@ function showSheetsSetupGuide() {
         <div class="workflow-step-num">3</div>
         <div class="workflow-step-content">
           <div class="workflow-step-title">Deploy as Web App</div>
-          <div class="workflow-step-desc">Click Deploy → New Deployment → Web App. Set "Execute as" to yourself. Set "Who has access" to Anyone. Click Deploy and copy the URL.</div>
+          <div class="workflow-step-desc">Click <strong>Deploy → New Deployment → Web App</strong>. Set <em>Execute as</em> to <strong>Me</strong>. Set <em>Who has access</em> to <strong>Anyone</strong>. Click Deploy and copy the URL. You can re-deploy to the same URL after any code changes using "Manage Deployments".</div>
         </div>
       </div>
       <div class="workflow-step">
         <div class="workflow-step-num">4</div>
         <div class="workflow-step-content">
-          <div class="workflow-step-title">Paste URL in Simulator</div>
-          <div class="workflow-step-desc">Paste the deployment URL into the "Apps Script Web App URL" field in the Dashboard and click Test Connection.</div>
+          <div class="workflow-step-title">Paste URL in Simulator &amp; Test</div>
+          <div class="workflow-step-desc">Paste the deployment URL into the Apps Script URL field in the Dashboard and click <strong>Test Connection</strong>. Check your Google Sheet — you should see a new row in the <em>Raw Events</em> tab. The script auto-creates three tabs: <strong>Raw Events</strong> (every action), <strong>Learner Summary</strong> (one row per learner, always current), and <strong>Module Progress</strong> (per learner per module).</div>
         </div>
       </div>
     </div>`;
@@ -3624,11 +4322,1071 @@ function showSheetsSetupGuide() {
   document.getElementById('sheets-modal').classList.add('show');
 }
 
+// ===== BANK STATEMENT CSV DATA =====
+// All amounts calculated from real demo tenancy data.
+// 12% management fee + 20% VAT on fee. Net = rent × 0.88 / 1.2 × 1.2 ... simplified: net = rent × (1 - 0.12 × 1.2)
+// Rent × 0.856 = net (i.e. rent - (rent×0.12) - (rent×0.12×0.20))
+// Actual nets: Bailey £1,198.40 | White £2,482.40 | Knight £2,225.60 | Anderson £1,540.80
+//              Walker £1,027.20 | Butler £2,396.80 | Stevens £1,968.80 | Davies £1,284.00 | Taylor £1,455.20
+
+const BANK_STATEMENTS = {
+  recon_round1: {
+    filename: 'November_Bank_Statement_JBS_Recon_Round1.csv',
+    label: 'November — {AGENCY} Client Account (Recon Round 1)',
+    scenario: 'Matches the Recon Trainer Round 1: Prof. Aaron Bailey £1,400, Mr. Dan Anderson £1,800, Mr. Jason Walker £1,200 rents + Manchester Heating Solutions boiler repair + Prof. Scarlett Cooper net landlord payment (rent minus repair) + Prof. Fred Watson landlord payment + Prof. Mandy Price deposit refund + bank charge.',
+    csv: `Date,Reference,Payee,Credit (£),Debit (£)
+01/11/2024,OB-001,Opening Balance - {AGENCY} Client Account,12450.00,
+04/11/2024,TFR-48821,Prof. Aaron Bailey - 268 Greenleach Lane (Ref TvLE84DkIQ),1400.00,
+05/11/2024,TFR-48822,Mr. Dan Anderson - 20 Vicars Street Eccles (Ref HzAN6GirLG),1800.00,
+06/11/2024,TFR-48823,Mr. Jason Walker - 142 Ladymere Drive (Ref aKRzQbqY27),1200.00,
+08/11/2024,PAY-22041,Manchester Heating Solutions - Boiler Repair 268 Greenleach Ln WO-441,,420.00
+15/11/2024,PAY-22042,Prof. Scarlett Cooper - Nov Landlord Payment (net of repair),,778.40
+22/11/2024,PAY-22043,Prof. Fred Watson - Nov Landlord Payment,,1540.80
+25/11/2024,PAY-22044,Prof. Mandy Price - Deposit Refund 38 Partington Street,,1920.00
+30/11/2024,BGC-00112,Bank Service Charge - November,,15.00
+30/11/2024,CLOSING,Closing Balance - £12175.80,,`
+  },
+  recon_round2: {
+    filename: 'December_Bank_Statement_JBS_Recon_Round2.csv',
+    label: 'December — {AGENCY} Client Account (Recon Round 2)',
+    scenario: 'Matches the Recon Trainer Round 2: Dr. Sienna Knight £2,600, Mrs. Sasha Stevens £2,300, Dr. Elliott Taylor £1,700 rents + Worsley Electrical emergency repair + Mrs. Alexandra Scott landlord payment + Mrs. Sarah Price landlord payment.',
+    csv: `Date,Reference,Payee,Credit (£),Debit (£)
+01/12/2024,OB-001,Opening Balance - {AGENCY} Client Account,12175.80,
+02/12/2024,TFR-51201,Dr. Sienna Knight - 222 Manchester Road (Ref cgMZoDISq2),2600.00,
+03/12/2024,TFR-51202,Mrs. Sasha Stevens - 210 Cliftonville Drive (Ref Je0j75Xebe),2300.00,
+04/12/2024,TFR-51203,Dr. Elliott Taylor - 270 Leigh Road (Ref LLETg7lIgQ),1700.00,
+10/12/2024,PAY-24101,Worsley Electrical Ltd - Emergency Repair 222 Manchester Road,,180.00
+20/12/2024,PAY-24102,Mrs. Alexandra Scott - Dec Landlord Payment,,2225.60
+20/12/2024,PAY-24103,Mrs. Sarah Price - Dec Landlord Payment,,1968.80
+31/12/2024,CLOSING,Closing Balance - £14401.40,,`
+  },
+  module9: {
+    filename: 'October_Bank_Statement_JBS_Module9_Reconciliation.csv',
+    label: 'October — {AGENCY} Client Account (Module 9 Reconciliation)',
+    scenario: 'Bank closing balance: £18,750.00. Street system balance: £18,900.00. The £150.00 difference is the bank service charge on the final line — it exists on the real bank statement but has NOT yet been posted in Street. Find it and post it to complete the reconciliation.',
+    csv: `Date,Reference,Payee,Credit (£),Debit (£)
+01/10/2024,OB-001,Opening Balance - {AGENCY} Client Account,17040.00,
+03/10/2024,TFR-46001,Prof. Aaron Bailey - 268 Greenleach Lane Oct Rent (Ref TvLE84DkIQ),1400.00,
+03/10/2024,TFR-46002,Mr. Dan Anderson - 20 Vicars Street Oct Rent (Ref HzAN6GirLG),1800.00,
+04/10/2024,TFR-46003,Mr. Jason Walker - 142 Ladymere Drive Oct Rent (Ref aKRzQbqY27),1200.00,
+04/10/2024,TFR-46004,Dr. Dylan Butler - 285 Chatsworth Road Oct Rent (Ref 3q2VbjezRb),2800.00,
+05/10/2024,TFR-46005,Miss Wayne Davies - 19 Queen Anne Drive Oct Rent (Ref OpzCicymkj),1500.00,
+10/10/2024,PAY-20841,Manchester Heating Solutions - Maintenance 268 Greenleach Ln,,420.00
+25/10/2024,PAY-20842,Prof. Scarlett Cooper - Oct Landlord Payment,,1198.40
+25/10/2024,PAY-20843,Dr. Eleanor Rogers - Oct Landlord Payment,,2396.80
+25/10/2024,PAY-20844,Mr. Danielle Walker - Oct Landlord Payment,,1284.00
+25/10/2024,PAY-20845,Prof. Fred Watson - Oct Landlord Payment,,1540.80
+31/10/2024,BGC-00098,Bank Service Charge - October — POST THIS IN STREET (missing £150),,150.00
+31/10/2024,CLOSING,Bank Closing Balance £18750.00 — Street shows £18900.00 — difference is the charge above,,`
+  },
+  module13: {
+    filename: 'November_Bank_Statement_JBS_Module13_EndOfMonth.csv',
+    label: 'November — {AGENCY} Client Account (Module 13 End-of-Month)',
+    scenario: 'Complete November statement for {AGENCY} month-end close. 4 rent receipts including Jason Walker partial (£1,100 of £1,200 due). Contractor invoice from Manchester Heating Solutions £336 inc VAT. 3 landlord payments at correct net amounts. Miss Tiffany Ward held (partial payment). Bank service charge.',
+    csv: `Date,Reference,Payee,Credit (£),Debit (£)
+01/11/2024,OB-001,Opening Balance - {AGENCY} Client Account,11200.00,
+04/11/2024,TFR-48901,Prof. Aaron Bailey - 268 Greenleach Lane (Ref TvLE84DkIQ),1400.00,
+05/11/2024,TFR-48902,Mr. Elsie White - 6 Woodside Avenue (Ref 01WSb7mPbS),2900.00,
+06/11/2024,TFR-48903,Mr. Jason Walker - 142 Ladymere Drive PARTIAL (Ref aKRzQbqY27),1100.00,
+07/11/2024,TFR-48904,Mr. Dan Anderson - 20 Vicars Street (Ref HzAN6GirLG),1800.00,
+12/11/2024,PAY-22881,Manchester Heating Solutions - Boiler Repair 268 Greenleach Ln WO-509,,336.00
+25/11/2024,PAY-22882,Prof. Scarlett Cooper - Nov Net Payment (after boiler repair),,862.40
+25/11/2024,PAY-22883,Dr. Dave Bennett - Nov Net Payment (after renewal fee),,2374.40
+25/11/2024,PAY-22884,Prof. Fred Watson - Nov Net Payment,,1540.80
+30/11/2024,BGC-00115,Bank Service Charge - November,,15.00
+30/11/2024,CLOSING,Closing Balance - £13271.40,,`
+  },
+  capstone: {
+    filename: 'November_Bank_Statement_JBS_Capstone.csv',
+    label: 'November — {AGENCY} Client Account (Capstone)',
+    scenario: 'Full November for the {AGENCY} capstone. 4 rent receipts (Jason Walker partial £1,100; Dr. Dylan Butler NO payment — 2nd month arrears). Manchester Heating Solutions contractor invoice. 3 landlord payments processed (Miss Tiffany Ward held, Dr. Eleanor Rogers arrears decision pending). Bank charge.',
+    csv: `Date,Reference,Payee,Credit (£),Debit (£)
+01/11/2024,OB-001,Opening Balance - {AGENCY} Client Account,9800.00,
+04/11/2024,TFR-49001,Prof. Aaron Bailey - 268 Greenleach Lane £1400 (Ref TvLE84DkIQ),1400.00,
+05/11/2024,TFR-49002,Mr. Elsie White - 6 Woodside Avenue £2900 early (Ref 01WSb7mPbS),2900.00,
+06/11/2024,TFR-49003,Mr. Jason Walker - 142 Ladymere Drive PARTIAL £1100 (Ref aKRzQbqY27),1100.00,
+06/11/2024,TFR-49004,Mr. Dan Anderson - 20 Vicars Street £1800 (Ref HzAN6GirLG),1800.00,
+10/11/2024,PAY-23001,Manchester Heating Solutions - Boiler Repair 268 Greenleach Ln,,336.00
+25/11/2024,PAY-23002,Prof. Scarlett Cooper - Nov Net Payment (after repair),,862.40
+25/11/2024,PAY-23003,Dr. Dave Bennett - Nov Net Payment (after renewal fee),,2374.40
+25/11/2024,PAY-23004,Prof. Fred Watson - Nov Net Payment,,1540.80
+30/11/2024,BGC-00117,Bank Service Charge - November,,12.00
+30/11/2024,CLOSING,Closing Balance - £11874.40,,`
+  }
+};
+
+function downloadBankStatement(id) {
+  const stmt = BANK_STATEMENTS[id];
+  if (!stmt) return;
+  const blob = new Blob([tpl(stmt.csv)], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = stmt.filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function bankStatementCard(id) {
+  const stmt = BANK_STATEMENTS[id];
+  if (!stmt) return '';
+  return tpl(`
+    <div style="background:linear-gradient(135deg,#f0fdf4,#dcfce7);border:1.5px solid rgba(34,197,94,0.3);border-radius:var(--radius);padding:18px 20px;margin:16px 0;display:flex;align-items:flex-start;gap:14px">
+      <div style="width:44px;height:44px;background:rgba(34,197,94,0.15);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">📥</div>
+      <div style="flex:1">
+        <div style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.7px;color:#15803d;margin-bottom:3px">Bank Statement — Ready to Download</div>
+        <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:4px">${stmt.label}</div>
+        <div style="font-size:12px;color:#166534;line-height:1.5;margin-bottom:10px">${stmt.scenario}</div>
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+          <button class="btn btn-sm" onclick="downloadBankStatement('${id}')" style="background:#16a34a;color:white;border:none;font-size:13px;padding:8px 18px">
+            ⬇️ Download CSV Bank Statement
+          </button>
+          <span style="font-size:11px;color:#15803d;font-weight:500">📄 ${stmt.filename}</span>
+        </div>
+      </div>
+    </div>`);
+}
+const GLOSSARY = [
+  { term: 'Client Money', category: 'Core', def: 'Funds held by the letting agency on behalf of landlords or tenants. Client money must always be kept strictly separate from agency operating funds. It belongs to the clients, not the agency.', example: 'Rent received from a tenant is client money — it belongs to the landlord until paid out.' },
+  { term: 'Client Money Protection (CMP)', category: 'Compliance', def: 'A mandatory scheme that protects landlord and tenant money in the event the agency fails or acts improperly. All ARLA/NAEA registered agents must be members.', example: 'If an agency goes into administration, CMP ensures landlords and tenants can claim their money back.' },
+  { term: 'Ledger', category: 'Accounting', def: 'A record of all financial transactions for a specific entity (landlord, tenant, or property). In Street, each landlord and tenancy has its own ledger showing every debit and credit.', example: 'The landlord ledger shows: rent received, fees charged, contractor payments, and net balance.' },
+  { term: 'Landlord Ledger', category: 'Accounting', def: 'The individual financial account for each landlord in Street. Shows all rent received, management fees deducted, contractor costs, and the net balance available for payment.', example: 'Landlord ledger: Rent £1,200 CR → Fee £144 DR → Net balance £1,056.' },
+  { term: 'Tenant Ledger', category: 'Accounting', def: 'The individual financial account for each tenant. Records rent charged, payments received, arrears, credits, and deposit status.', example: 'Tenant ledger shows rent due each month, any partial payments, and the current arrears balance.' },
+  { term: 'Suspense Account', category: 'Accounting', def: 'A temporary holding account for funds that have been received but not yet identified or allocated to a specific tenancy or landlord. Suspense balances must be cleared regularly.', example: 'A £950 bank payment arrives with no reference — it sits in suspense until the tenant is identified.' },
+  { term: 'Allocation', category: 'Workflow', def: 'The process of matching a received payment to a specific tenancy or landlord account. In Street, rent must be allocated before it can flow to the landlord ledger.', example: 'Allocating £950 to Prof. Aaron Bailey\'s tenancy credits his rent account and updates the landlord balance.' },
+  { term: 'Unallocated Payment', category: 'Workflow', def: 'A received payment that has not yet been matched to a tenancy or account. Shown as unallocated in Street until manually processed.', example: 'An unallocated payment sits in the bank account view until you identify and allocate it.' },
+  { term: 'Bank Reconciliation', category: 'Workflow', def: 'The process of matching every transaction recorded in Street to the corresponding entry on the real bank statement, to confirm both records agree perfectly.', example: 'After reconciliation, Street balance (£18,750) should match bank statement (£18,750) exactly.' },
+  { term: 'Reconciled', category: 'Workflow', def: 'A transaction that has been confirmed as matching between Street records and the bank statement. Reconciled items are marked as cleared.', example: 'All rent receipts and landlord payments are reconciled against the month-end bank statement.' },
+  { term: 'Management Fee', category: 'Fees', def: 'The fee charged by the letting agency for managing a property, expressed as a percentage of rent collected. Automatically calculated in Street when rent is allocated.', example: '12% management fee on £1,000 rent = £120 + VAT (£24) = £144 total deducted from landlord.' },
+  { term: 'Landlord Statement', category: 'Reporting', def: 'A monthly document sent to landlords showing all income (rent), deductions (fees, charges, contractor costs), and the net payment made to them.', example: 'Statement shows: Rent £1,200 | Fee -£144 | Boiler repair -£280 | Net paid £776.' },
+  { term: 'Deposit', category: 'Deposits', def: 'A security payment made by a tenant at the start of a tenancy, held to cover potential damage, unpaid rent, or cleaning costs. Must be protected in a government-approved scheme within 30 days.', example: 'Prof. Mandy Price pays £1,100 deposit on move-in. Protected with TDS within 30 days.' },
+  { term: 'Tenancy Deposit Scheme (TDS)', category: 'Deposits', def: 'A government-approved third-party scheme that holds or insures tenant deposits. The three main schemes are TDS, DPS, and mydeposits.', example: '{AGENCY} uses TDS to protect all tenant deposits. Scheme ref: TDS-2024-XXXX.' },
+  { term: 'Deduction', category: 'Deposits', def: 'An amount withheld from a tenant\'s deposit at end of tenancy for legitimate costs such as cleaning, damage, or unpaid rent. Must be evidenced and agreed or disputed through the scheme.', example: '£200 cleaning deduction from £1,100 deposit → £900 refunded to tenant.' },
+  { term: 'Arrears', category: 'Workflow', def: 'Rent that is overdue and unpaid. In Street, arrears are tracked on the tenant ledger. Aged arrears require action such as payment plans, notices, or escalation.', example: 'Tenant owes 6 weeks rent = £1,425 in arrears. Street flags this for action.' },
+  { term: 'Nominal Code', category: 'Accounting', def: 'A reference code assigned to each type of income or expenditure in the chart of accounts. Used to categorise transactions for reporting and accounting purposes.', example: 'Management fee income might be nominal code 4000. Rent received might be code 3000.' },
+  { term: 'Chart of Accounts', category: 'Setup', def: 'The complete list of nominal codes (account codes) used by the agency. Controls how all transactions are categorised in Street\'s accounting module.', example: 'A typical chart includes: Rent Received (3000), Management Fees (4000), VAT Control (2200).' },
+  { term: 'Payment Batch', category: 'Workflow', def: 'A grouped processing run that calculates and sends payments to multiple landlords simultaneously. Run monthly or as required. Each landlord\'s net payment is calculated and dispatched.', example: 'November payment batch: 11 landlords paid, 1 on hold. Total disbursed: £9,240.' },
+  { term: 'Payment Hold', category: 'Workflow', def: 'A flag placed on a landlord\'s account to prevent their payment from being processed in the current payment batch. The balance remains in the client account.', example: 'Landlord Dr. Dave Bennett requests a hold for November — his £820 carries to December.' },
+  { term: 'Disbursement', category: 'Accounting', def: 'A payment made from the client account to a third party — typically a contractor or landlord. Disbursements must be authorised and tracked in Street.', example: 'Paying Worsley Electrical Ltd £420 for boiler repair is a disbursement from client funds.' },
+  { term: 'VAT', category: 'Fees', def: 'Value Added Tax, applied to most agency fees if the agency is VAT registered. Street automatically calculates and adds VAT to management fees and charges when enabled in settings.', example: '£120 management fee + 20% VAT = £144 total charged to landlord.' },
+  { term: 'Accounting Period', category: 'Setup', def: 'A defined date range (usually monthly) during which transactions are posted. At period end, the period is closed (locked) to prevent retrospective changes.', example: 'November accounting period: 01/11 to 30/11. Locked on 30/11 after all tasks complete.' },
+  { term: 'Period Lock', category: 'Setup', def: 'Closing and locking an accounting period in Street prevents any further entries being posted to that period. Done at month-end after all tasks are complete.', example: 'After reconciliation, payments and statements are done — lock November to prevent errors.' },
+  { term: 'Reversal Entry', category: 'Accounting', def: 'An equal and opposite journal entry used to correct a previously posted transaction. Used instead of deleting entries to maintain a full audit trail.', example: 'Wrong allocation reversed by posting -£950 to incorrect tenancy, then +£950 to correct one.' },
+  { term: 'Audit Trail', category: 'Compliance', def: 'A chronological record of every transaction, change, and action taken in Street Accounting. Used to investigate errors, disputes, and compliance checks.', example: 'The audit trail shows: charge posted at 14:32 on 3rd Nov by Jane Smith, nominal code 4001.' },
+  { term: 'BACS', category: 'Payments', def: 'Bankers\' Automated Clearing Service — the UK payment system used to make bulk bank transfers. Landlord payment batches in Street can generate BACS files for submission to your bank.', example: 'After confirming the payment batch, Street generates a BACS file for the bank\'s same-day processing.' },
+  { term: 'Net Payment', category: 'Payments', def: 'The amount paid to a landlord after all fees, charges, and deductions have been taken. Net = Gross rent - management fee - VAT - charges.', example: 'Gross rent £1,200, fee £144, boiler £280 → Net landlord payment £776.' },
+  { term: 'Gross Rent', category: 'Accounting', def: 'The full rent amount received from the tenant before any deductions. The starting point for all calculations on the landlord ledger.', example: 'Gross rent for 268 Greenleach Lane: £950/month. After 12% fee + VAT: landlord receives £813.20.' },
+  { term: 'Credit', category: 'Accounting', def: 'An entry that increases the balance owed to a party. On a landlord ledger, rent received appears as a credit (money owed to the landlord increases).', example: 'CR £1,200 — rent received — increases the balance available for landlord payment.' },
+  { term: 'Debit', category: 'Accounting', def: 'An entry that reduces the balance owed to a party. On a landlord ledger, management fees and charges appear as debits (reducing the landlord\'s balance).', example: 'DR £144 — management fee — reduces landlord balance from £1,200 to £1,056.' },
+  { term: 'Client Account', category: 'Setup', def: 'The dedicated bank account(s) held by the agency to receive and hold client money. Must be separate from the agency\'s own operating account.', example: 'All tenant rent goes into the client account. Agency fees are transferred to the office account after allocation.' },
+  { term: 'Contractor Invoice', category: 'Workflow', def: 'A bill from a maintenance contractor for work carried out on a managed property. Costs are posted to the landlord\'s ledger and paid from client funds.', example: 'Manchester Heating Solutions invoice: £350 + VAT = £420. Posted to Dr. Dave Bennett\'s landlord ledger as debit.' },
+  { term: 'Prescribed Information', category: 'Compliance', def: 'The legal documentation that must be provided to a tenant within 30 days of receiving their deposit, confirming the deposit protection details and their rights.', example: 'TDS prescribed information letter sent to Prof. Mandy Price on day 5 after her deposit was received.' }
+];
+
+// ===== GLOSSARY FUNCTIONS =====
+function buildGlossaryList(filter = '') {
+  const list = document.getElementById('glossary-list');
+  if (!list) return;
+  const filtered = filter
+    ? GLOSSARY.filter(g => g.term.toLowerCase().includes(filter.toLowerCase()) || g.def.toLowerCase().includes(filter.toLowerCase()))
+    : GLOSSARY;
+  const sorted = [...filtered].sort((a, b) => a.term.localeCompare(b.term));
+  list.innerHTML = tpl(sorted.map((g, i) => `
+    <div class="glossary-item" id="gloss-${i}" onclick="toggleGlossaryItem(${i})">
+      <div class="glossary-term">
+        <span>${g.term}</span>
+        <span class="glossary-category">${g.category}</span>
+      </div>
+      <div class="glossary-def">
+        ${g.def}
+        ${g.example ? `<div class="glossary-example">💡 Example: ${g.example}</div>` : ''}
+      </div>
+    </div>`).join(''));
+}
+
+function toggleGlossaryItem(i) {
+  const el = document.getElementById(`gloss-${i}`);
+  if (el) el.classList.toggle('open');
+}
+
+function filterGlossary(val) { buildGlossaryList(val); }
+
+function openGlossaryPanel() {
+  document.getElementById('glossary-overlay').classList.add('show');
+  buildGlossaryList();
+}
+
+function closeGlossaryPanel() {
+  document.getElementById('glossary-overlay').classList.remove('show');
+}
+
+function closeGlossary(e) {
+  if (e.target === document.getElementById('glossary-overlay')) closeGlossaryPanel();
+}
+
+// ===== CONFIDENCE SCORE ENGINE =====
+const MODULE_CATEGORIES = {
+  'M1': 'Foundations', 'M2': 'Foundations',
+  'M3': 'Setup', 'M4': 'Setup',
+  'M5': 'Rent & Receipts', 'M6': 'Fees & Charges',
+  'M7': 'Contractor Payments', 'M8': 'Landlord Payments',
+  'M9': 'Reconciliation', 'M10': 'Suspense',
+  'M11': 'Deposits', 'M12': 'Reporting',
+  'M13': 'Month-End', 'M14': 'Troubleshooting',
+  'M15': 'Capstone'
+};
+
+function computeConfidenceScore() {
+  const categories = {};
+  MODULES.forEach(m => {
+    const cat = MODULE_CATEGORIES[m.id] || 'General';
+    if (!categories[cat]) categories[cat] = { total: 0, done: 0 };
+    m.scenarios.forEach(s => {
+      const sp = getScenarioProgress(m.id, s.id);
+      const tasksDone = s.tasks.filter(t => sp.tasks?.[t.id]).length;
+      const reflDone = s.reflections.filter(r => (sp.reflections?.[r.id] || '').trim().length > 20).length;
+      const kcScore = sp.kcScore || 0;
+      const kcTotal = s.knowledgeCheck?.length || 0;
+      const points = tasksDone + reflDone + (kcTotal > 0 ? Math.round((kcScore / kcTotal) * 3) : 0);
+      const maxPoints = s.tasks.length + s.reflections.length + 3;
+      categories[cat].total += maxPoints;
+      categories[cat].done += points;
+    });
+  });
+  const catScores = {};
+  Object.entries(categories).forEach(([cat, d]) => {
+    catScores[cat] = d.total > 0 ? Math.round((d.done / d.total) * 100) : 0;
+  });
+  const overall = Object.values(catScores).length > 0
+    ? Math.round(Object.values(catScores).reduce((a, b) => a + b, 0) / Object.values(catScores).length)
+    : 0;
+  const sorted = Object.entries(catScores).sort((a, b) => b[1] - a[1]);
+  const strong = sorted.filter(([, v]) => v >= 60).map(([k]) => k);
+  const weak = sorted.filter(([, v]) => v < 40).map(([k]) => k);
+  return { overall, catScores, strong, weak };
+}
+
+function renderConfidenceWidget(container) {
+  const { overall, catScores, strong, weak } = computeConfidenceScore();
+  const level = overall >= 80 ? 'Expert' : overall >= 60 ? 'Practitioner' : overall >= 40 ? 'Developing' : 'Beginner';
+  const barColors = {
+    'Foundations': '#5B4BE7', 'Setup': '#F59E0B', 'Rent & Receipts': '#22C55E',
+    'Fees & Charges': '#3B82F6', 'Contractor Payments': '#8B5CF6', 'Landlord Payments': '#06B6D4',
+    'Reconciliation': '#EF4444', 'Suspense': '#F97316', 'Deposits': '#EC4899',
+    'Reporting': '#10B981', 'Month-End': '#6366F1', 'Troubleshooting': '#DC2626', 'Capstone': '#FFD700', 'General': '#94A3B8'
+  };
+  const displayCats = Object.entries(catScores).slice(0, 7);
+  container.innerHTML = `
+    <div class="confidence-widget">
+      <div class="confidence-header">
+        <div>
+          <div class="confidence-title">🎯 Accounting Confidence Score</div>
+          <div class="text-xs text-muted" style="margin-top:2px">Based on tasks, reflections & knowledge checks</div>
+        </div>
+        <div style="text-align:right">
+          <div class="confidence-score-big">${overall}%</div>
+          <div class="confidence-label">${level}</div>
+        </div>
+      </div>
+      <div class="confidence-bars">
+        ${displayCats.map(([cat, score]) => `
+          <div class="conf-bar-item">
+            <div class="conf-bar-label">${cat}</div>
+            <div class="conf-bar-track">
+              <div class="conf-bar-fill" style="width:${score}%;background:${barColors[cat] || '#5B4BE7'}"></div>
+            </div>
+            <div class="conf-bar-val">${score}%</div>
+          </div>`).join('')}
+      </div>
+      ${strong.length > 0 || weak.length > 0 ? `
+      <div class="confidence-strengths">
+        <div class="conf-strength-box strong">
+          <div class="conf-strength-label">✅ Strong Areas</div>
+          <div class="conf-strength-items">
+            ${strong.slice(0,3).map(s => `<div class="conf-strength-item">• ${s}</div>`).join('') || '<div class="conf-strength-item text-muted">Keep practising!</div>'}
+          </div>
+        </div>
+        <div class="conf-strength-box weak">
+          <div class="conf-strength-label">⚠️ Needs Practice</div>
+          <div class="conf-strength-items">
+            ${weak.slice(0,3).map(w => `<div class="conf-strength-item">• ${w}</div>`).join('') || '<div class="conf-strength-item" style="color:var(--success)">All areas strong!</div>'}
+          </div>
+        </div>
+      </div>` : ''}
+    </div>`;
+}
+
+// ===== BEHIND THE SCENES DATA =====
+const BTS_DATA = {
+  'M5S1': {
+    title: 'What Street Does When You Allocate Rent',
+    steps: [
+      'Creates a debit entry on the tenant\'s rent account for the period due',
+      'Posts a credit entry matching the received payment to the tenant ledger',
+      'Automatically calculates the management fee based on configured percentage',
+      'Posts the fee as a debit on the landlord\'s ledger',
+      'Credits the landlord ledger with the net rent amount',
+      'Makes the net balance available for the next payment run',
+      'Updates the client account balance to reflect the allocation'
+    ]
+  },
+  'M6S1': {
+    title: 'What Street Does When You Add a Charge',
+    steps: [
+      'Creates a charge record linked to the landlord\'s account',
+      'Posts a debit entry on the landlord\'s ledger reducing their balance',
+      'Calculates VAT if applicable and posts separately to the VAT control account',
+      'Makes the charge visible on the next landlord statement',
+      'Reduces the net payment amount in the next payment batch',
+      'Creates an income entry in the agency\'s fee income nominal account'
+    ]
+  },
+  'M7S1': {
+    title: 'What Street Does When You Post a Contractor Invoice',
+    steps: [
+      'Creates an invoice record linked to the work order and property',
+      'Posts a debit on the landlord\'s ledger for the full invoice amount including VAT',
+      'Reduces the landlord\'s available balance by the invoice total',
+      'Creates a payable entry to the contractor awaiting payment',
+      'When payment is processed: debits the contractor payable and credits client bank account',
+      'Records the transaction on the landlord\'s next statement as a deduction'
+    ]
+  },
+  'M8S1': {
+    title: 'What Street Does During a Payment Batch',
+    steps: [
+      'Calculates each landlord\'s net balance from all allocations in the period',
+      'Deducts any charges, fees, or contractor payments posted in the period',
+      'Checks each landlord\'s payment hold status before including in the batch',
+      'Generates a payment instruction for each landlord (BACS or bank transfer)',
+      'Posts payment entries on each landlord ledger reducing their balance to zero',
+      'Updates the client bank account balance to reflect all outgoing payments',
+      'Makes statement data available for generation'
+    ]
+  },
+  'M9S1': {
+    title: 'What Street Does During Reconciliation',
+    steps: [
+      'Compares each transaction in Street against the imported bank statement',
+      'Flags transactions that exist in Street but not on the bank statement',
+      'Flags bank statement entries that don\'t match a Street transaction',
+      'Marks matched pairs as reconciled, removing them from the outstanding list',
+      'Calculates the running difference between Street balance and bank balance',
+      'Generates a reconciliation report once balance difference reaches zero',
+      'Locks reconciled transactions to prevent accidental editing'
+    ]
+  },
+  'M11S1': {
+    title: 'What Street Does During a Deposit Refund',
+    steps: [
+      'Calculates net refund: deposit amount minus agreed deductions',
+      'Posts deduction entries on the tenancy deposit record',
+      'Creates a payment instruction to the tenant for the net refund amount',
+      'Debits the deposit ledger and credits the client deposit bank account',
+      'Updates the tenancy status and marks deposit as released',
+      'Records full transaction history for compliance audit purposes'
+    ]
+  }
+};
+
+// ===== COMMON MISTAKES DATA =====
+const MISTAKES_DATA = {
+  'M5S1': [
+    { icon: '⚠️', text: 'Allocating rent to the wrong tenancy', impact: 'High' },
+    { icon: '⚠️', text: 'Processing a landlord payment before allocating the rent', impact: 'Critical' },
+    { icon: '⚠️', text: 'Not flagging a partial payment — treating it as full rent received', impact: 'High' },
+    { icon: '⚠️', text: 'Leaving payments unallocated in suspense for more than 24 hours', impact: 'Medium' }
+  ],
+  'M6S1': [
+    { icon: '⚠️', text: 'Forgetting to apply VAT to a charge when the agency is VAT registered', impact: 'High' },
+    { icon: '⚠️', text: 'Using the wrong nominal code — mixing fees with rent income', impact: 'Medium' },
+    { icon: '⚠️', text: 'Adding a charge to the wrong landlord account', impact: 'High' },
+    { icon: '⚠️', text: 'Posting a charge without a description — makes audit trail useless', impact: 'Medium' }
+  ],
+  'M7S1': [
+    { icon: '⚠️', text: 'Paying a contractor before confirming the landlord has sufficient balance', impact: 'Critical' },
+    { icon: '⚠️', text: 'Not linking the invoice to the work order — breaks the audit trail', impact: 'Medium' },
+    { icon: '⚠️', text: 'Posting the contractor net amount without VAT — understating the cost', impact: 'High' },
+    { icon: '⚠️', text: 'Paying a contractor directly from the agency account instead of client account', impact: 'Critical' }
+  ],
+  'M8S1': [
+    { icon: '⚠️', text: 'Running payment batch before all rent is allocated for the period', impact: 'Critical' },
+    { icon: '⚠️', text: 'Forgetting to place a hold — paying a landlord who asked to defer', impact: 'High' },
+    { icon: '⚠️', text: 'Not reviewing the batch summary before confirming — missed errors', impact: 'High' },
+    { icon: '⚠️', text: 'Processing payments without generating statements — landlords get no record', impact: 'Medium' }
+  ],
+  'M9S1': [
+    { icon: '⚠️', text: 'Reconciling before all receipts are entered in Street', impact: 'High' },
+    { icon: '⚠️', text: 'Matching a bank payment to the wrong transaction', impact: 'High' },
+    { icon: '⚠️', text: 'Ignoring small differences — a £5 difference hides a bigger error', impact: 'Medium' },
+    { icon: '⚠️', text: 'Leaving items unreconciled at month-end and rolling them forward', impact: 'Critical' }
+  ],
+  'M10S1': [
+    { icon: '⚠️', text: 'Leaving aged suspense items for weeks without investigation', impact: 'Critical' },
+    { icon: '⚠️', text: 'Allocating an unidentified payment to the nearest matching tenancy', impact: 'High' },
+    { icon: '⚠️', text: 'Not recording why a payment was held — no notes for the audit trail', impact: 'Medium' }
+  ],
+  'M11S1': [
+    { icon: '⚠️', text: 'Not protecting the deposit within 30 days — legal breach', impact: 'Critical' },
+    { icon: '⚠️', text: 'Processing deductions without landlord confirmation or evidence', impact: 'High' },
+    { icon: '⚠️', text: 'Refunding more than the deposit amount — client account goes negative', impact: 'Critical' }
+  ],
+  'M13S1': [
+    { icon: '⚠️', text: 'Locking the period before reconciliation is complete', impact: 'Critical' },
+    { icon: '⚠️', text: 'Sending statements before confirming payments have processed', impact: 'High' },
+    { icon: '⚠️', text: 'Not reviewing arrears before month-end — outstanding tenants missed', impact: 'Medium' }
+  ]
+};
+
+// ===== WHAT IF WRONG DATA =====
+const WRONG_DATA = {
+  'M5S1': {
+    scenario: 'What happens if rent is allocated to the wrong tenancy?',
+    outcomes: [
+      'The correct tenant\'s ledger shows rent as unpaid (generating false arrears)',
+      'The wrong tenant\'s landlord receives credit they are not entitled to',
+      'The bank reconciliation will eventually show a mismatch',
+      'Landlord statements become inaccurate — tenant complaints follow'
+    ],
+    fix: 'Create a reversal entry to undo the original allocation, then reallocate to the correct tenancy. Both entries appear on the audit trail.'
+  },
+  'M8S1': {
+    scenario: 'What happens if a payment batch runs before all rent is allocated?',
+    outcomes: [
+      'Some landlords are underpaid (rent not yet credited to their ledger)',
+      'The client account doesn\'t balance — too much paid out vs income received',
+      'The next reconciliation will show a deficit',
+      'Landlords may receive multiple small payments instead of one correct amount'
+    ],
+    fix: 'Always run an unallocated receipts report before processing payments. If a batch runs early, reverse the affected payments and reprocess correctly.'
+  },
+  'M9S1': {
+    scenario: 'What happens if a reconciliation difference is ignored?',
+    outcomes: [
+      'Errors compound month to month — small differences grow large',
+      'ARLA/RICS audit will flag unreconciled differences as a compliance failure',
+      'Client money reporting becomes inaccurate',
+      'Hidden fraud or error becomes harder to trace the longer it\'s left'
+    ],
+    fix: 'Every reconciliation must reach zero difference before closing. Investigate every discrepancy, no matter how small.'
+  }
+};
+
+// ===== ENHANCED WORKFLOW STEP RENDERER =====
+const _originalRenderWorkflowStep = renderWorkflowStep;
+function renderWorkflowStep(m, s, sp) {
+  const basHtml = _originalRenderWorkflowStep(m, s, sp);
+  return basHtml; // Extended below via monkey-patch
+}
+
+// Override renderWorkflowStep to include BTS + Mistakes panels
+function renderWorkflowStep(m, s, sp) {
+  if (!sp.stepsDone) sp.stepsDone = {};
+  if (!sp.stepsDone.workflow) {
+    sp.stepsDone.workflow = true;
+    if (state.progress[m.id]?.scenarios[s.id]) state.progress[m.id].scenarios[s.id].stepsDone.workflow = true;
+    saveLocal();
+  }
+  const bts = BTS_DATA[s.id];
+  const mistakes = MISTAKES_DATA[s.id];
+  const wrongData = WRONG_DATA[s.id];
+
+  // Map scenario IDs to their bank statement keys
+  const bankStatementMap = {
+    'M9S1': 'module9',
+    'M13S1': 'module13',
+    'M15S1': 'capstone'
+  };
+  const bankStmtId = bankStatementMap[s.id];
+  return `
+    <div class="fade-up">
+      <div class="section-title mb-16">⚡ Street <span class="accent">Workflow</span></div>
+      <div class="alert alert-info mb-16">
+        <div class="alert-icon">📍</div>
+        <div>Follow these exact steps inside the Street demo account. Each step shows you the navigation path and what to expect in the system.</div>
+      </div>
+      <div class="card mb-16">
+        <div class="card-header"><div class="card-title"><div class="card-icon">🗺️</div>Step-by-Step Instructions</div></div>
+        <div class="card-body">
+          <div class="workflow-steps">
+            ${s.workflow.map((step, i) => `
+              <div class="workflow-step">
+                <div class="workflow-step-num">${i + 1}</div>
+                <div class="workflow-step-content">
+                  <div class="workflow-step-title">${step.step}</div>
+                  <div class="workflow-step-desc">${step.desc}</div>
+                  <div class="workflow-step-path">
+                    📍 ${step.path.split('→').map((p, pi) => `${pi > 0 ? '<span class="nav-arrow">›</span>' : ''}${p.trim()}`).join(' ')}
+                  </div>
+                </div>
+              </div>`).join('')}
+          </div>
+          ${bankStmtId ? bankStatementCard(bankStmtId) : ''}
+        </div>
+      </div>
+
+      ${bts ? `
+      <div class="bts-panel">
+        <div class="bts-header">
+          <div class="bts-icon">🔮</div>
+          <div>
+            <div class="bts-title">${bts.title}</div>
+            <div class="bts-subtitle">What Street Is Doing Behind The Scenes</div>
+          </div>
+        </div>
+        <div class="bts-steps">
+          ${bts.steps.map(step => `
+            <div class="bts-step">
+              <div class="bts-step-bullet"></div>
+              <span>${step}</span>
+            </div>`).join('')}
+        </div>
+      </div>` : ''}
+
+      ${mistakes ? `
+      <div class="mistakes-panel">
+        <div class="mistakes-header">
+          <span style="font-size:20px">⚠️</span>
+          <div class="mistakes-title">Common Agent Mistakes — Don't Do These!</div>
+        </div>
+        ${mistakes.map(m2 => `
+          <div class="mistake-item">
+            <div class="mistake-icon">${m2.icon}</div>
+            <div class="mistake-text">${m2.text}</div>
+            <div class="mistake-impact">${m2.impact} Risk</div>
+          </div>`).join('')}
+      </div>` : ''}
+
+      ${wrongData ? `
+      <div class="wrong-panel">
+        <div class="wrong-header">
+          <span>🤔</span>
+          <span>${wrongData.scenario}</span>
+        </div>
+        <div class="wrong-outcomes">
+          ${wrongData.outcomes.map(o => `
+            <div class="wrong-outcome">
+              <div class="wrong-outcome-bullet">→</div>
+              <span>${o}</span>
+            </div>`).join('')}
+        </div>
+        <div class="wrong-fix-label">✅ How to Fix It</div>
+        <div class="wrong-fix">${wrongData.fix}</div>
+      </div>` : ''}
+
+      <div class="alert alert-success" style="margin-top:16px">
+        <div class="alert-icon">✅</div>
+        <div>Once you've reviewed all steps, open the Street demo account and complete the workflow. Then proceed to the Tasks checklist to confirm what you've done.</div>
+      </div>
+      <div style="display:flex;justify-content:flex-end;margin-top:16px">
+        <button class="btn btn-primary" onclick="setStep(4)">I've Reviewed the Workflow → Tasks</button>
+      </div>
+    </div>`;
+}
+
+// ===== RECONCILIATION MINI-GAME =====
+const RECON_ROUNDS = [
+  {
+    title: 'November — {AGENCY} Client Account vs Street',
+    bankItems: [
+      { id: 'b1', amount: '£1,400', desc: 'BACS Credit — Prof. A Bailey 268 Greenleach Ln', matchId: 's1' },
+      { id: 'b2', amount: '£1,800', desc: 'BACS Credit — Mr. D Anderson 20 Vicars St', matchId: 's2' },
+      { id: 'b3', amount: '£420', desc: 'BACS Debit — Manchester Heating Solutions WO-441', matchId: 's3' },
+      { id: 'b4', amount: '£1,198.40', desc: 'BACS Debit — Prof. Scarlett Cooper Landlord', matchId: 's4' },
+      { id: 'b5', amount: '£1,200', desc: 'BACS Credit — Mr. J Walker 142 Ladymere Dr', matchId: 's5' },
+      { id: 'b6', amount: '£1,540.80', desc: 'BACS Debit — Prof. Fred Watson Landlord', matchId: 's6' },
+      { id: 'b7', amount: '£1,920', desc: 'BACS Debit — Prof. Mandy Price Deposit Refund', matchId: 's7' },
+      { id: 'b8', amount: '£15', desc: 'Bank Charge — Service Fee November', matchId: 's8' }
+    ],
+    streetItems: [
+      { id: 's1', amount: '£1,400', desc: 'Rent Receipt — Prof. Aaron Bailey (268 Greenleach Lane, Ref TvLE84DkIQ)', type: 'rent' },
+      { id: 's2', amount: '£1,800', desc: 'Rent Receipt — Mr. Dan Anderson (20 Vicars Street, Ref HzAN6GirLG)', type: 'rent' },
+      { id: 's3', amount: '£420', desc: 'Contractor Payment — Manchester Heating Solutions Boiler Repair', type: 'contractor' },
+      { id: 's4', amount: '£1,198.40', desc: 'Landlord Payment — Prof. Scarlett Cooper November', type: 'landlord' },
+      { id: 's5', amount: '£1,200', desc: 'Rent Receipt — Mr. Jason Walker (142 Ladymere Drive, Ref aKRzQbqY27)', type: 'rent' },
+      { id: 's6', amount: '£1,540.80', desc: 'Landlord Payment — Prof. Fred Watson November', type: 'landlord' },
+      { id: 's7', amount: '£1,920', desc: 'Deposit Refund — Prof. Mandy Price (38 Partington Street, end of tenancy)', type: 'deposit' },
+      { id: 's8', amount: '£15', desc: 'Bank Charge — November Service Fee', type: 'contractor' }
+    ]
+  },
+  {
+    title: 'December — {AGENCY} Reconciliation Challenge',
+    bankItems: [
+      { id: 'b1', amount: '£2,600', desc: 'BACS Credit — Dr. Sienna Knight 222 Manchester Rd', matchId: 's1' },
+      { id: 'b2', amount: '£2,300', desc: 'BACS Credit — Mrs. Sasha Stevens 210 Cliftonville Dr', matchId: 's2' },
+      { id: 'b3', amount: '£180', desc: 'BACS Debit — Worsley Electrical Ltd Emergency', matchId: 's3' },
+      { id: 'b4', amount: '£2,225.60', desc: 'BACS Debit — Mrs. Alexandra Scott Landlord', matchId: 's4' },
+      { id: 'b5', amount: '£1,700', desc: 'BACS Credit — Dr. Elliott Taylor 270 Leigh Road', matchId: 's5' },
+      { id: 'b6', amount: '£1,968.80', desc: 'BACS Debit — Mrs. Sarah Price Landlord', matchId: 's6' }
+    ],
+    streetItems: [
+      { id: 's1', amount: '£2,600', desc: 'Rent Receipt — Dr. Sienna Knight (222 Manchester Road, Ref cgMZoDISq2)', type: 'rent' },
+      { id: 's2', amount: '£2,300', desc: 'Rent Receipt — Mrs. Sasha Stevens (210 Cliftonville Drive, Ref Je0j75Xebe)', type: 'rent' },
+      { id: 's3', amount: '£180', desc: 'Contractor Payment — Worsley Electrical Ltd Emergency Repair', type: 'contractor' },
+      { id: 's4', amount: '£2,225.60', desc: 'Landlord Payment — Mrs. Alexandra Scott December', type: 'landlord' },
+      { id: 's5', amount: '£1,700', desc: 'Rent Receipt — Dr. Elliott Taylor (270 Leigh Road, Ref LLETg7lIgQ)', type: 'rent' },
+      { id: 's6', amount: '£1,968.80', desc: 'Landlord Payment — Mrs. Sarah Price December', type: 'landlord' }
+    ]
+  }
+];
+
+let reconState = {
+  round: 0,
+  selectedBank: null,
+  selectedStreet: null,
+  matched: new Set(),
+  errors: 0
+};
+
+function openReconGame() {
+  reconState = { round: Math.floor(Math.random() * RECON_ROUNDS.length), selectedBank: null, selectedStreet: null, matched: new Set(), errors: 0 };
+  document.getElementById('recon-game-overlay').classList.add('show');
+  renderReconGame();
+}
+
+function closeReconGame() {
+  document.getElementById('recon-game-overlay').classList.remove('show');
+}
+
+function newReconRound() {
+  reconState.round = (reconState.round + 1) % RECON_ROUNDS.length;
+  reconState.selectedBank = null;
+  reconState.selectedStreet = null;
+  reconState.matched = new Set();
+  reconState.errors = 0;
+  renderReconGame();
+}
+
+function renderReconGame() {
+  const round = RECON_ROUNDS[reconState.round];
+  const body = document.getElementById('recon-game-body');
+  const stmtKey = reconState.round === 0 ? 'recon_round1' : 'recon_round2';
+  body.innerHTML = tpl(`
+    <div class="alert alert-purple mb-16" style="font-size:13px">
+      <div class="alert-icon">💡</div>
+      <div><strong>${round.title}</strong> — Click a bank transaction, then click its matching Street entry. Match all ${round.bankItems.length} items to complete the round.</div>
+    </div>
+    ${bankStatementCard(stmtKey)}
+    <div class="recon-columns">
+      <div>
+        <div class="recon-col-title">🏦 Bank Statement</div>
+        ${round.bankItems.map(item => `
+          <div class="recon-item ${reconState.matched.has(item.id) ? 'matched' : reconState.selectedBank === item.id ? 'selected' : ''}"
+            id="bank-${item.id}"
+            onclick="${reconState.matched.has(item.id) ? '' : `selectBankItem('${item.id}')`}">
+            <div class="recon-amount">${item.amount}</div>
+            <div class="recon-desc">${item.desc}</div>
+            ${reconState.matched.has(item.id) ? '<div style="font-size:16px">✅</div>' : ''}
+          </div>`).join('')}
+      </div>
+      <div>
+        <div class="recon-col-title">💻 Street Records</div>
+        ${round.streetItems.map(item => `
+          <div class="recon-item ${reconState.matched.has(item.id) ? 'matched' : reconState.selectedStreet === item.id ? 'selected' : ''}"
+            id="street-${item.id}"
+            onclick="${reconState.matched.has(item.id) ? '' : `selectStreetItem('${item.id}')`}">
+            <div class="recon-amount">${item.amount}</div>
+            <div class="recon-desc">${item.desc}</div>
+            <div class="recon-type ${item.type}">${item.type}</div>
+            ${reconState.matched.has(item.id) ? '<div style="font-size:16px">✅</div>' : ''}
+          </div>`).join('')}
+      </div>
+    </div>`);
+  updateReconScores();
+}
+
+function selectBankItem(id) {
+  reconState.selectedBank = id;
+  if (reconState.selectedStreet) attemptReconMatch();
+  else renderReconGame();
+}
+
+function selectStreetItem(id) {
+  reconState.selectedStreet = id;
+  if (reconState.selectedBank) attemptReconMatch();
+  else renderReconGame();
+}
+
+function attemptReconMatch() {
+  const round = RECON_ROUNDS[reconState.round];
+  const bankItem = round.bankItems.find(b => b.id === reconState.selectedBank);
+  const streetId = reconState.selectedStreet;
+  if (bankItem && bankItem.matchId === streetId) {
+    reconState.matched.add(reconState.selectedBank);
+    reconState.matched.add(streetId);
+    reconState.selectedBank = null;
+    reconState.selectedStreet = null;
+    renderReconGame();
+    if (reconState.matched.size === round.bankItems.length * 2) {
+      setTimeout(() => {
+        document.getElementById('recon-game-body').innerHTML += `
+          <div class="alert alert-success" style="margin-top:16px;font-size:14px">
+            <div class="alert-icon">🎉</div>
+            <div><strong>Perfect Reconciliation!</strong> All ${round.bankItems.length} transactions matched. ${reconState.errors === 0 ? 'Zero errors — excellent!' : `${reconState.errors} error${reconState.errors > 1 ? 's' : ''} made.`} Click New Round for another challenge.</div>
+          </div>`;
+      }, 300);
+    }
+  } else {
+    reconState.errors++;
+    const bankEl = document.getElementById(`bank-${reconState.selectedBank}`);
+    const streetEl = document.getElementById(`street-${streetId}`);
+    if (bankEl) { bankEl.classList.add('wrong'); setTimeout(() => bankEl.classList.remove('wrong'), 600); }
+    if (streetEl) { streetEl.classList.add('wrong'); setTimeout(() => streetEl.classList.remove('wrong'), 600); }
+    reconState.selectedBank = null;
+    reconState.selectedStreet = null;
+    setTimeout(() => renderReconGame(), 700);
+  }
+  updateReconScores();
+}
+
+function updateReconScores() {
+  const round = RECON_ROUNDS[reconState.round];
+  const matchedCount = reconState.matched.size / 2;
+  document.getElementById('recon-matched').textContent = matchedCount;
+  document.getElementById('recon-remaining').textContent = round.bankItems.length - matchedCount;
+  document.getElementById('recon-errors').textContent = reconState.errors;
+}
+
+// ===== AGENCY SIMULATION DAY =====
+const AGENCY_SIM_DATA = {
+  date: 'Monday, 25th November',
+  agency: '{AGENCY}',
+  inbox: [
+    {
+      id: 'sim1',
+      icon: '💷',
+      iconBg: 'rgba(34,197,94,0.1)',
+      from: 'Bank Alert — {AGENCY} Client Account',
+      subject: '3 rent payments received overnight',
+      preview: 'Payments from Prof. Aaron Bailey £1,400 (268 Greenleach Lane), Dr. Sienna Knight £2,600 (222 Manchester Road), Mr. Jason Walker £1,100 partial (142 Ladymere Drive, £100 short) have arrived.',
+      priority: 'urgent',
+      steps: [
+        'Open Accounting → Receipts → Unallocated',
+        'Allocate £1,400 to Prof. Aaron Bailey tenancy — 268 Greenleach Lane (Ref: TvLE84DkIQ)',
+        'Allocate £2,600 to Dr. Sienna Knight tenancy — 222 Manchester Road (Ref: cgMZoDISq2)',
+        'Allocate £1,100 to Mr. Jason Walker tenancy — 142 Ladymere Drive (Ref: aKRzQbqY27) — mark as partial, £100 outstanding',
+        'Do NOT generate Miss Tiffany Ward landlord payment yet — awaiting full rent from Jason Walker',
+        'Verify Prof. Scarlett Cooper and Mrs. Alexandra Scott landlord ledgers updated correctly'
+      ]
+    },
+    {
+      id: 'sim2',
+      icon: '🔧',
+      iconBg: 'rgba(59,130,246,0.1)',
+      from: 'Manchester Heating Solutions',
+      subject: 'Invoice #MHS-2024-441 — Boiler repair 268 Greenleach Lane £280+VAT',
+      preview: 'Invoice attached for emergency boiler repair at 268 Greenleach Lane, Worsley M28 1UZ. Landlord Prof. Scarlett Cooper pre-approved via phone.',
+      priority: 'urgent',
+      steps: [
+        'Navigate to 268 Greenleach Lane property → Maintenance → Work Order',
+        'Post invoice from Manchester Heating Solutions: £280 + VAT (£56) = £336 total',
+        'Confirm debit of £336 on Prof. Scarlett Cooper's landlord ledger',
+        'Verify Prof. Scarlett Cooper still has sufficient balance after deduction (£1,198.40 - £336 = £862.40)',
+        'Generate payment to Manchester Heating Solutions for £336 from client account',
+        'Verify client account balance reduced correctly'
+      ]
+    },
+    {
+      id: 'sim3',
+      icon: '📊',
+      iconBg: 'rgba(91,75,231,0.1)',
+      from: 'System — Payment Day (25th)',
+      subject: 'Monthly landlord payment batch due today — {AGENCY}',
+      preview: 'Today is the 25th. Batch payment run scheduled for all 12 {AGENCY} landlords.',
+      priority: 'urgent',
+      steps: [
+        'Run unallocated receipts report — confirm all rent is allocated for November',
+        'Navigate to Accounting → Landlord Payments → New Batch',
+        'Review all 12 landlord balances: Prof. Scarlett Cooper (£862.40 after repair), Dr. Dave Bennett, Mrs. Alexandra Scott, Prof. Fred Watson, Miss Tiffany Ward (HOLD), etc.',
+        'Place hold on Miss Tiffany Ward (142 Ladymere Drive) — Jason Walker partial payment only',
+        'Note Dr. Dylan Butler (285 Chatsworth Road) arrears — discuss Dr. Eleanor Rogers payment with manager',
+        'Confirm and process batch for all other landlords',
+        'Verify client account balance post-payment'
+      ]
+    },
+    {
+      id: 'sim4',
+      icon: '🏦',
+      iconBg: 'rgba(245,158,11,0.1)',
+      from: 'Month-End Checklist',
+      subject: 'Bank reconciliation required before November close',
+      preview: '{AGENCY} client account balance needs to be reconciled against November bank statement before period can be locked.',
+      priority: 'normal',
+      bankStmt: 'module13',
+      steps: [
+        'Download the November Bank Statement CSV (button above)',
+        'Navigate to Accounting → Bank Accounts → {AGENCY} Client Account → Reconcile',
+        'Import or enter the November bank statement',
+        'Match all transactions: 4 rent receipts, Manchester Heating Solutions, 3 landlord payments, bank charge',
+        'Investigate any unmatched items — check references match tenancy refs in Street',
+        'Confirm zero difference and complete reconciliation'
+      ]
+    },
+    {
+      id: 'sim5',
+      icon: '📋',
+      iconBg: 'rgba(34,197,94,0.1)',
+      from: 'System — Statements',
+      subject: 'Generate and send all 12 {AGENCY} landlord statements',
+      preview: 'All 12 landlords must receive November statements today. Miss Tiffany Ward and Dr. Eleanor Rogers statements need special notes.',
+      priority: 'normal',
+      steps: [
+        'Navigate to Accounting → Statements → Landlord Statements',
+        'Select November as the statement period',
+        'Preview statement for Miss Tiffany Ward — ensure hold reason is noted (partial rent from Jason Walker)',
+        'Preview statement for Dr. Eleanor Rogers — ensure Dr. Dylan Butler arrears position is clearly noted',
+        'Preview Prof. Scarlett Cooper statement — confirm Manchester Heating Solutions deduction shows clearly',
+        'Send batch to all 12 landlords via email',
+        'Check dispatch log confirms all 12 sent successfully'
+      ]
+    },
+    {
+      id: 'sim6',
+      icon: '⚠️',
+      iconBg: 'rgba(239,68,68,0.08)',
+      from: 'Tenancy Alert',
+      subject: '285 Chatsworth Road — Dr. Dylan Butler 2nd month arrears, action required',
+      preview: 'Tenant Dr. Dylan Butler (Ref: 3q2VbjezRb) at 285 Chatsworth Road, Eccles M30 9LS has not paid for 2 consecutive months. Total arrears: £5,600. Landlord: Dr. Eleanor Rogers.',
+      priority: 'urgent',
+      steps: [
+        'Open tenancy record for Dr. Dylan Butler — 285 Chatsworth Road (Ref: 3q2VbjezRb)',
+        'Review arrears ledger — confirm £5,600 outstanding (2 x £2,800)',
+        'Record action taken (notice issued / payment plan agreed / escalated)',
+        'Add note to Dr. Eleanor Rogers landlord account explaining the arrears position',
+        'Decide with manager whether to proceed with Dr. Eleanor Rogers payment or hold pending arrears resolution'
+      ]
+    }
+  ]
+};
+
+let simState = {
+  activeSim: null,
+  completedItems: {},
+  stepsDone: {}
+};
+
+function openAgencySim() {
+  document.getElementById('agency-sim-overlay').classList.add('show');
+  // Update the header sub-title with the real agency name
+  const sub = document.getElementById('agency-sim-sub');
+  if (sub) sub.textContent = `Monday 9:00am · ${ag()} · You are the accounts manager`;
+  renderAgencySim();
+}
+
+function closeAgencySim() {
+  document.getElementById('agency-sim-overlay').classList.remove('show');
+}
+
+function renderAgencySim() {
+  const body = document.getElementById('agency-sim-body');
+  const totalSteps = AGENCY_SIM_DATA.inbox.reduce((a, item) => a + item.steps.length, 0);
+  const doneSteps = Object.values(simState.stepsDone).reduce((a, steps) => a + Object.values(steps).filter(Boolean).length, 0);
+  const pct = totalSteps > 0 ? Math.round((doneSteps / totalSteps) * 100) : 0;
+  const doneItems = AGENCY_SIM_DATA.inbox.filter(item => {
+    const steps = simState.stepsDone[item.id] || {};
+    return item.steps.every((_, i) => steps[i]);
+  }).length;
+  body.innerHTML = tpl(`
+    <div class="alert alert-warning mb-20" style="font-size:13px">
+      <div class="alert-icon">📅</div>
+      <div><strong>${AGENCY_SIM_DATA.date} · {AGENCY}</strong> — You have 6 items requiring attention today. Work through each one in order of priority. Tick each step as you complete it in the demo account.</div>
+    </div>
+    <div class="sim-progress-bar mb-20">
+      <div class="sim-progress-label">Day Progress: ${doneItems}/${AGENCY_SIM_DATA.inbox.length} items</div>
+      <div class="mini-bar" style="flex:1;height:8px"><div class="mini-fill" style="width:${pct}%"></div></div>
+      <div class="mini-label" style="font-size:13px;font-weight:700;min-width:40px">${pct}%</div>
+    </div>
+    <div class="sim-inbox">
+      ${AGENCY_SIM_DATA.inbox.map(item => {
+        const steps = simState.stepsDone[item.id] || {};
+        const isDone = item.steps.every((_, i) => steps[i]);
+        const isActive = simState.activeSim === item.id;
+        return `
+          <div>
+            <div class="sim-inbox-item ${isDone ? 'done' : isActive ? 'active' : ''}" onclick="toggleSimItem('${item.id}')">
+              <div class="sim-inbox-icon" style="background:${item.iconBg}">${item.icon}</div>
+              <div class="sim-inbox-info">
+                <div class="sim-inbox-from">${item.from}</div>
+                <div class="sim-inbox-subject">${item.subject}</div>
+                <div class="sim-inbox-preview">${item.preview}</div>
+              </div>
+              <div class="sim-inbox-meta">
+                <div class="sim-priority ${isDone ? 'done' : item.priority}">${isDone ? '✅ Done' : item.priority === 'urgent' ? '🔴 Urgent' : '⚪ Normal'}</div>
+                <div style="font-size:11px;color:var(--text-muted)">${Object.values(steps).filter(Boolean).length}/${item.steps.length} steps</div>
+              </div>
+            </div>
+            ${isActive ? `
+            <div class="sim-task-panel">
+              <div class="sim-task-panel-title">📋 Steps to complete in demo account:</div>
+              ${item.bankStmt ? bankStatementCard(item.bankStmt) : ''}
+              <div class="sim-steps">
+                ${item.steps.map((step, i) => `
+                  <div class="sim-step">
+                    <div class="sim-step-cb ${steps[i] ? 'done' : ''}" onclick="toggleSimStep('${item.id}', ${i})">${steps[i] ? '✓' : ''}</div>
+                    <div class="sim-step-text" style="${steps[i] ? 'text-decoration:line-through;color:var(--text-muted)' : ''}">${step}</div>
+                  </div>`).join('')}
+              </div>
+            </div>` : ''}
+          </div>`;
+      }).join('')}
+    </div>
+    ${doneItems === AGENCY_SIM_DATA.inbox.length ? `
+    <div class="alert alert-success" style="font-size:14px">
+      <div class="alert-icon">🎉</div>
+      <div><strong>Day complete!</strong> You've successfully handled all accounting tasks for {AGENCY}. Excellent work — this is exactly what day-to-day Street Accounting looks like in a busy agency.</div>
+    </div>` : ''}
+  `);
+}
+
+function toggleSimItem(id) {
+  simState.activeSim = simState.activeSim === id ? null : id;
+  renderAgencySim();
+}
+
+function toggleSimStep(itemId, stepIdx) {
+  if (!simState.stepsDone[itemId]) simState.stepsDone[itemId] = {};
+  simState.stepsDone[itemId][stepIdx] = !simState.stepsDone[itemId][stepIdx];
+  renderAgencySim();
+  saveLocal();
+}
+
+// ===== ENHANCED CERTIFICATE WITH TIERS =====
+const CERT_TIERS = [
+  { medal: '🥉', name: 'Street Accounting Fundamentals', req: 'Complete Modules 1–4 (Foundations & Setup)', modules: ['M1','M2','M3','M4'], badge: 'Fundamentals' },
+  { medal: '🥈', name: 'Street Accounting Practitioner', req: 'Complete Modules 1–10 (All core workflows)', modules: ['M1','M2','M3','M4','M5','M6','M7','M8','M9','M10'], badge: 'Practitioner' },
+  { medal: '🥇', name: 'Street Accounting Certified User', req: 'Complete all 15 modules including Capstone', modules: MODULES.map(m => m.id), badge: 'Certified' }
+];
+
+function renderCertificate() {
+  const complete = isAllComplete();
+  const certArea = document.getElementById('cert-area');
+  const certActions = document.getElementById('cert-actions');
+
+  // Render tier cards
+  const tiersHtml = `
+    <div class="section-title mb-16" style="margin-top:24px">🏆 Certification <span class="accent">Pathway</span></div>
+    <div class="cert-tiers mb-24">
+      ${CERT_TIERS.map(tier => {
+        const earned = tier.modules.every(mId => state.progress[mId]?.moduleComplete);
+        return `
+          <div class="cert-tier-card ${earned ? 'earned' : 'locked'}">
+            ${earned ? '<div class="cert-tier-shine"></div>' : ''}
+            <div class="cert-tier-medal">${tier.medal}</div>
+            <div class="cert-tier-name">${tier.name}</div>
+            <div class="cert-tier-req">${tier.req}</div>
+            <div class="cert-tier-badge">${earned ? '✅ Earned' : '🔒 Locked'}</div>
+          </div>`;
+      }).join('')}
+    </div>`;
+
+  if (!complete) {
+    const modDone = MODULES.filter(m => state.progress[m.id]?.moduleComplete).length;
+    certArea.innerHTML = tiersHtml + `
+      <div class="cert-preview">
+        <div class="cert-locked-overlay">
+          <div class="cert-locked-icon">🔒</div>
+          <div class="cert-locked-title">Full Certificate Locked</div>
+          <p class="cert-locked-sub">Complete all 15 modules and the Capstone Assessment to unlock your Street Advanced Accounting Certificate.</p>
+          <div style="margin-top:24px">
+            <div class="cert-unlock-steps">
+              ${CERT_TIERS.map(t => {
+                const earned = t.modules.every(mId => state.progress[mId]?.moduleComplete);
+                return `<div class="cert-unlock-step ${earned ? 'done' : ''}"><span class="step-icon">${earned ? '✅' : '⏳'}</span>${t.name}</div>`;
+              }).join('')}
+            </div>
+            <div class="mini-progress" style="max-width:300px;margin:16px auto 8px">
+              <div class="mini-bar" style="height:8px"><div class="mini-fill" style="width:${getOverallProgress()}%"></div></div>
+              <div class="mini-label">${getOverallProgress()}%</div>
+            </div>
+            <p style="font-size:13px;color:var(--text-muted)">${modDone}/${MODULES.length} modules complete</p>
+            <button class="btn btn-primary" style="margin-top:16px" onclick="showView('learning')">Continue Learning →</button>
+          </div>
+        </div>
+      </div>`;
+    certActions.style.display = 'none';
+  } else {
+    const certId = 'STREET-' + state.user.id.toUpperCase() + '-' + new Date().getFullYear();
+    const dateStr = new Date().toLocaleDateString('en-GB', {day:'numeric', month:'long', year:'numeric'});
+    certArea.innerHTML = tiersHtml + `
+      <div class="cert-preview" id="cert-printable">
+        <div class="cert-border-top"></div>
+        <div class="cert-inner">
+          <div class="cert-logo">🏠</div>
+          <div class="cert-issuer">Street · Advanced Accounting Learning Simulator</div>
+          <div class="cert-declare">This is to certify that</div>
+          <div class="cert-name-display">${state.user.name}</div>
+          <div class="cert-course">has successfully completed the</div>
+          <div style="font-size:22px;font-weight:800;color:white;margin-bottom:8px;position:relative;letter-spacing:-0.5px">Street Advanced Accounting Certification</div>
+          <div style="font-size:14px;color:rgba(255,255,255,0.5);margin-bottom:32px;position:relative">${state.user.company ? `${state.user.company} · ` : ''}${dateStr}</div>
+          <div class="cert-badge-row">
+            ${CERT_TIERS.map(t => `<div class="cert-badge-item"><div class="cert-badge-icon">${t.medal}</div><div class="cert-badge-label">${t.badge}</div></div>`).join('')}
+            <div class="cert-badge-item"><div class="cert-badge-icon">🏆</div><div class="cert-badge-label">Capstone</div></div>
+          </div>
+          <div class="cert-sig-row">
+            <div class="cert-sig">
+              <div class="cert-sig-line"></div>
+              <div class="cert-sig-name">Street Training</div>
+              <div class="cert-sig-role">Certification Authority</div>
+            </div>
+            <div class="cert-sig">
+              <div class="cert-sig-line"></div>
+              <div class="cert-sig-name">${state.user.company || 'Street Learner'}</div>
+              <div class="cert-sig-role">Training Company</div>
+            </div>
+          </div>
+          <div class="cert-id">Certificate ID: ${certId}</div>
+        </div>
+      </div>`;
+    certActions.style.display = 'flex';
+  }
+}
+
+// ===== ENHANCED DASHBOARD WITH CONFIDENCE SCORE =====
+const _originalRenderDashboard = renderDashboard;
+function renderDashboard() {
+  _originalRenderDashboard();
+  // Inject confidence widget after stats
+  const existingConf = document.getElementById('confidence-container');
+  if (!existingConf) {
+    const dashStats = document.getElementById('dashboard-stats');
+    if (dashStats) {
+      const confContainer = document.createElement('div');
+      confContainer.id = 'confidence-container';
+      dashStats.after(confContainer);
+      renderConfidenceWidget(confContainer);
+    }
+  } else {
+    renderConfidenceWidget(existingConf);
+  }
+}
+
+// ===== SHOW FABS ON APP LAUNCH =====
+function showFabs() {
+  const glossaryFab = document.getElementById('glossary-fab');
+  const reconFab = document.getElementById('recon-fab');
+  const agencyFab = document.getElementById('agency-sim-fab');
+  const reconTopbar = document.getElementById('recon-topbar-btn');
+  const agencyTopbar = document.getElementById('agency-topbar-btn');
+  if (glossaryFab) glossaryFab.style.display = 'flex';
+  if (reconFab) reconFab.style.display = 'flex';
+  if (agencyFab) agencyFab.style.display = 'flex';
+  if (reconTopbar) reconTopbar.style.display = 'inline-flex';
+  if (agencyTopbar) agencyTopbar.style.display = 'inline-flex';
+}
+
 // ===== KEYBOARD SHORTCUTS =====
 document.addEventListener('keydown', e => {
   if (e.key === 'ArrowRight' && e.altKey) nextScenario();
   if (e.key === 'ArrowLeft' && e.altKey) prevScenario();
-  if (e.key === 'Escape') { closeModal(); document.getElementById('sheets-modal').classList.remove('show'); }
+  if (e.key === 'Escape') {
+    closeModal();
+    document.getElementById('sheets-modal').classList.remove('show');
+    closeGlossaryPanel();
+    closeReconGame();
+    closeAgencySim();
+  }
+  if (e.key === 'g' && e.altKey) openGlossaryPanel();
+  if (e.key === 'r' && e.altKey) openReconGame();
 });
 </script>
 </body>
