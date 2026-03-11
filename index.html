@@ -6531,10 +6531,13 @@ document.addEventListener('keydown', e => {
   if (e.key === 'g' && e.altKey) openGlossaryPanel();
   if (e.key === 'r' && e.altKey) openReconGame();
   if (e.key === 'f' && e.altKey) openDemoFilesLibrary();
-}); — Copy everything below into your Apps Script editor
-  (Extensions → Apps Script in your Google Sheet) then click Deploy →
-  New Deployment → Web App → Execute as: Me → Who has access: Anyone
-  Copy the deployment URL into the "Sheets URL" field in the simulator.
+});
+
+/*
+=======================================================================
+  GOOGLE APPS SCRIPT — paste this into Extensions → Apps Script
+  in your Google Sheet, NOT here in the HTML file.
+=======================================================================
 
   REQUIRED SHEET TABS:
     • "Learner Summary"  — one row per learner, approval column included
