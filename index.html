@@ -1992,10 +1992,8 @@ body {
         <!-- Populated by JS -->
       </div>
       <div class="sidebar-footer">
-        <button class="sidebar-footer-btn" onclick="showView('dashboard')">📊 Dashboard</button>
-        <button class="sidebar-footer-btn" onclick="showView('certificate')">🏅 Cert</button>
-        <button class="sidebar-footer-btn" onclick="openGlossaryPanel()" title="Alt+G">📖</button>
-        <button class="sidebar-footer-btn" onclick="openDemoFilesLibrary()" title="Demo Files" style="color:rgba(91,75,231,0.9)">📁</button>
+        <button class="sidebar-footer-btn" onclick="openGlossaryPanel()" title="Alt+G">📖 Glossary</button>
+        <button class="sidebar-footer-btn" onclick="logout()" title="Log out" style="color:rgba(239,68,68,0.8)">🚪 Log Out</button>
       </div>
     </nav>
 
@@ -2180,14 +2178,7 @@ body {
   <span>📖</span>
   <span class="glossary-btn-label">Glossary</span>
 </button>
-<div style="position:fixed;bottom:20px;right:20px;z-index:200;display:flex;gap:8px;align-items:center" id="fab-row" style="display:none">
-  <button class="sim-fab" id="agency-sim-fab" onclick="openAgencySim()" title="Agency Simulation Day" style="display:none">
-    🏢 Agency Sim
-  </button>
-  <button class="sim-fab" id="recon-fab" onclick="openReconGame()" style="display:none">
-    ⚖️ Recon Trainer
-  </button>
-</div>
+
 
 <script>
 // ========================================
@@ -6219,6 +6210,29 @@ function dismissWelcomeAndStart() {
   const resumePoint = findResumePoint();
   navigateToModule(resumePoint.mIdx, resumePoint.sIdx);
   showView('learning');
+}
+
+// ===== LOGOUT =====
+function logout() {
+  if (!confirm('Are you sure you want to log out? Your progress has been saved.')) return;
+  // Reset runtime state
+  state.user = { name: '', email: '', company: '', id: '' };
+  state.currentModule = 0;
+  state.currentScenario = 0;
+  state.currentStep = 0;
+  state.progress = {};
+  state.activity = [];
+  state.sheetsConnected = false;
+  // Switch screens
+  document.getElementById('screen-app').classList.remove('active');
+  document.getElementById('screen-login').classList.add('active');
+  // Clear login form
+  const nameEl = document.getElementById('login-name');
+  const emailEl = document.getElementById('login-email');
+  const companyEl = document.getElementById('login-company');
+  if (nameEl) nameEl.value = '';
+  if (emailEl) emailEl.value = '';
+  if (companyEl) companyEl.value = '';
 }
 
 // ===== KEYBOARD SHORTCUTS =====
