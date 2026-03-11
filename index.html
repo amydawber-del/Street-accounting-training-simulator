@@ -275,6 +275,49 @@ body {
 }
 .login-pending-back:hover { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.7); }
 
+/* ===== LOGIN CODE VERIFICATION ===== */
+.login-code-wrap { text-align: center; padding: 8px 0; }
+.login-code-icon { font-size: 48px; margin-bottom: 20px; display: block; }
+.login-code-title { color: var(--white); font-size: 22px; font-weight: 700; margin-bottom: 12px; letter-spacing: -0.3px; }
+.login-code-body { color: rgba(255,255,255,0.5); font-size: 14px; line-height: 1.7; margin-bottom: 20px; }
+.code-inputs { display: flex; justify-content: center; gap: 12px; margin: 20px 0; }
+.code-input-box {
+  width: 62px; height: 70px;
+  background: rgba(255,255,255,0.06);
+  border: 2px solid rgba(255,255,255,0.12);
+  border-radius: 12px;
+  text-align: center;
+  font-family: 'DM Mono', monospace;
+  font-size: 28px; font-weight: 700;
+  color: var(--white);
+  outline: none;
+  transition: var(--transition);
+  caret-color: var(--purple);
+}
+.code-input-box:focus { border-color: var(--purple); background: rgba(91,75,231,0.12); }
+.code-input-box.error { border-color: var(--danger); background: rgba(239,68,68,0.08); animation: codeShake 0.4s ease; }
+@keyframes codeShake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)} }
+.code-error-msg { color: var(--danger); font-size: 13px; min-height: 18px; margin-bottom: 12px; }
+.code-display { display: flex; justify-content: center; gap: 12px; margin: 24px 0; }
+.code-digit {
+  width: 62px; height: 70px;
+  background: rgba(91,75,231,0.18);
+  border: 2px solid rgba(91,75,231,0.4);
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'DM Mono', monospace;
+  font-size: 32px; font-weight: 800;
+  color: var(--white);
+}
+.code-reveal-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(34,197,94,0.12);
+  border: 1px solid rgba(34,197,94,0.25);
+  border-radius: 999px; padding: 8px 18px;
+  color: #86efac; font-size: 13px; font-weight: 600;
+  margin-bottom: 20px;
+}
+
 .login-return-row {
   display: flex; gap: 8px; align-items: center;
 }
@@ -2065,6 +2108,45 @@ body {
       </div>
     </div>
 
+    <!-- ===== STATE: CODE VERIFY / REVEAL ===== -->
+    <div class="login-state" id="login-state-code">
+
+      <!-- Sub-panel A: entering code to verify -->
+      <div class="login-code-wrap" id="code-wrap-verify">
+        <span class="login-code-icon">🔐</span>
+        <div class="login-code-title">Enter Your Access Code</div>
+        <p class="login-code-body">Enter the 4-digit code assigned to your account to confirm it's you.</p>
+        <div class="code-inputs">
+          <input class="code-input-box" id="code-d1" type="text" inputmode="numeric" maxlength="1">
+          <input class="code-input-box" id="code-d2" type="text" inputmode="numeric" maxlength="1">
+          <input class="code-input-box" id="code-d3" type="text" inputmode="numeric" maxlength="1">
+          <input class="code-input-box" id="code-d4" type="text" inputmode="numeric" maxlength="1">
+        </div>
+        <div class="code-error-msg" id="code-error-msg"></div>
+        <button class="btn btn-primary" onclick="submitCode()">Verify &amp; Continue →</button>
+        <div style="margin-top:14px">
+          <button class="login-pending-back" onclick="setLoginState('form')">← Back</button>
+        </div>
+      </div>
+
+      <!-- Sub-panel B: showing a new user their generated code -->
+      <div class="login-code-wrap" id="code-wrap-reveal" style="display:none">
+        <span class="login-code-icon">🎉</span>
+        <div class="login-code-title">Your Access Code</div>
+        <p class="login-code-body">This unique 4-digit code has been logged to your account on the learner spreadsheet. <strong style="color:rgba(255,255,255,0.8)">Save it — you'll need it every time you log in.</strong></p>
+        <div class="code-reveal-badge">🔒 Logged on the Learner Spreadsheet</div>
+        <div class="code-display">
+          <div class="code-digit" id="cd-1">-</div>
+          <div class="code-digit" id="cd-2">-</div>
+          <div class="code-digit" id="cd-3">-</div>
+          <div class="code-digit" id="cd-4">-</div>
+        </div>
+        <p style="color:rgba(255,255,255,0.4);font-size:12px;margin-bottom:20px">Your trainer can see this code on the Learner Summary sheet.</p>
+        <button class="btn btn-primary" onclick="setLoginState('pending')">I've saved my code →</button>
+      </div>
+
+    </div>
+
   </div>
 </div>
 
@@ -3578,7 +3660,7 @@ function updateSheetsStatus(connected) {
 
 // ===== LOGIN STATE MANAGER =====
 function setLoginState(state, opts = {}) {
-  ['form', 'loading', 'pending'].forEach(s => {
+  ['form', 'loading', 'pending', 'code'].forEach(s => {
     document.getElementById(`login-state-${s}`)?.classList.remove('active');
   });
   document.getElementById(`login-state-${state}`)?.classList.add('active');
@@ -3595,6 +3677,101 @@ function setLoginState(state, opts = {}) {
     if (body && opts.isNew) body.textContent = 'Thanks for registering to use our Accounting Simulator — your onboarding specialist will approve your access. Please notify us so we can assure you can begin accessing the training sim.';
     if (body && !opts.isNew) body.textContent = 'Your account has been registered but is still awaiting approval. Please contact your onboarding specialist to confirm access has been enabled.';
   }
+  if (state === 'code') {
+    // Show verify sub-panel or reveal sub-panel
+    const verify = document.getElementById('code-wrap-verify');
+    const reveal = document.getElementById('code-wrap-reveal');
+    if (opts.revealCode) {
+      // Show the generated code to a new user
+      if (verify) verify.style.display = 'none';
+      if (reveal) reveal.style.display = 'block';
+      const digits = String(opts.revealCode).padStart(4,'0').split('');
+      ['cd-1','cd-2','cd-3','cd-4'].forEach((id, i) => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = digits[i] || '-';
+      });
+    } else {
+      // Show the code entry verification panel
+      if (verify) verify.style.display = 'block';
+      if (reveal) reveal.style.display = 'none';
+      // Clear inputs + error
+      ['code-d1','code-d2','code-d3','code-d4'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) { el.value = ''; el.classList.remove('error'); }
+      });
+      const errEl = document.getElementById('code-error-msg');
+      if (errEl) errEl.textContent = '';
+      setTimeout(() => document.getElementById('code-d1')?.focus(), 100);
+    }
+  }
+}
+
+// ===== 4-DIGIT CODE VERIFICATION STATE =====
+let _codeVerifyState = { email: '', name: '', company: '', pendingUser: null };
+
+// Keyboard auto-advance for the 4 code input boxes
+document.addEventListener('DOMContentLoaded', () => {
+  const ids = ['code-d1','code-d2','code-d3','code-d4'];
+  ids.forEach((id, i) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.addEventListener('input', () => {
+      el.value = el.value.replace(/\D/g, '').slice(-1); // digits only
+      if (el.value && i < ids.length - 1) {
+        document.getElementById(ids[i + 1])?.focus();
+      }
+    });
+    el.addEventListener('keydown', e => {
+      if (e.key === 'Backspace' && !el.value && i > 0) {
+        document.getElementById(ids[i - 1])?.focus();
+      }
+      if (e.key === 'Enter') submitCode();
+    });
+  });
+});
+
+async function submitCode() {
+  const digits = ['code-d1','code-d2','code-d3','code-d4'].map(id => document.getElementById(id)?.value || '');
+  if (digits.some(d => d === '')) {
+    showCodeError('Please enter all 4 digits.'); return;
+  }
+  const code = digits.join('');
+  const email = _codeVerifyState.email;
+  if (!email) { setLoginState('form'); return; }
+
+  setLoginState('loading', { text: 'Verifying your access code…' });
+  const result = await callSheetsGet({ action: 'verifyCode', email, code });
+
+  if (!result) {
+    // Sheets not reachable — allow through on local fallback
+    console.warn('Sheets unavailable — skipping code check');
+    _finaliseLogin(_codeVerifyState.pendingUser, _codeVerifyState.pendingProgress);
+    return;
+  }
+
+  if (result.status === 'verified') {
+    _finaliseLogin(_codeVerifyState.pendingUser, _codeVerifyState.pendingProgress);
+  } else {
+    setLoginState('code');
+    showCodeError('Incorrect code. Please try again or contact your trainer.');
+  }
+}
+
+function showCodeError(msg) {
+  const errEl = document.getElementById('code-error-msg');
+  if (errEl) errEl.textContent = msg;
+  ['code-d1','code-d2','code-d3','code-d4'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) { el.classList.add('error'); setTimeout(() => el.classList.remove('error'), 600); }
+  });
+}
+
+function _finaliseLogin(user, progress) {
+  state.user = user;
+  initProgress();
+  if (progress) restoreProgressFromSnapshot(progress);
+  saveLocal();
+  launchApp();
 }
 
 // ===== SHEETS GET (readable, for login/register) =====
@@ -3673,21 +3850,24 @@ async function startApp() {
   }
 
   if (result.status === 'approved') {
-    // Returning approved user — restore their progress from server
-    state.user = {
+    // Existing approved user — send to code verification before launching
+    const user = {
       name:      result.user?.name    || name,
       email:     result.user?.email   || email,
       company:   result.user?.company || company,
       id:        result.user?.id      || ('U_' + btoa(email).replace(/=/g,'').slice(0, 12)),
       startedAt: new Date().toISOString()
     };
-    initProgress();
-    if (result.progress) restoreProgressFromSnapshot(result.progress);
-    saveLocal();
-    launchApp();
+    _codeVerifyState = { email: user.email, pendingUser: user, pendingProgress: result.progress || null };
+    setLoginState('code');
   } else if (result.status === 'pending') {
     // Registered but not yet approved
-    setLoginState('pending', { isNew: !result.existing });
+    if (!result.existing && result.code) {
+      // Brand new user — show them their generated code first
+      setLoginState('code', { revealCode: result.code });
+    } else {
+      setLoginState('pending', { isNew: !result.existing });
+    }
   } else {
     alert('Something went wrong. Please try again.');
     setLoginState('form');
@@ -3725,17 +3905,15 @@ async function returnLogin() {
   }
 
   if (result.status === 'approved') {
-    state.user = {
+    const user = {
       name:      result.user?.name    || email,
       email:     result.user?.email   || email,
       company:   result.user?.company || '',
       id:        result.user?.id      || ('U_' + btoa(email).replace(/=/g,'').slice(0, 12)),
       startedAt: new Date().toISOString()
     };
-    initProgress();
-    if (result.progress) restoreProgressFromSnapshot(result.progress);
-    saveLocal();
-    launchApp();
+    _codeVerifyState = { email: user.email, pendingUser: user, pendingProgress: result.progress || null };
+    setLoginState('code');
   } else if (result.status === 'pending') {
     setLoginState('pending', { isNew: false });
   } else if (result.status === 'not_found') {
@@ -6549,7 +6727,7 @@ const EVENTS_TAB   = 'Activity Log';
 
 // ── Columns for Learner Summary (1-indexed) ──────────────────────────
 // A=1 Timestamp | B=2 Learner ID | C=3 Name | D=4 Email | E=5 Company
-// F=6 Approved  | G=7 Progress JSON | H=8 Last Active
+// F=6 Approved  | G=7 Progress JSON | H=8 Last Active | I=9 Access Code
 
 function doGet(e) {
   const action = e.parameter.action || '';
@@ -6561,6 +6739,8 @@ function doGet(e) {
       result = handleRegister(ss, e.parameter);
     } else if (action === 'login') {
       result = handleLogin(ss, e.parameter);
+    } else if (action === 'verifyCode') {
+      result = handleVerifyCode(ss, e.parameter);
     } else {
       result = { status: 'ok' };
     }
@@ -6600,11 +6780,12 @@ function ensureLearnerSheet(ss) {
   let sheet = ss.getSheetByName(LEARNERS_TAB);
   if (!sheet) {
     sheet = ss.insertSheet(LEARNERS_TAB);
-    const headers = ['Timestamp','Learner ID','Name','Email','Company','Approved','Progress JSON','Last Active'];
+    const headers = ['Timestamp','Learner ID','Name','Email','Company','Approved','Progress JSON','Last Active','Access Code'];
     sheet.appendRow(headers);
     sheet.getRange(1, 1, 1, headers.length).setFontWeight('bold').setBackground('#12152A').setFontColor('#ffffff');
     sheet.setColumnWidth(6, 100); // Approved column
     sheet.setColumnWidth(7, 40);  // Progress JSON (keep narrow — it's large)
+    sheet.setColumnWidth(9, 100); // Access Code
   }
   return sheet;
 }
@@ -6668,8 +6849,9 @@ function handleRegister(ss, params) {
     };
   }
 
-  // New user — add row with Approved = FALSE
+  // New user — add row with Approved = FALSE and a generated 4-digit access code
   const userId = 'U_' + Utilities.base64Encode(email).replace(/=/g,'').slice(0, 12);
+  const accessCode = String(Math.floor(1000 + Math.random() * 9000)); // 4-digit: 1000–9999
   sheet.appendRow([
     new Date().toISOString(), // A Timestamp
     userId,                   // B Learner ID
@@ -6678,10 +6860,11 @@ function handleRegister(ss, params) {
     company,                  // E Company
     false,                    // F Approved  ← trainer sets this to TRUE in the sheet
     '',                       // G Progress JSON
-    new Date().toISOString()  // H Last Active
+    new Date().toISOString(), // H Last Active
+    accessCode                // I Access Code ← shown to learner once, logged here
   ]);
 
-  return { status: 'pending', existing: false };
+  return { status: 'pending', existing: false, code: accessCode };
 }
 
 // ── LOGIN: called on returning-user email-only login ──────────────────
@@ -6746,6 +6929,24 @@ function handleLogEvent(ss, data) {
   }
 
   return { status: 'logged' };
+}
+
+// ── VERIFY CODE: confirms the 4-digit code matches what's stored ──────
+function handleVerifyCode(ss, params) {
+  const sheet = ensureLearnerSheet(ss);
+  const email = (params.email || '').trim();
+  const code  = (params.code  || '').trim();
+  if (!email || !code) return { status: 'error', message: 'Email and code required' };
+
+  const existing = findLearner(sheet, email);
+  if (!existing) return { status: 'not_found' };
+
+  const storedCode = String(existing.data[8] || '').trim(); // column I (index 8)
+  if (storedCode === code) {
+    return { status: 'verified' };
+  } else {
+    return { status: 'invalid_code' };
+  }
 }
 
 =======================================================================
