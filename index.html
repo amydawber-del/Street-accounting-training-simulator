@@ -5124,7 +5124,6 @@ const BANK_STATEMENTS = {
     label: 'November — {AGENCY} Client Account (Recon Round 1)',
     scenario: 'Matches the Recon Trainer Round 1: Prof. Aaron Bailey £1,400, Mr. Dan Anderson £1,800, Mr. Jason Walker £1,200 rents + Manchester Heating Solutions boiler repair + Prof. Scarlett Cooper net landlord payment (rent minus repair) + Prof. Fred Watson landlord payment + Prof. Mandy Price deposit refund + bank charge.',
     csv: `Date,Reference,Payee,Credit (£),Debit (£)
-01/11/2024,OB-001,Opening Balance - {AGENCY} Client Account,12450.00,
 04/11/2024,TFR-48821,Prof. Aaron Bailey - 268 Greenleach Lane (Ref TvLE84DkIQ),1400.00,
 05/11/2024,TFR-48822,Mr. Dan Anderson - 20 Vicars Street Eccles (Ref HzAN6GirLG),1800.00,
 06/11/2024,TFR-48823,Mr. Jason Walker - 142 Ladymere Drive (Ref aKRzQbqY27),1200.00,
@@ -5132,29 +5131,25 @@ const BANK_STATEMENTS = {
 15/11/2024,PAY-22042,Prof. Scarlett Cooper - Nov Landlord Payment (net of repair),,778.40
 22/11/2024,PAY-22043,Prof. Fred Watson - Nov Landlord Payment,,1540.80
 25/11/2024,PAY-22044,Prof. Mandy Price - Deposit Refund 38 Partington Street,,1920.00
-30/11/2024,BGC-00112,Bank Service Charge - November,,15.00
-30/11/2024,CLOSING,Closing Balance - £12175.80,,`
+30/11/2024,BGC-00112,Bank Service Charge - November,,15.00`
   },
   recon_round2: {
     filename: 'December_Bank_Statement_JBS_Recon_Round2.csv',
     label: 'December — {AGENCY} Client Account (Recon Round 2)',
     scenario: 'Matches the Recon Trainer Round 2: Dr. Sienna Knight £2,600, Mrs. Sasha Stevens £2,300, Dr. Elliott Taylor £1,700 rents + Worsley Electrical emergency repair + Mrs. Alexandra Scott landlord payment + Mrs. Sarah Price landlord payment.',
     csv: `Date,Reference,Payee,Credit (£),Debit (£)
-01/12/2024,OB-001,Opening Balance - {AGENCY} Client Account,12175.80,
 02/12/2024,TFR-51201,Dr. Sienna Knight - 222 Manchester Road (Ref cgMZoDISq2),2600.00,
 03/12/2024,TFR-51202,Mrs. Sasha Stevens - 210 Cliftonville Drive (Ref Je0j75Xebe),2300.00,
 04/12/2024,TFR-51203,Dr. Elliott Taylor - 270 Leigh Road (Ref LLETg7lIgQ),1700.00,
 10/12/2024,PAY-24101,Worsley Electrical Ltd - Emergency Repair 222 Manchester Road,,180.00
 20/12/2024,PAY-24102,Mrs. Alexandra Scott - Dec Landlord Payment,,2225.60
-20/12/2024,PAY-24103,Mrs. Sarah Price - Dec Landlord Payment,,1968.80
-31/12/2024,CLOSING,Closing Balance - £14401.40,,`
+20/12/2024,PAY-24103,Mrs. Sarah Price - Dec Landlord Payment,,1968.80`
   },
   module9: {
     filename: 'October_Bank_Statement_JBS_Module9_Reconciliation.csv',
     label: 'October — {AGENCY} Client Account (Module 9 Reconciliation)',
     scenario: 'Bank closing balance: £18,750.00. Street system balance: £18,900.00. The £150.00 difference is the bank service charge on the final line — it exists on the real bank statement but has NOT yet been posted in Street. Find it and post it to complete the reconciliation.',
     csv: `Date,Reference,Payee,Credit (£),Debit (£)
-01/10/2024,OB-001,Opening Balance - {AGENCY} Client Account,17040.00,
 03/10/2024,TFR-46001,Prof. Aaron Bailey - 268 Greenleach Lane Oct Rent (Ref TvLE84DkIQ),1400.00,
 03/10/2024,TFR-46002,Mr. Dan Anderson - 20 Vicars Street Oct Rent (Ref HzAN6GirLG),1800.00,
 04/10/2024,TFR-46003,Mr. Jason Walker - 142 Ladymere Drive Oct Rent (Ref aKRzQbqY27),1200.00,
@@ -5165,15 +5160,13 @@ const BANK_STATEMENTS = {
 25/10/2024,PAY-20843,Dr. Eleanor Rogers - Oct Landlord Payment,,2396.80
 25/10/2024,PAY-20844,Mr. Danielle Walker - Oct Landlord Payment,,1284.00
 25/10/2024,PAY-20845,Prof. Fred Watson - Oct Landlord Payment,,1540.80
-31/10/2024,BGC-00098,Bank Service Charge - October — POST THIS IN STREET (missing £150),,150.00
-31/10/2024,CLOSING,Bank Closing Balance £18750.00 — Street shows £18900.00 — difference is the charge above,,`
+31/10/2024,BGC-00098,Bank Service Charge - October — POST THIS IN STREET (missing £150),,150.00`
   },
   module13: {
     filename: 'November_Bank_Statement_JBS_Module13_EndOfMonth.csv',
     label: 'November — {AGENCY} Client Account (Module 13 End-of-Month)',
     scenario: 'Complete November statement for {AGENCY} month-end close. 4 rent receipts including Jason Walker partial (£1,100 of £1,200 due). Contractor invoice from Manchester Heating Solutions £336 inc VAT. 3 landlord payments at correct net amounts. Miss Tiffany Ward held (partial payment). Bank service charge.',
     csv: `Date,Reference,Payee,Credit (£),Debit (£)
-01/11/2024,OB-001,Opening Balance - {AGENCY} Client Account,11200.00,
 04/11/2024,TFR-48901,Prof. Aaron Bailey - 268 Greenleach Lane (Ref TvLE84DkIQ),1400.00,
 05/11/2024,TFR-48902,Mr. Elsie White - 6 Woodside Avenue (Ref 01WSb7mPbS),2900.00,
 06/11/2024,TFR-48903,Mr. Jason Walker - 142 Ladymere Drive PARTIAL (Ref aKRzQbqY27),1100.00,
@@ -5182,69 +5175,59 @@ const BANK_STATEMENTS = {
 25/11/2024,PAY-22882,Prof. Scarlett Cooper - Nov Net Payment (after boiler repair),,862.40
 25/11/2024,PAY-22883,Dr. Dave Bennett - Nov Net Payment (after renewal fee),,2374.40
 25/11/2024,PAY-22884,Prof. Fred Watson - Nov Net Payment,,1540.80
-30/11/2024,BGC-00115,Bank Service Charge - November,,15.00
-30/11/2024,CLOSING,Closing Balance - £13271.40,,`
+30/11/2024,BGC-00115,Bank Service Charge - November,,15.00`
   },
   module5: {
     filename: 'October_Rent_Receipts_JBS_Module5_ImportPractice.csv',
     label: 'October — {AGENCY} Client Account (Module 5 — Import & Allocate)',
     scenario: 'Use this statement to practise the full Import → Reconcile → Allocate flow. Three rent receipts have arrived: Prof. Aaron Bailey £1,400, Mr. Dan Anderson £1,800, and Mr. Jason Walker £1,200. Import the CSV into Street via Accounting → Bank Accounts → Import Statement, then reconcile and allocate each receipt.',
     csv: `Date,Reference,Payee,Credit (£),Debit (£)
-01/10/2024,OB-001,Opening Balance - {AGENCY} Client Account,9800.00,
 03/10/2024,TFR-46001,Prof. Aaron Bailey - 268 Greenleach Lane Oct Rent (Ref TvLE84DkIQ),1400.00,
 04/10/2024,TFR-46002,Mr. Dan Anderson - 20 Vicars Street Oct Rent (Ref HzAN6GirLG),1800.00,
-05/10/2024,TFR-46003,Mr. Jason Walker - 142 Ladymere Drive Oct Rent (Ref aKRzQbqY27),1200.00,
-31/10/2024,CLOSING,Closing Balance - £14200.00,,`
+05/10/2024,TFR-46003,Mr. Jason Walker - 142 Ladymere Drive Oct Rent (Ref aKRzQbqY27),1200.00`
   },
   module6: {
     filename: 'October_Statement_JBS_Module6_Charges.csv',
     label: 'October — {AGENCY} Client Account (Module 6 — Fees & Charges)',
     scenario: 'This statement shows rent received plus the agency management fee deductions already posted in Street. Compare the gross rent receipts against the net landlord amounts to see the fee calculation in action. Use alongside the charges workflow to confirm each deduction is correctly recorded.',
     csv: `Date,Reference,Payee,Credit (£),Debit (£)
-01/10/2024,OB-001,Opening Balance - {AGENCY} Client Account,9800.00,
 03/10/2024,TFR-46001,Prof. Aaron Bailey - 268 Greenleach Lane Oct Rent (Ref TvLE84DkIQ),1400.00,
 03/10/2024,FEE-46001,Management Fee 12% + VAT - Prof. Aaron Bailey Oct,,201.60
 04/10/2024,TFR-46002,Mr. Dan Anderson - 20 Vicars Street Oct Rent (Ref HzAN6GirLG),1800.00,
 04/10/2024,FEE-46002,Management Fee 12% + VAT - Mr. Dan Anderson Oct,,259.20
 05/10/2024,TFR-46003,Dr. Sienna Knight - 222 Manchester Road Oct Rent (Ref cgMZoDISq2),2600.00,
-05/10/2024,FEE-46003,Management Fee 12% + VAT - Dr. Sienna Knight Oct,,374.40
-31/10/2024,CLOSING,Closing Balance - £14265.80,,`
+05/10/2024,FEE-46003,Management Fee 12% + VAT - Dr. Sienna Knight Oct,,374.40`
   },
   module10: {
     filename: 'September_Bank_Statement_JBS_Module10_Suspense.csv',
     label: 'September — {AGENCY} Client Account (Module 10 — Suspense Account)',
     scenario: 'This statement contains a mystery payment of £975 with the reference "RENT SEP" — not enough to match any tenancy automatically. On the Reconcile page, click \'more\' → \'add to suspense account\' to hold it there while you investigate. Then navigate to Accounting → Bank Accounts → View Suspense Account to find it, contact the tenant to confirm identity, and use the Transfer button to move it to the correct tenancy once identified. Also note the bank charge that is easy to miss.',
     csv: `Date,Reference,Payee,Credit (£),Debit (£)
-01/09/2024,OB-001,Opening Balance - {AGENCY} Client Account,8420.00,
 02/09/2024,TFR-43001,Prof. Aaron Bailey - 268 Greenleach Lane (Ref TvLE84DkIQ),1400.00,
 03/09/2024,TFR-43002,Mr. Dan Anderson - 20 Vicars Street (Ref HzAN6GirLG),1800.00,
 05/09/2024,TFR-43003,RENT SEP - 975.00 - UNKNOWN REF,975.00,
 08/09/2024,TFR-43004,Dr. Sienna Knight - 222 Manchester Rd (Ref cgMZoDISq2),2600.00,
 25/09/2024,PAY-20011,Prof. Scarlett Cooper - Sep Landlord Payment,,1198.40
 25/09/2024,PAY-20012,Mrs. Alexandra Scott - Sep Landlord Payment,,2225.60
-30/09/2024,BGC-00089,Bank Service Charge - September,,15.00
-30/09/2024,CLOSING,Closing Balance - £11756.00,,`
+30/09/2024,BGC-00089,Bank Service Charge - September,,15.00`
   },
   module11: {
     filename: 'August_Statement_JBS_Module11_Deposits.csv',
     label: 'August — {AGENCY} Client Account (Module 11 — Deposits)',
     scenario: 'This statement covers a full deposit lifecycle: Prof. Mandy Price paid a £1,920 deposit on move-in (must be protected within 30 days), and at end of tenancy a net refund of £1,620 is paid back (£300 deduction for cleaning agreed). Practice recording the deposit receipt, protecting it with TDS, posting the deduction, and processing the refund.',
     csv: `Date,Reference,Payee,Credit (£),Debit (£)
-01/08/2024,OB-001,Opening Balance - {AGENCY} Client Account,7200.00,
 02/08/2024,DEP-38001,Prof. Mandy Price - Deposit 38 Partington Street (Ref PMP-001),1920.00,
 03/08/2024,TFR-38001,Prof. Aaron Bailey - 268 Greenleach Lane Aug Rent (Ref TvLE84DkIQ),1400.00,
 04/08/2024,TFR-38002,Mr. Dan Anderson - 20 Vicars Street Aug Rent (Ref HzAN6GirLG),1800.00,
 25/08/2024,PAY-19001,Prof. Scarlett Cooper - Aug Landlord Payment,,1198.40
 25/08/2024,PAY-19002,Mr. Danielle Walker - Aug Landlord Payment,,1284.00
-28/08/2024,DEP-REFUND,Prof. Mandy Price - Deposit Refund (net of £300 deduction),,1620.00
-31/08/2024,CLOSING,Closing Balance - £8217.60,,`
+28/08/2024,DEP-REFUND,Prof. Mandy Price - Deposit Refund (net of £300 deduction),,1620.00`
   },
   capstone: {
     filename: 'November_Bank_Statement_JBS_Capstone.csv',
     label: 'November — {AGENCY} Client Account (Capstone)',
     scenario: 'Full November for the {AGENCY} capstone. 4 rent receipts (Jason Walker partial £1,100; Dr. Dylan Butler NO payment — 2nd month arrears). Manchester Heating Solutions contractor invoice. 3 landlord payments processed (Miss Tiffany Ward held, Dr. Eleanor Rogers arrears decision pending). Bank charge.',
     csv: `Date,Reference,Payee,Credit (£),Debit (£)
-01/11/2024,OB-001,Opening Balance - {AGENCY} Client Account,9800.00,
 04/11/2024,TFR-49001,Prof. Aaron Bailey - 268 Greenleach Lane £1400 (Ref TvLE84DkIQ),1400.00,
 05/11/2024,TFR-49002,Mr. Elsie White - 6 Woodside Avenue £2900 early (Ref 01WSb7mPbS),2900.00,
 06/11/2024,TFR-49003,Mr. Jason Walker - 142 Ladymere Drive PARTIAL £1100 (Ref aKRzQbqY27),1100.00,
@@ -5253,8 +5236,7 @@ const BANK_STATEMENTS = {
 25/11/2024,PAY-23002,Prof. Scarlett Cooper - Nov Net Payment (after repair),,862.40
 25/11/2024,PAY-23003,Dr. Dave Bennett - Nov Net Payment (after renewal fee),,2374.40
 25/11/2024,PAY-23004,Prof. Fred Watson - Nov Net Payment,,1540.80
-30/11/2024,BGC-00117,Bank Service Charge - November,,12.00
-30/11/2024,CLOSING,Closing Balance - £11874.40,,`
+30/11/2024,BGC-00117,Bank Service Charge - November,,12.00`
   }
 };
 
