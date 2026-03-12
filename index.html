@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Street Advanced Accounting Learning Simulator</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
 :root {
@@ -5485,66 +5484,183 @@ function downloadDemoInvoice(id) {
   const inv = DEMO_INVOICES[id];
   if (!inv) return;
 
-  // Create a hidden iframe to render the invoice HTML cleanly
-  const iframe = document.createElement('iframe');
-  iframe.style.cssText = 'position:fixed;left:-9999px;top:-9999px;width:820px;height:1160px;border:none;visibility:hidden';
-  document.body.appendChild(iframe);
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
 
-  const html = generateInvoiceHTML(inv);
-  iframe.contentDocument.open();
-  iframe.contentDocument.write(html);
-  iframe.contentDocument.close();
+  const PW = 210, PH = 297;
+  const ML = 15, MR = 15, MT = 15;
+  const CW = PW - ML - MR; // usable width = 180mm
+  let y = MT;
 
-  // Show a brief loading indicator on the button
-  const btn = document.querySelector(`button[onclick="downloadDemoInvoice('${id}')"]`);
-  const origText = btn ? btn.innerHTML : null;
-  if (btn) btn.innerHTML = '⏳ Generating PDF…';
+  // ── Helpers ───────────────────────────────────────────────────────────
+  function txt(text, x, yPos, opts) {
+    doc.text(String(text || ''), x, yPos, opts || {});
+  }
+  function line(y1, x1, x2) {
+    doc.line(x1 !== undefined ? x1 : ML, y1, x2 !== undefined ? x2 : PW - MR, y1);
+  }
+  function setFont(style, size, color) {
+    doc.setFont('helvetica', style || 'normal');
+    doc.setFontSize(size || 10);
+    const c = color || [26, 26, 26];
+    doc.setTextColor(c[0], c[1], c[2]);
+  }
 
-  setTimeout(() => {
-    const { jsPDF } = window.jspdf;
-    const invoiceEl = iframe.contentDocument.body;
+  // ── Purple accent bar at top ───────────────────────────────────────────
+  doc.setFillColor(91, 75, 231);
+  doc.rect(ML, y, CW, 1, 'F');
+  y += 6;
 
-    html2canvas(invoiceEl, {
-      scale: 2,
-      useCORS: true,
-      backgroundColor: '#ffffff',
-      width: 820,
-      windowWidth: 820
-    }).then(canvas => {
-      const imgData = canvas.toDataURL('image/jpeg', 0.95);
-      const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
-      const pdfW = pdf.internal.pageSize.getWidth();
-      const pdfH = pdf.internal.pageSize.getHeight();
-      const ratio = canvas.height / canvas.width;
-      const imgH = pdfW * ratio;
+  // ── Header: company name (left) + INVOICE title (right) ───────────────
+  setFont('bold', 16, [91, 75, 231]);
+  txt(inv.contractor, ML, y);
 
-      if (imgH <= pdfH) {
-        pdf.addImage(imgData, 'JPEG', 0, 0, pdfW, imgH);
-      } else {
-        // Multi-page: slice canvas into A4-height chunks
-        const pageHeightPx = canvas.width * (pdfH / pdfW);
-        let yOffset = 0;
-        while (yOffset < canvas.height) {
-          const sliceCanvas = document.createElement('canvas');
-          sliceCanvas.width = canvas.width;
-          sliceCanvas.height = Math.min(pageHeightPx, canvas.height - yOffset);
-          const ctx = sliceCanvas.getContext('2d');
-          ctx.drawImage(canvas, 0, -yOffset);
-          if (yOffset > 0) pdf.addPage();
-          pdf.addImage(sliceCanvas.toDataURL('image/jpeg', 0.95), 'JPEG', 0, 0, pdfW, pdfH * (sliceCanvas.height / pageHeightPx));
-          yOffset += pageHeightPx;
-        }
-      }
+  setFont('normal', 22, [180, 180, 180]);
+  txt('INVOICE', PW - MR, y, { align: 'right' });
+  y += 5;
 
-      pdf.save(inv.filename);
-      document.body.removeChild(iframe);
-      if (btn && origText) btn.innerHTML = origText;
-    }).catch(() => {
-      document.body.removeChild(iframe);
-      if (btn && origText) btn.innerHTML = origText;
-      alert('PDF generation failed. Please try again.');
-    });
-  }, 400); // wait for iframe fonts/styles to load
+  setFont('normal', 8, [100, 100, 100]);
+  const coLines = [inv.address, `Tel: ${inv.phone}`, inv.email, `VAT Reg: ${inv.vatReg}  |  Co No: ${inv.companyNo}`];
+  coLines.forEach(l => { txt(l, ML, y); y += 4; });
+
+  // Invoice number / status (right-aligned, alongside co details)
+  const rightColX = PW - MR;
+  let ry = MT + 11;
+  setFont('bold', 11, [91, 75, 231]);
+  txt(`#${inv.invoiceNum}`, rightColX, ry, { align: 'right' }); ry += 5;
+
+  // Status badge (drawn as filled rect + white text)
+  const badgeW = 36, badgeH = 5.5;
+  doc.setFillColor(240, 240, 255);
+  doc.setDrawColor(91, 75, 231);
+  doc.roundedRect(rightColX - badgeW, ry - 4, badgeW, badgeH, 1.5, 1.5, 'FD');
+  setFont('bold', 7, [91, 75, 231]);
+  txt('AWAITING PAYMENT', rightColX - badgeW / 2, ry - 0.5, { align: 'center' });
+  ry += 7;
+
+  setFont('normal', 8, [100, 100, 100]);
+  txt(`Invoice Date: ${inv.date}`, rightColX, ry, { align: 'right' }); ry += 4;
+  txt(`Payment Due:  ${inv.due}`, rightColX, ry, { align: 'right' });
+
+  y += 4;
+  doc.setDrawColor(220, 220, 220);
+  line(y);
+  y += 7;
+
+  // ── Bill To / Work Details grid ────────────────────────────────────────
+  const colMid = ML + CW / 2 + 5;
+  setFont('bold', 7, [160, 160, 160]);
+  txt('INVOICE TO', ML, y);
+  txt('WORK DETAILS', colMid, y);
+  y += 5;
+
+  setFont('bold', 9, [26, 26, 26]);
+  txt('[Your Agency Name]', ML, y);
+  txt(inv.lines[0].desc.split('\n')[0], colMid, y);
+  y += 4;
+
+  setFont('normal', 8, [80, 80, 80]);
+  txt('Property Management', ML, y);
+  setFont('normal', 8, [80, 80, 80]);
+  txt(`Date of Work: ${inv.workDate}`, colMid, y); y += 4;
+  txt(`Re: ${inv.property}`, ML, y);
+  txt(`Property: ${inv.property}`, colMid, y); y += 4;
+  txt(`Landlord: ${inv.landlord}`, ML, y);
+  txt(`Invoice Ref: ${inv.invoiceNum}`, colMid, y); y += 4;
+  if (inv.workOrder !== 'N/A') {
+    setFont('bold', 8, [67, 56, 196]);
+    txt(`Work Order: #${inv.workOrder}`, ML, y);
+  }
+  y += 8;
+
+  // ── Line items table ───────────────────────────────────────────────────
+  // Header row
+  doc.setFillColor(248, 248, 248);
+  doc.rect(ML, y - 4, CW, 7, 'F');
+  setFont('bold', 8, [120, 120, 120]);
+  const descW = CW * 0.55;
+  txt('DESCRIPTION',       ML + 2, y);
+  txt('QTY',               ML + descW + 2, y, { align: 'center' });
+  txt('UNIT PRICE',        ML + descW + 30, y, { align: 'right' });
+  txt('AMOUNT',            ML + CW - 2, y, { align: 'right' });
+  y += 4;
+  doc.setDrawColor(230, 230, 230);
+  line(y);
+  y += 5;
+
+  // Data rows
+  inv.lines.forEach(l => {
+    const descLines = l.desc.split('\n');
+    setFont('normal', 9, [26, 26, 26]);
+    txt(descLines[0], ML + 2, y);
+    txt(l.qty,        ML + descW + 2, y, { align: 'center' });
+    txt(l.unit,       ML + descW + 30, y, { align: 'right' });
+    setFont('bold', 9, [26, 26, 26]);
+    txt(l.total,      ML + CW - 2, y, { align: 'right' });
+    if (descLines[1]) {
+      setFont('normal', 7.5, [140, 140, 140]);
+      txt(descLines[1], ML + 2, y + 4);
+      y += 4;
+    }
+    y += 6;
+    doc.setDrawColor(240, 240, 240);
+    line(y - 2);
+  });
+
+  y += 4;
+
+  // ── Totals block (right-aligned) ───────────────────────────────────────
+  const totX = ML + CW * 0.62;
+  const totW = CW * 0.38;
+
+  function totRow(label, val, bold, bigPurple) {
+    if (bigPurple) {
+      doc.setFillColor(91, 75, 231);
+      doc.rect(totX, y - 4.5, totW, 8, 'F');
+      setFont('bold', 11, [255, 255, 255]);
+      txt(label, totX + 3, y);
+      txt(val, ML + CW - 2, y, { align: 'right' });
+    } else {
+      setFont(bold ? 'bold' : 'normal', 9, [80, 80, 80]);
+      txt(label, totX + 3, y);
+      setFont(bold ? 'bold' : 'normal', 9, [26, 26, 26]);
+      txt(val, ML + CW - 2, y, { align: 'right' });
+    }
+    y += bold ? 7 : 6;
+    if (!bigPurple) { doc.setDrawColor(240, 240, 240); line(y - 2, totX, ML + CW); }
+  }
+
+  totRow('Subtotal (net)', inv.net);
+  totRow('VAT @ 20%', inv.vat);
+  y += 2;
+  totRow('Total Due', inv.total, true, true);
+  y += 6;
+
+  // ── Bank payment details ───────────────────────────────────────────────
+  doc.setFillColor(249, 248, 255);
+  doc.setDrawColor(200, 195, 255);
+  const bankH = 18;
+  doc.roundedRect(ML, y, CW, bankH, 2, 2, 'FD');
+  y += 5;
+  setFont('bold', 8, [50, 50, 50]);
+  txt('Payment via BACS:', ML + 4, y);
+  setFont('normal', 8, [80, 80, 80]);
+  txt(`Sort Code: ${inv.bankSort}  ·  Account: ${inv.bankAcc}`, ML + 38, y); y += 5;
+  txt(`Reference: `, ML + 4, y);
+  setFont('bold', 8, [26, 26, 26]);
+  txt(inv.invoiceNum, ML + 22, y);
+  setFont('normal', 8, [80, 80, 80]);
+  txt(`  ·  Payee: ${inv.contractor}`, ML + 22 + doc.getTextWidth(inv.invoiceNum), y); y += 5;
+  txt('Please quote invoice number as payment reference.', ML + 4, y);
+  y += 10;
+
+  // ── Footer ─────────────────────────────────────────────────────────────
+  doc.setDrawColor(220, 220, 220);
+  line(PH - 12);
+  setFont('normal', 7, [180, 180, 180]);
+  txt(`${inv.contractor}  ·  VAT Reg: ${inv.vatReg}  ·  All work subject to standard terms and conditions`, PW / 2, PH - 8, { align: 'center' });
+
+  doc.save(inv.filename);
 }
 
 function demoInvoiceCard(id) {
