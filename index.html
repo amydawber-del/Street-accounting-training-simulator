@@ -4571,12 +4571,41 @@ function toggleTask(mId, sId, taskId) {
   const sp = getScenarioProgress(mId, sId);
   const currentState = sp.tasks?.[taskId] || false;
   setTaskDone(mId, sId, taskId, !currentState);
-  renderStep(4, state.currentModule, state.currentScenario);
-  // Add to activity
+
+  // ── Targeted DOM update (no full re-render = no bounce animation) ──
   const m = MODULES.find(x => x.id === mId);
   const s = m?.scenarios.find(x => x.id === sId);
   const t = s?.tasks.find(x => x.id === taskId);
-  if (!currentState) {
+  const newState = !currentState;
+
+  // Toggle done class on the task item
+  const itemEl = document.getElementById('task-item-' + taskId);
+  if (itemEl) {
+    itemEl.classList.toggle('done', newState);
+  }
+
+  // Update progress bar + counter + proceed button
+  const spNow = getScenarioProgress(mId, sId);
+  const doneCount = s.tasks.filter(t2 => spNow.tasks?.[t2.id]).length;
+  const total = s.tasks.length;
+  const pct = Math.round((doneCount / total) * 100);
+
+  const miniFill = document.querySelector('#step-content .mini-fill');
+  if (miniFill) miniFill.style.width = pct + '%';
+  const miniLabel = document.querySelector('#step-content .mini-label');
+  if (miniLabel) miniLabel.textContent = pct + '%';
+
+  const countEl = document.querySelector('#step-content .card-header .text-sm.text-muted');
+  if (countEl) countEl.textContent = doneCount + '/' + total + ' complete';
+
+  const proceedBtn = document.querySelector('#step-content .card-footer .btn-primary');
+  if (proceedBtn) {
+    proceedBtn.disabled = doneCount === 0;
+    proceedBtn.style.opacity = doneCount === 0 ? '0.4' : '';
+  }
+
+  // Activity log
+  if (newState) {
     state.activity.unshift({ type: 'task', text: `Completed: ${t?.title}`, time: new Date().toISOString() });
     state.activity = state.activity.slice(0, 20);
     saveLocal();
