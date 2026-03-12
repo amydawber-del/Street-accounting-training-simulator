@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Street Advanced Accounting Learning Simulator</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
 :root {
   --navy: #12152A;
@@ -5290,7 +5292,7 @@ function bankStatementCard(id) {
 // ===== DEMO INVOICES =====
 const DEMO_INVOICES = {
   mhs_441: {
-    filename: 'Invoice_MHS-2024-441_Boiler_Repair_268_Greenleach_Lane.html',
+    filename: 'Invoice_MHS-2024-441_Boiler_Repair_268_Greenleach_Lane.pdf',
     label: 'Manchester Heating Solutions — Invoice #MHS-2024-441',
     scenario: 'M7: Post this invoice for the emergency boiler repair at 268 Greenleach Lane. Navigate to the property → Maintenance → Work Order #WO-441, then upload and post the invoice. Net: £280 + VAT (£56) = £336 total.',
     module: 'M7',
@@ -5314,7 +5316,7 @@ const DEMO_INVOICES = {
     phone: '0161 447 2288', email: 'info@manchesterheating.co.uk'
   },
   mhs_509: {
-    filename: 'Invoice_MHS-2024-509_Boiler_Service_268_Greenleach_Lane.html',
+    filename: 'Invoice_MHS-2024-509_Boiler_Service_268_Greenleach_Lane.pdf',
     label: 'Manchester Heating Solutions — Invoice #MHS-2024-509',
     scenario: 'M13: Post this second Manchester Heating Solutions invoice for a boiler service at the same property. This is the November invoice referenced in the Module 13 bank statement. Net: £280 + VAT (£56) = £336 total. Reference #WO-509.',
     module: 'M13',
@@ -5338,7 +5340,7 @@ const DEMO_INVOICES = {
     phone: '0161 447 2288', email: 'info@manchesterheating.co.uk'
   },
   worsley_electric: {
-    filename: 'Invoice_WEL-2024-188_Emergency_Repair_222_Manchester_Road.html',
+    filename: 'Invoice_WEL-2024-188_Emergency_Repair_222_Manchester_Road.pdf',
     label: 'Worsley Electrical Ltd — Invoice #WEL-2024-188',
     scenario: 'M15 Capstone: Post this invoice for the emergency electrical repair at 222 Manchester Road. Net: £150 + VAT (£30) = £180 total. Landlord: Mrs. Alexandra Scott. Confirm the debit on her ledger.',
     module: 'M15',
@@ -5362,7 +5364,7 @@ const DEMO_INVOICES = {
     phone: '0161 793 4410', email: 'billing@worsleyelectrical.co.uk'
   },
   inventory_fee: {
-    filename: 'Invoice_InventoryPro_INV-2024-773_38_Partington_Street.html',
+    filename: 'Invoice_InventoryPro_INV-2024-773_38_Partington_Street.pdf',
     label: 'InventoryPro Ltd — Invoice #INV-2024-773',
     scenario: 'M6: Post this inventory fee charge against Prof. Mandy Price\'s tenancy at 38 Partington Street. Navigate to the Landlord ledger → Add Charge → Inventory Fee. Net: £120 + VAT (£24) = £144 total.',
     module: 'M6',
@@ -5500,14 +5502,67 @@ function generateInvoiceHTML(inv) {
 function downloadDemoInvoice(id) {
   const inv = DEMO_INVOICES[id];
   if (!inv) return;
+
+  // Create a hidden iframe to render the invoice HTML cleanly
+  const iframe = document.createElement('iframe');
+  iframe.style.cssText = 'position:fixed;left:-9999px;top:-9999px;width:820px;height:1160px;border:none;visibility:hidden';
+  document.body.appendChild(iframe);
+
   const html = generateInvoiceHTML(inv);
-  const blob = new Blob([html], { type: 'text/html;charset=utf-8;' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = inv.filename;
-  a.click();
-  URL.revokeObjectURL(url);
+  iframe.contentDocument.open();
+  iframe.contentDocument.write(html);
+  iframe.contentDocument.close();
+
+  // Show a brief loading indicator on the button
+  const btn = document.querySelector(`button[onclick="downloadDemoInvoice('${id}')"]`);
+  const origText = btn ? btn.innerHTML : null;
+  if (btn) btn.innerHTML = '⏳ Generating PDF…';
+
+  setTimeout(() => {
+    const { jsPDF } = window.jspdf;
+    const invoiceEl = iframe.contentDocument.body;
+
+    html2canvas(invoiceEl, {
+      scale: 2,
+      useCORS: true,
+      backgroundColor: '#ffffff',
+      width: 820,
+      windowWidth: 820
+    }).then(canvas => {
+      const imgData = canvas.toDataURL('image/jpeg', 0.95);
+      const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+      const pdfW = pdf.internal.pageSize.getWidth();
+      const pdfH = pdf.internal.pageSize.getHeight();
+      const ratio = canvas.height / canvas.width;
+      const imgH = pdfW * ratio;
+
+      if (imgH <= pdfH) {
+        pdf.addImage(imgData, 'JPEG', 0, 0, pdfW, imgH);
+      } else {
+        // Multi-page: slice canvas into A4-height chunks
+        const pageHeightPx = canvas.width * (pdfH / pdfW);
+        let yOffset = 0;
+        while (yOffset < canvas.height) {
+          const sliceCanvas = document.createElement('canvas');
+          sliceCanvas.width = canvas.width;
+          sliceCanvas.height = Math.min(pageHeightPx, canvas.height - yOffset);
+          const ctx = sliceCanvas.getContext('2d');
+          ctx.drawImage(canvas, 0, -yOffset);
+          if (yOffset > 0) pdf.addPage();
+          pdf.addImage(sliceCanvas.toDataURL('image/jpeg', 0.95), 'JPEG', 0, 0, pdfW, pdfH * (sliceCanvas.height / pageHeightPx));
+          yOffset += pageHeightPx;
+        }
+      }
+
+      pdf.save(inv.filename);
+      document.body.removeChild(iframe);
+      if (btn && origText) btn.innerHTML = origText;
+    }).catch(() => {
+      document.body.removeChild(iframe);
+      if (btn && origText) btn.innerHTML = origText;
+      alert('PDF generation failed. Please try again.');
+    });
+  }, 400); // wait for iframe fonts/styles to load
 }
 
 function demoInvoiceCard(id) {
@@ -5523,7 +5578,7 @@ function demoInvoiceCard(id) {
         <div style="font-size:12px;color:#1e40af;line-height:1.5;margin-bottom:10px">${inv.scenario}</div>
         <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
           <button class="btn btn-sm" onclick="downloadDemoInvoice('${id}')" style="background:#2563eb;color:white;border:none;font-size:13px;padding:8px 18px">
-            ⬇️ Download Invoice (HTML)
+            ⬇️ Download Invoice (PDF)
           </button>
           <span style="font-size:11px;color:#1d4ed8;font-weight:500">📄 ${inv.filename}</span>
         </div>
@@ -5597,7 +5652,7 @@ function renderDemoFilesLibrary() {
             <div style="font-size:11px;color:var(--text-muted);font-family:'DM Mono',monospace">${inv.filename}</div>
             <div style="font-size:11px;color:#1d4ed8;margin-top:2px">Total: ${inv.total} · ${inv.property}</div>
           </div>
-          <button class="btn btn-sm" onclick="downloadDemoInvoice('${id}')" style="background:#2563eb;color:white;border:none;flex-shrink:0;font-size:12px">⬇️ HTML</button>
+          <button class="btn btn-sm" onclick="downloadDemoInvoice('${id}')" style="background:#2563eb;color:white;border:none;flex-shrink:0;font-size:12px">⬇️ PDF</button>
         </div>`;
     }).join('');
     return `
